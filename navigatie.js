@@ -1039,11 +1039,22 @@ const app = {
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         const pane = document.getElementById(`tab-${tabName}`);
         pane.classList.add('active');
-        // Scroll altijd naar de top van het tab-content blok, zodat de gebruiker
-        // meteen de inhoud van het nieuwe tabblad ziet. scroll-padding-top op html
-        // zorgt dat de sticky site-header niet over de tabs heen valt.
-        const tabsContainer = document.querySelector('.tabs') || pane;
-        requestAnimationFrame(() => tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+
+        // Scroll altijd naar de top van het tab-blok, ook als de gebruiker ver
+        // naar beneden gescrold staat. Explicit met window.scrollTo zodat we
+        // niet afhankelijk zijn van scroll-padding-top of scrollIntoView-
+        // gedrag dat soms genegeerd wordt bij sticky descendants.
+        const tabs = document.querySelector('.tabs');
+        if (!tabs) return;
+        // Wacht een frame tot de nieuwe .tab-content is gerenderd (layout kan
+        // verschuiven doordat een andere pane in beeld kwam).
+        requestAnimationFrame(() => {
+            const siteHeader = document.querySelector('.site-header');
+            const headerH = siteHeader ? siteHeader.offsetHeight : 64;
+            const tabsTop = tabs.getBoundingClientRect().top + window.pageYOffset;
+            const targetY = Math.max(0, tabsTop - headerH - 8);
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+        });
     },
 
     // Klap de USP-rij (faciliteiten-tags) uit/in op mobiel

@@ -691,20 +691,29 @@ button.usp-more:hover .usp-circle {
 .toggle-btn.active { background: var(--primary); color: white; }
 
 /* ========== TABS ========== */
-.tabs { margin-top: 48px; }
+.tabs {
+    margin-top: 48px;
+    /* Expliciet: geen overflow/transform op het tabs-ouderblok, zodat
+       .tab-buttons sticky blijft t.o.v. de viewport. */
+    overflow: visible;
+    transform: none;
+}
 .tab-buttons {
     /* Sticky onder de site-header, op alle breedtes. Ancestors (body/html,
        #app, .page, .detail-container) gebruiken overflow-x: clip en hebben
-       geen transform, dus de sticky-context is de viewport. */
-    position: sticky;
-    top: var(--header-height, 64px);
-    z-index: 30;
-    background: #fff;
+       geen transform, dus de sticky-context is de viewport.
+       !important neutraliseert eventuele oudere, gecachete regels en
+       voorkomt dat specificiteits-issues dit overschrijven. */
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 70px !important;
+    z-index: 30 !important;
+    background: #fff !important;
     display: flex;
     gap: 8px;
     border-bottom: 2px solid var(--border);
-    margin-bottom: 32px;
-    padding: 6px 0;
+    margin-bottom: 24px;
+    padding: 8px 0;
     flex-wrap: wrap;
 }
 .tab-button {
