@@ -405,6 +405,8 @@ const app = {
 
     // ========== INIT ==========
     init() {
+        // Unified site header: alle pagina's delen dezelfde header via site.js
+        if (typeof renderHeader === 'function') renderHeader('nav');
         this.bindTabs();
         this.bindBrowserBack();
         const params = new URLSearchParams(window.location.search);
@@ -540,9 +542,8 @@ const app = {
         target.classList.add('active');
         this.state.currentPage = pageName;
 
-        // Header blijft altijd zichtbaar (oude 'home' fallback is verwijderd)
-        const header = document.getElementById('header');
-        header.classList.remove('hidden');
+        // Oude in-pagina header is vervangen door unified .site-header.
+        // updateHeader() is nu een no-op wanneer #active-filters-display ontbreekt.
         this.updateHeader();
         window.scrollTo(0, 0);
     },
@@ -760,8 +761,8 @@ const app = {
         document.getElementById('editorial-verdict').textContent = acc.editorial ||
             'De redactie werkt aan een uitgebreid oordeel voor deze accommodatie.';
         document.getElementById('detail-long-description').textContent = acc.longDescription;
-        document.getElementById('detail-facilities').innerHTML =
-            acc.facilityKeys.map(k => `<div class="facility-item">✓ ${this.labels.facilities[k] || k}</div>`).join('');
+        // "Belangrijkste faciliteiten" is vervangen door het Reviews-blok (zie verderop).
+        this.renderReviewsRail(acc);
 
         // Reisverslagen van onze redactie
         const storiesEl = document.getElementById('editorial-stories');
@@ -793,17 +794,8 @@ const app = {
             `).join('');
         }
 
-        // Gast-reviews (placeholder)
-        document.getElementById('reviews-section').innerHTML = `
-            <div class="review-item">
-                <div class="review-header"><span class="review-author">Anita M.</span><span class="review-rating">⭐ 9/10</span></div>
-                <p>Fantastische plek! Netjes, vriendelijk personeel en heerlijk uitzicht.</p>
-            </div>
-            <div class="review-item">
-                <div class="review-header"><span class="review-author">Bert K.</span><span class="review-rating">⭐ 8/10</span></div>
-                <p>Goede locatie en prima faciliteiten. Zeker voor herhaling vatbaar.</p>
-            </div>
-        `;
+        // Het oude inline "Beoordelingen van gasten" blok is vervangen door
+        // renderReviewsRail() bovenaan de Details-tab.
 
         // Rooms — direct zichtbaar met afbeelding per kamertype
         const roomGradients = [
@@ -1022,7 +1014,12 @@ const app = {
 
     // ========== HEADER CHIPS ==========
     updateHeader() {
+        // De oude top-header met #active-filters-display is vervangen door de
+        // unified .site-header. Filter-chips verschijnen op de listing-pagina
+        // nog steeds in de sidebar. Deze functie is een no-op wanneer het
+        // oude element niet meer bestaat.
         const display = document.getElementById('active-filters-display');
+        if (!display) return;
         const tags = [];
         for (const [key, values] of Object.entries(this.state.activeFilters)) {
             values.forEach(v => tags.push({ key, value: v, label: this.labels[key]?.[v] || v }));
@@ -1053,6 +1050,70 @@ const app = {
     toggleUspExpanded() {
         const row = document.getElementById('usp-row');
         if (row) row.classList.toggle('expanded');
+    },
+
+    // ===== Reviews-rail (vervangt 'Belangrijkste faciliteiten') =====
+    // Rendert een sleepbare rij review-kaarten op de Details-tab.
+    // Gebruikt acc.reviewsList als die bestaat; anders worden deterministische
+    // placeholder-reviews gegenereerd op basis van het id van de accommodatie
+    // en het totaal aantal reviews (acc.reviews).
+    renderReviewsRail(acc) {
+        const rail = document.getElementById('reviews-rail');
+        const total = document.getElementById('reviews-total');
+        const allLink = document.getElementById('reviews-all-link');
+        const writeBtn = document.getElementById('btn-write-review');
+        if (!rail) return;
+
+        const totalCount = typeof acc.reviews === 'number' ? acc.reviews : 0;
+        if (total) total.textContent = totalCount;
+        if (allLink) allLink.onclick = (e) => {
+            e.preventDefault();
+            // Plekhouder: in een echt backend-scenario gaat dit naar een reviews-
+            // overzichtspagina. Voor nu tonen we een notificatie.
+            alert(`Alle ${totalCount} reviews komen hier straks — volledig overzicht volgt.`);
+        };
+        if (writeBtn) writeBtn.onclick = () => {
+            alert('Review schrijven — functionaliteit volgt in de volgende stap.');
+        };
+
+        // Gebruik echte review-data wanneer beschikbaar, anders placeholders
+        const reviews = (acc.reviewsList && acc.reviewsList.length)
+            ? acc.reviewsList
+            : this.buildPlaceholderReviews(acc);
+
+        const stars = (r) => {
+            const full = Math.floor(r);
+            const half = r - full >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            return '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(empty);
+        };
+        rail.innerHTML = reviews.map(r => `
+            <article class="review-card">
+                <div class="review-stars" aria-label="${r.rating.toFixed(1)} van de 5 sterren">${stars(r.rating)}</div>
+                <h4 class="review-title">"${r.title}"</h4>
+                <p class="review-text">${r.text}</p>
+                <div class="review-meta">${r.author} · ${r.date}</div>
+            </article>
+        `).join('');
+
+        // Activeer sleepbare rail (hergebruik bestaande helper uit site.js)
+        if (typeof makeHorizontalRail === 'function') {
+            makeHorizontalRail(rail, { itemMinWidth: 320 });
+        }
+    },
+
+    // Genereert 4 deterministische placeholder-reviews per accommodatie.
+    // Zodra echte review-data bestaat (acc.reviewsList) wordt deze niet meer
+    // gebruikt — structuur blijft identiek zodat frontend niet hoeft te wijzigen.
+    buildPlaceholderReviews(acc) {
+        const pool = [
+            { title: 'Geweldig voor kids', text: 'Echt een aanrader voor de meivakantie. Het zwembad is super schoon en de animatie doet enorm hun best. We komen zeker terug!', author: 'Familie de Vries', date: 'Mei 2023' },
+            { title: 'Leuk, maar druk in hoogseizoen', text: 'Het park is prima verzorgd, maar in het hoogseizoen is het erg vol. Huisje was ruim genoeg voor 6 personen.', author: 'Anoniem', date: 'Augustus 2023' },
+            { title: 'Prachtige omgeving', text: 'Rustgevende plek, vriendelijk personeel. We hebben hier heerlijk gewandeld en gefietst. Aanrader!', author: 'Marjolein B.', date: 'September 2024' },
+            { title: 'Prijs-kwaliteit top', text: 'Voor deze prijs kregen we een heel nette accommodatie met alles erop en eraan. Bedden waren uitstekend.', author: 'Peter & Sanne', date: 'Juli 2024' }
+        ];
+        const base = Math.max(3.5, Math.min(5, (acc.rating || 8.5) / 2));
+        return pool.map((r, i) => ({ ...r, rating: Math.round((base - i * 0.3) * 2) / 2 }));
     },
 
     changeImage(idx, el) {

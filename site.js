@@ -380,7 +380,15 @@ function renderHeader(activePage = '') {
         <a href="index.html" class="site-logo">Urlaubspotter</a>
         <div class="site-actions">
             <button class="site-action" type="button" aria-label="Favorieten">♡</button>
-            <button class="site-action" type="button" aria-label="Zoeken">🔍</button>
+            <button class="site-action site-search-toggle" type="button" aria-label="Zoeken" aria-expanded="false">🔍</button>
+        </div>
+        <div class="site-search" id="site-search" role="search" aria-hidden="true">
+            <form class="site-search-form" onsubmit="return submitSiteSearch(event)">
+                <span class="site-search-icon" aria-hidden="true">🔍</span>
+                <input type="search" id="site-search-input" placeholder="Zoek accommodatie, bestemming, type…" autocomplete="off" aria-label="Zoeken">
+                <button type="button" class="site-search-close" aria-label="Zoekbalk sluiten">×</button>
+            </form>
+            <div class="site-search-results" id="site-search-results" role="listbox"></div>
         </div>
         <nav class="site-nav">
             <a href="Homepagina.html" ${activePage === 'home' ? 'class="active"' : ''}>Home</a>
@@ -449,6 +457,7 @@ function renderHeader(activePage = '') {
         </nav>
     `;
     bindMobileNav(header);
+    bindSiteSearch(header);
 }
 
 // Hamburger + accordion (mobiel) — vanilla JS, geen library
@@ -474,6 +483,124 @@ function bindMobileNav(header) {
             parent.classList.toggle('open');
         });
     });
+}
+
+// ============ LIVE SEARCH ============
+// Doorzoekt SITE_DATA.accommodations + labels (who/what/where) en toont
+// voorgestelde resultaten onder de zoekbalk. Geen fake data, geen fuzzy
+// magic — gewoon substring-matches op name/location/label.
+function bindSiteSearch(header) {
+    const toggleBtn = header.querySelector('.site-search-toggle');
+    const panel = header.querySelector('#site-search');
+    const input = header.querySelector('#site-search-input');
+    const results = header.querySelector('#site-search-results');
+    const closeBtn = header.querySelector('.site-search-close');
+    if (!toggleBtn || !panel || !input || !results) return;
+
+    const open = () => {
+        panel.classList.add('open');
+        panel.setAttribute('aria-hidden', 'false');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        setTimeout(() => input.focus(), 30);
+    };
+    const close = () => {
+        panel.classList.remove('open');
+        panel.setAttribute('aria-hidden', 'true');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        results.innerHTML = '';
+        results.classList.remove('open');
+    };
+
+    toggleBtn.addEventListener('click', () => {
+        panel.classList.contains('open') ? close() : open();
+    });
+    closeBtn?.addEventListener('click', close);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && panel.classList.contains('open')) close();
+    });
+    // Klik buiten de zoekbalk sluit 'm
+    document.addEventListener('click', (e) => {
+        if (!panel.classList.contains('open')) return;
+        if (panel.contains(e.target) || toggleBtn.contains(e.target)) return;
+        close();
+    });
+
+    let lastQuery = '';
+    input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        if (q === lastQuery) return;
+        lastQuery = q;
+        if (!q) { results.innerHTML = ''; results.classList.remove('open'); return; }
+        results.innerHTML = renderSiteSearchResults(q);
+        results.classList.add('open');
+    });
+}
+
+// Bouwt de suggesties-dropdown op basis van SITE_DATA + DATA labels
+function renderSiteSearchResults(q) {
+    if (typeof SITE_DATA === 'undefined' || typeof DATA === 'undefined') return '';
+    const match = (s) => (s || '').toLowerCase().includes(q);
+
+    // 1) Accommodaties (naam of locatie bevat query)
+    const accs = SITE_DATA.accommodations
+        .filter(a => match(a.name) || match(a.location))
+        .slice(0, 5);
+
+    // 2) Tags: wat / waar / wie — labels die de query bevatten
+    const labelHits = (dim) => Object.entries(SITE_DATA.labels[dim] || {})
+        .filter(([, label]) => match(label))
+        .slice(0, 5);
+
+    const whatHits = labelHits('what');
+    const whereHits = [...labelHits('whereNL'), ...labelHits('whereEU')].slice(0, 5);
+    const whoHits = labelHits('who');
+
+    const groups = [];
+    if (accs.length) {
+        groups.push(`<div class="ss-group-title">Accommodaties</div>` +
+            accs.map(a => `
+                <a class="ss-item" href="Navigatie.html?acc=${a.id}">
+                    <span class="ss-icon">${a.emoji || '🏝️'}</span>
+                    <span class="ss-body"><span class="ss-name">${a.name}</span><span class="ss-meta">${a.location}</span></span>
+                </a>`).join(''));
+    }
+    if (whatHits.length) {
+        groups.push(`<div class="ss-group-title">Vakantietypen</div>` +
+            whatHits.map(([v,l]) => `
+                <a class="ss-item" href="alle-vakanties.html?what=${encodeURIComponent(v)}">
+                    <span class="ss-icon">${DATA.icon(v)}</span>
+                    <span class="ss-body"><span class="ss-name">${l}</span><span class="ss-meta">Type vakantie</span></span>
+                </a>`).join(''));
+    }
+    if (whereHits.length) {
+        groups.push(`<div class="ss-group-title">Bestemmingen</div>` +
+            whereHits.map(([v,l]) => `
+                <a class="ss-item" href="alle-vakanties.html?where=${encodeURIComponent(v)}">
+                    <span class="ss-icon">${DATA.icon(v)}</span>
+                    <span class="ss-body"><span class="ss-name">${l}</span><span class="ss-meta">Bestemming</span></span>
+                </a>`).join(''));
+    }
+    if (whoHits.length) {
+        groups.push(`<div class="ss-group-title">Reisgezelschap</div>` +
+            whoHits.map(([v,l]) => `
+                <a class="ss-item" href="alle-vakanties.html?who=${encodeURIComponent(v)}">
+                    <span class="ss-icon">${DATA.icon(v)}</span>
+                    <span class="ss-body"><span class="ss-name">${l}</span><span class="ss-meta">Reisgezelschap</span></span>
+                </a>`).join(''));
+    }
+    if (!groups.length) return `<div class="ss-empty">Geen resultaten voor "${q}"</div>`;
+    return groups.join('');
+}
+
+// Enter in zoekbalk: ga naar Alle vakanties met de query als 'q'-parameter
+function submitSiteSearch(e) {
+    e.preventDefault();
+    const input = document.getElementById('site-search-input');
+    const q = (input?.value || '').trim();
+    if (!q) return false;
+    window.location.href = 'alle-vakanties.html?q=' + encodeURIComponent(q);
+    return false;
 }
 
 function renderFooter() {

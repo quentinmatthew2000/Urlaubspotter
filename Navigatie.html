@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="navigatie.css?v=8">
+    <link rel="stylesheet" href="site.css?v=11">
+    <link rel="stylesheet" href="navigatie.css?v=9">
 </head>
 <body>
-<div id="app">
-    <!-- HEADER (blijft zichtbaar op alle subpagina's) -->
-    <header id="header" class="header">
-        <div class="header-content">
-            <button id="back-btn" class="back-button" onclick="app.goBack()">← Terug</button>
-            <a href="index.html" class="header-logo">🌍 Urlaubspotter</a>
-            <div id="active-filters-display" class="active-filters"></div>
-        </div>
-    </header>
+<!-- Unified site header — gerenderd via renderHeader() uit site.js -->
+<header class="site-header"><div class="inner"></div></header>
 
+<div id="app">
     <!-- PAGE: CATEGORY (Niveau 2 — WIE / WAT / WAAR) -->
     <div id="page-category" class="page">
         <div class="filter-page">
@@ -225,15 +220,21 @@
                     <h3 style="margin-top: 36px;">Over deze accommodatie</h3>
                     <p id="detail-long-description"></p>
 
-                    <h3 style="margin-top: 30px;">Belangrijkste faciliteiten</h3>
-                    <div class="facilities-list" id="detail-facilities"></div>
+                    <!-- REVIEWS BLOCK (vervangt de oude "Belangrijkste faciliteiten"-lijst) -->
+                    <div class="reviews-block">
+                        <div class="reviews-head">
+                            <h3>Reviews</h3>
+                            <a class="link" id="reviews-all-link" href="#">alle <span id="reviews-total">0</span> reviews →</a>
+                        </div>
+                        <div class="reviews-rail" id="reviews-rail" data-rail="340"></div>
+                        <div class="reviews-actions">
+                            <button type="button" class="btn-review" id="btn-write-review">Schrijf review</button>
+                        </div>
+                    </div>
 
                     <!-- Reisverslagen van onze redactie -->
                     <h3 class="editorial-stories-heading" style="margin-top: 36px;">Reisverslagen van onze redactie</h3>
                     <div id="editorial-stories" class="editorial-stories"></div>
-
-                    <h3 style="margin-top: 36px;">Beoordelingen van gasten</h3>
-                    <div id="reviews-section"></div>
                 </div>
 
                 <div id="tab-rooms" class="tab-content">
@@ -300,8 +301,8 @@
     </div>
 </div>
 
-<script src="site-data.js?v=2"></script>
-<script src="site.js?v=10"></script>
-<script src="navigatie.js?v=9"></script>
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=11"></script>
+<script src="navigatie.js?v=10"></script>
 </body>
 </html>

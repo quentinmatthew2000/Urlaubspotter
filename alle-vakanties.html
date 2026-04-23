@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alle vakanties · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=10">
+    <link rel="stylesheet" href="site.css?v=11">
     <style>
         /* Alle-vakanties specifieke layout: sidebar + resultaten */
         .av-layout {
@@ -173,7 +173,7 @@
 </footer>
 
 <script src="site-data.js?v=3"></script>
-<script src="site.js?v=10"></script>
+<script src="site.js?v=11"></script>
 <script>
     renderHeader('nav');
     renderFooter();
@@ -199,6 +199,8 @@
     const typePre = qp.get('type') || '';
     const nlKeys = DATA.whereNL().map(([v]) => v);
     const euKeys = DATA.whereEU().map(([v]) => v);
+    // 'q' = vrije zoekopdracht vanuit de header-zoekbalk (matcht naam of locatie)
+    const qText = (qp.get('q') || '').trim().toLowerCase();
 
     const priceInput = document.getElementById('f-price');
     const priceVal = document.getElementById('price-val');
@@ -218,6 +220,11 @@
         // Type-filter (NL/Europa) toepassen wanneer geen specifieke bestemming gekozen is
         if (!where && typePre === 'nederland') list = list.filter(a => nlKeys.includes(a.where));
         else if (!where && typePre === 'europa') list = list.filter(a => euKeys.includes(a.where));
+        // Vrije zoekopdracht (?q=) matcht naam of locatie (case-insensitive)
+        if (qText) list = list.filter(a =>
+            (a.name || '').toLowerCase().includes(qText) ||
+            (a.location || '').toLowerCase().includes(qText)
+        );
 
         const mode = sortSel.value;
         if (mode === 'rating') list = [...list].sort((a, b) => b.rating - a.rating);

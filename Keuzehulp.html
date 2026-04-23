@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter — Keuzehulp</title>
-    <link rel="stylesheet" href="keuzehulp.css?v=1">
+    <link rel="stylesheet" href="site.css?v=11">
+    <link rel="stylesheet" href="keuzehulp.css?v=2">
 </head>
 <body>
+    <!-- Unified site header — gedeeld via renderHeader() uit site.js -->
+    <header class="site-header"><div class="inner"></div></header>
+
+    <main class="kh-main">
     <div id="app" class="app">
-        <!-- Back to home -->
-        <div class="keuzehulp-topbar">
-            <a href="Homepagina.html" class="back-link">← Terug naar home</a>
-            <span class="topbar-title">Keuzehulp</span>
-        </div>
+        <!-- Progress bar (oude topbar vervangen door unified header) -->
+
 
         <!-- Progress Bar -->
         <div class="progress-container">
@@ -294,7 +296,11 @@
             <button class="btn btn-primary" id="btnNext" onclick="nextStep()">Volgende →</button>
         </div>
     </div>
+    </main>
 
-    <script src="keuzehulp.js?v=1"></script>
+    <script src="site-data.js?v=3"></script>
+    <script src="site.js?v=11"></script>
+    <script src="keuzehulp.js?v=2"></script>
+    <script>renderHeader('keuzehulp');</script>
 </body>
 </html>
