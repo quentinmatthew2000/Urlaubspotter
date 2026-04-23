@@ -452,6 +452,9 @@ const app = {
                         longDescription: `${src.name} is een ${(src.tags||[]).join(', ').toLowerCase()} accommodatie in ${src.location}. Onze redactie beoordeelt deze plek met ${src.rating}/10 op basis van ${src.reviews} reviews.`,
                         editorial: 'De redactie werkt nog aan een uitgebreid reisverslag voor deze accommodatie.',
                         facilities: ['WiFi','Parkeren','Ontbijt inbegrepen','Kindvriendelijk'],
+                        // facilityKeys wordt gebruikt door renderDetail (USP-rij + facility-lijst)
+                        // en door filter-logica; leeg array voorkomt TypeError op .slice/.map.
+                        facilityKeys: [],
                         accommodationKeys: [],
                         whoKeys: src.who || [],
                         whatKeys: src.what || [],
@@ -467,7 +470,9 @@ const app = {
                             { name: 'Restaurant', distance: '800 m' },
                             { name: 'Bezienswaardigheid', distance: '3 km' }
                         ],
-                        rooms: [{ type: 'Standaard kamer', price: src.price, size: '28 m²', capacity: '2 personen' }],
+                        // rooms is overal in dit bestand een array van strings (kamernamen),
+                        // niet objects — zie andere acc-entries. Zelfde vorm aanhouden.
+                        rooms: ['Standaard kamer', 'Comfort kamer', 'Suite'],
                         providers: [{ name: 'Booking.com', price: src.price }, { name: 'Expedia', price: Math.round(src.price*1.05) }]
                     };
                     this.accommodations.push(synth);
@@ -519,7 +524,9 @@ const app = {
     },
 
     bindBrowserBack() {
-        window.addEventListener('popstate', () => this.goBack());
+        // Geen eigen popstate-handler meer: het oude handler riep goBack() aan die op
+        // zijn beurt history.back() aanroept — dat gaf oneindige recursie. De browser
+        // regelt terug-navigatie nu zelf; onze eigen "← Terug"-knop gebruikt goBack().
     },
 
     // ========== NAVIGATIE ==========
@@ -541,16 +548,23 @@ const app = {
     },
 
     goBack() {
-        if (this.state.pageHistory.length > 0) {
-            const prev = this.state.pageHistory.pop();
-            this.goToPage(prev, false);
+        // 1) Interne detail → listing: blijf binnen Navigatie.html
+        if (this.state.currentPage === 'detail' && document.getElementById('page-listing')) {
+            this.goToPage('listing', false);
             return;
         }
-        // Fallback: terug naar de homepagina (index)
-        const flow = { combination: 'category', listing: 'combination', detail: 'listing' };
-        const prev = flow[this.state.currentPage];
-        if (prev) this.goToPage(prev, false);
-        else window.location.href = 'index.html';
+        // 2) Anders: echte browser-history gebruiken (komt van elders binnen de site)
+        if (document.referrer) {
+            try {
+                const ref = new URL(document.referrer);
+                if (ref.origin === location.origin) {
+                    history.back();
+                    return;
+                }
+            } catch (_) { /* ongeldige referrer: val door naar home */ }
+        }
+        // 3) Geen zinnige history → terug naar de homepage
+        window.location.href = 'index.html';
     },
 
     // ========== ENTRY VAN HOMEPAGINA ==========
@@ -784,13 +798,43 @@ const app = {
             </div>
         `;
 
-        // Rooms
-        document.getElementById('rooms-list').innerHTML = acc.rooms.map(r => `
-            <div class="room-item">
-                <div class="room-name">${r}</div>
-                <p>Comfortabel en goed uitgerust met moderne voorzieningen.</p>
-            </div>
-        `).join('');
+        // Rooms — direct zichtbaar met afbeelding per kamertype
+        const roomGradients = [
+            ['#667eea','#764ba2'], ['#f093fb','#f5576c'], ['#4facfe','#00c6ff'],
+            ['#43e97b','#38f9d7'], ['#fa709a','#fee140'], ['#a8edea','#fed6e3']
+        ];
+        const roomEmoji = (name) => {
+            const s = (name || '').toLowerCase();
+            if (s.includes('suite')) return '🛏️';
+            if (s.includes('villa')) return '🏡';
+            if (s.includes('chalet')) return '🏔️';
+            if (s.includes('bungalow')) return '🏘️';
+            if (s.includes('tent') || s.includes('safari') || s.includes('glamping')) return '⛺';
+            if (s.includes('apart') || s.includes('appart')) return '🏢';
+            if (s.includes('lodge')) return '🌲';
+            return '🛏️';
+        };
+        document.getElementById('rooms-list').innerHTML = acc.rooms.map((r, i) => {
+            const [c1, c2] = roomGradients[i % roomGradients.length];
+            const emoji = roomEmoji(r);
+            const img = `data:image/svg+xml;utf8,${encodeURIComponent(
+                `<svg xmlns='http://www.w3.org/2000/svg' width='480' height='300' viewBox='0 0 480 300'>
+                 <defs><linearGradient id='rg' x1='0' y1='0' x2='1' y2='1'>
+                 <stop offset='0%' stop-color='${c1}'/><stop offset='100%' stop-color='${c2}'/>
+                 </linearGradient></defs>
+                 <rect width='480' height='300' fill='url(%23rg)'/>
+                 <text x='240' y='180' font-size='120' text-anchor='middle' font-family='system-ui'>${emoji}</text>
+                 </svg>`)}`;
+            return `
+                <div class="room-item">
+                    <img class="room-image" src="${img}" alt="${r}" loading="lazy">
+                    <div class="room-body">
+                        <div class="room-name">${r}</div>
+                        <p>Comfortabel en goed uitgerust met moderne voorzieningen.</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
 
         // ===== Info-tab =====
         // Klimaat
@@ -989,7 +1033,14 @@ const app = {
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-        document.getElementById(`tab-${tabName}`).classList.add('active');
+        const pane = document.getElementById(`tab-${tabName}`);
+        pane.classList.add('active');
+        // Bij 'Prijzen' direct scrollen naar het "Prijzen vergelijken"-blok
+        if (tabName === 'prices') {
+            // Gebruik de tab-pane zelf (waarin het prijzen-vergelijken blok staat)
+            // en laat scroll-padding-top van html de sticky header verrekenen.
+            requestAnimationFrame(() => pane.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        }
     },
 
     changeImage(idx, el) {

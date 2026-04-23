@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alle vakanties · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=8">
+    <link rel="stylesheet" href="site.css?v=9">
     <style>
         /* Alle-vakanties specifieke layout: sidebar + resultaten */
         .av-layout {
@@ -173,7 +173,7 @@
 </footer>
 
 <script src="site-data.js?v=3"></script>
-<script src="site.js?v=8"></script>
+<script src="site.js?v=9"></script>
 <script>
     renderHeader('nav');
     renderFooter();
@@ -232,6 +232,8 @@
     document.getElementById('reset').addEventListener('click', () => {
         fWhat.value = ''; fWho.value = ''; fWhere.value = '';
         priceInput.value = 300; sortSel.value = 'popular';
+        // Maak de URL schoon, zodat filters niet terugkomen bij een refresh
+        history.replaceState(null, '', location.pathname);
         applyFilters();
     });
 

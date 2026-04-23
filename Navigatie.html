@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="navigatie.css?v=6">
+    <link rel="stylesheet" href="navigatie.css?v=7">
 </head>
 <body>
 <div id="app">
@@ -242,11 +242,9 @@
                 </div>
 
                 <div id="tab-info" class="tab-content">
-                    <!-- Klimaat -->
-                    <div class="climate-block">
-                        <h3 id="climate-title">Weer & Klimaat</h3>
-                        <div class="climate-months" id="climate-months"></div>
-                    </div>
+                    <!-- Beoordelingskader -->
+                    <h3 style="margin-top: 0;">Beoordelingskader</h3>
+                    <div class="rating-frame" id="rating-frame"></div>
 
                     <!-- Locatie & hotspots -->
                     <h3 class="hotspot-heading" style="margin-top: 36px;">Locatie &amp; hotspots</h3>
@@ -257,9 +255,11 @@
                     </p>
                     <ul id="hotspots-list" class="hotspots-list"></ul>
 
-                    <!-- Beoordelingskader -->
-                    <h3 style="margin-top: 36px;">Beoordelingskader</h3>
-                    <div class="rating-frame" id="rating-frame"></div>
+                    <!-- Klimaat (verplaatst onder Beoordelingskader / hotspots) -->
+                    <div class="climate-block" style="margin-top: 36px;">
+                        <h3 id="climate-title">Weer & Klimaat</h3>
+                        <div class="climate-months" id="climate-months"></div>
+                    </div>
 
                     <h3 style="margin-top: 36px;">Veelgestelde vragen</h3>
                     <div id="faq-accordion"></div>
@@ -301,7 +301,7 @@
 </div>
 
 <script src="site-data.js?v=2"></script>
-<script src="site.js?v=8"></script>
-<script src="navigatie.js?v=7"></script>
+<script src="site.js?v=9"></script>
+<script src="navigatie.js?v=8"></script>
 </body>
 </html>
