@@ -431,6 +431,23 @@ img { max-width: 100%; height: auto; }
     font-size: 1.25rem;
     background: white;
 }
+/* "Meer"-knop is een button-element; uiterlijk gelijk aan usp-item */
+button.usp-more {
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+button.usp-more:hover .usp-circle {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+/* Mobiel: toon max 6 tags + een "Meer"-knop als er meer dan 6 zijn.
+   Bij 'expanded' verschijnt de rest en verdwijnt de Meer-knop. */
+@media (max-width: 640px) {
+    .usp-row.has-overflow .usp-item:nth-of-type(n+7):not(.usp-more) { display: none; }
+    .usp-row.has-overflow.expanded .usp-item:nth-of-type(n+7):not(.usp-more) { display: flex; }
+    .usp-row.has-overflow.expanded .usp-more { display: none; }
+}
 
 .in-het-kort {
     background: white;

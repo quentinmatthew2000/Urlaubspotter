@@ -726,13 +726,20 @@ const app = {
             'nature': { icon: '🌲', label: 'Natuur' },
             'festive': { icon: '🎉', label: 'Feestelijk' }
         };
-        const uspItems = acc.facilityKeys.slice(0, 6).map(k => {
+        // Render alle tags; CSS verbergt op mobiel de items vanaf de 7e tot de
+        // gebruiker "Meer" aantikt. Op desktop blijft het grid alles tonen.
+        const facilityKeys = acc.facilityKeys || [];
+        const uspItems = facilityKeys.map(k => {
             const cfg = uspIconMap[k] || { icon: '•', label: this.labels.facilities[k] || k };
             return `<div class="usp-item"><div class="usp-circle">${cfg.icon}</div><span class="usp-label">${cfg.label}</span></div>`;
         }).join('');
-        document.getElementById('usp-row').innerHTML =
-            uspItems +
-            `<div class="usp-item"><div class="usp-circle">⋯</div><span class="usp-label">Meer</span></div>`;
+        const uspRow = document.getElementById('usp-row');
+        const hasOverflow = facilityKeys.length > 6;
+        uspRow.classList.toggle('has-overflow', hasOverflow);
+        uspRow.classList.remove('expanded');
+        uspRow.innerHTML = uspItems + (hasOverflow
+            ? `<button type="button" class="usp-item usp-more" onclick="app.toggleUspExpanded()"><div class="usp-circle">⋯</div><span class="usp-label">Meer</span></button>`
+            : '');
 
         // In het kort
         document.getElementById('ihk-list').innerHTML = `
@@ -1035,12 +1042,17 @@ const app = {
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         const pane = document.getElementById(`tab-${tabName}`);
         pane.classList.add('active');
-        // Bij 'Prijzen' direct scrollen naar het "Prijzen vergelijken"-blok
-        if (tabName === 'prices') {
-            // Gebruik de tab-pane zelf (waarin het prijzen-vergelijken blok staat)
-            // en laat scroll-padding-top van html de sticky header verrekenen.
-            requestAnimationFrame(() => pane.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-        }
+        // Scroll altijd naar de top van het tab-content blok, zodat de gebruiker
+        // meteen de inhoud van het nieuwe tabblad ziet. scroll-padding-top op html
+        // zorgt dat de sticky site-header niet over de tabs heen valt.
+        const tabsContainer = document.querySelector('.tabs') || pane;
+        requestAnimationFrame(() => tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    },
+
+    // Klap de USP-rij (faciliteiten-tags) uit/in op mobiel
+    toggleUspExpanded() {
+        const row = document.getElementById('usp-row');
+        if (row) row.classList.toggle('expanded');
     },
 
     changeImage(idx, el) {

@@ -44,46 +44,36 @@ button { font-family: inherit; cursor: pointer; }
     border-bottom: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
 }
+/* 3-koloms layout: hamburger links, logo gecentreerd, acties rechts.
+   Nav-drawer staat als vierde kind en wrapt (flex-basis 100%) naar een
+   nieuwe regel wanneer .open gezet wordt. */
 .site-header .inner {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 14px 24px;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 .site-logo {
     font-weight: 800;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     color: var(--primary);
     text-decoration: none;
     letter-spacing: -0.01em;
-    flex-shrink: 0;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.site-nav {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    margin-left: auto;
-}
-.site-nav a {
-    padding: 8px 14px;
-    color: var(--text);
-    font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 8px;
-    transition: background 0.15s, color 0.15s;
-}
-.site-nav a:hover { background: var(--primary-light); color: var(--primary); }
-.site-nav a.active { color: var(--primary); background: var(--primary-light); }
-
-/* Hamburger knop — alleen zichtbaar op mobiel */
+/* Hamburger: altijd zichtbaar, links */
 .nav-toggle {
-    display: none;
+    display: flex;
     background: transparent;
     border: none;
     padding: 8px;
-    margin-left: auto;
     flex-direction: column;
     gap: 5px;
     cursor: pointer;
@@ -91,6 +81,7 @@ button { font-family: inherit; cursor: pointer; }
     height: 40px;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 .nav-toggle span {
     display: block;
@@ -103,6 +94,59 @@ button { font-family: inherit; cursor: pointer; }
 .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-toggle.open span:nth-child(2) { opacity: 0; }
 .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Actie-iconen rechts */
+.site-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.site-action {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    font-size: 1.15rem;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.site-action:hover { background: var(--primary-light); color: var(--primary); }
+
+/* Navigatie-drawer: standaard ingeklapt, klapt open via hamburger op alle
+   breakpoints (3-koloms header = mobile-first ontwerp). */
+.site-nav {
+    flex: 1 1 100%;
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+}
+.site-nav.open { max-height: 80vh; overflow-y: auto; }
+.site-nav > a,
+.site-nav > .has-dropdown > a {
+    display: block;
+    padding: 14px 8px;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s, color 0.15s;
+}
+.site-nav a:hover { background: var(--primary-light); color: var(--primary); }
+.site-nav a.active { color: var(--primary); background: var(--primary-light); }
 
 /* ============ SEARCHBAR (kidsvakantiegids-stijl) ============ */
 .searchbar-wrap {
@@ -744,33 +788,27 @@ button { font-family: inherit; cursor: pointer; }
     font-weight: 600;
 }
 
-/* ============ DROPDOWN NAV ============ */
-.site-nav .has-dropdown { position: relative; }
+/* ============ DROPDOWN NAV (accordeon in drawer) ============ */
+.site-nav .has-dropdown { display: block; }
 .site-nav .has-dropdown > a::after {
-    content: '▾';
-    font-size: 0.7rem;
-    margin-left: 4px;
-    opacity: 0.6;
+    content: '+';
+    float: right;
+    font-size: 1.15rem;
+    color: var(--secondary);
+    margin-left: 8px;
+    line-height: 1;
 }
+.site-nav .has-dropdown.open > a::after { content: '−'; }
 .nav-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: 4px;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    padding: 22px;
-    min-width: 560px;
     display: none;
-    z-index: 100;
-    gap: 24px;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    background: var(--bg-light);
+    padding: 10px 16px 14px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
 }
-.nav-dropdown.wide { min-width: 720px; grid-template-columns: repeat(3, 1fr); }
-.site-nav .has-dropdown:hover .nav-dropdown,
-.site-nav .has-dropdown:focus-within .nav-dropdown { display: grid; }
+.nav-dropdown.wide { grid-template-columns: 1fr; }
+.site-nav .has-dropdown.open .nav-dropdown { display: grid; }
 .nav-dd-col h5 {
     font-size: 0.78rem;
     text-transform: uppercase;
@@ -964,73 +1002,15 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ============ RESPONSIVE ============ */
-/* Tablet (iPad) */
+/* Tablet (iPad) — grid-tweaks (header-drawer is al de default, zie boven) */
 @media (max-width: 1024px) {
     .section { padding: 48px 20px; }
     .listing-grid { gap: 18px; }
-    .offer-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
-    .nav-dropdown { min-width: 480px; padding: 18px; }
-    .nav-dropdown.wide { min-width: 600px; }
+    .offer-grid { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
 }
 
-/* Tablet / klein — hamburger-accordion nav */
+/* Tablet / klein */
 @media (max-width: 900px) {
-    .site-header .inner { gap: 12px; padding: 12px 16px; flex-wrap: wrap; }
-    .nav-toggle { display: flex; }
-    .site-nav {
-        flex: 1 1 100%;
-        flex-direction: column;
-        align-items: stretch;
-        margin-left: 0;
-        order: 3;
-        gap: 0;
-        border-top: 1px solid var(--border);
-        margin-top: 8px;
-        padding-top: 8px;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.25s ease;
-    }
-    .site-nav.open { max-height: 80vh; overflow-y: auto; }
-    .site-nav > a,
-    .site-nav > .has-dropdown > a {
-        display: block;
-        padding: 14px 8px;
-        border-radius: 0;
-        border-bottom: 1px solid var(--border);
-        font-size: 1rem;
-    }
-    .site-nav .has-dropdown > a::after {
-        content: '+';
-        float: right;
-        font-size: 1.1rem;
-        color: var(--secondary);
-        margin-left: auto;
-    }
-    .site-nav .has-dropdown.open > a::after { content: '−'; }
-    .nav-dropdown {
-        position: static;
-        display: none;
-        grid-template-columns: 1fr;
-        min-width: 0;
-        width: 100%;
-        margin: 0;
-        padding: 8px 16px 12px;
-        background: var(--bg-light);
-        border: none;
-        border-bottom: 1px solid var(--border);
-        border-radius: 0;
-        box-shadow: none;
-        gap: 12px;
-    }
-    .nav-dropdown.wide { grid-template-columns: 1fr; min-width: 0; }
-    .site-nav .has-dropdown.open .nav-dropdown { display: grid; }
-    .site-nav .has-dropdown:hover .nav-dropdown,
-    .site-nav .has-dropdown:focus-within .nav-dropdown { display: none; }
-    .site-nav .has-dropdown.open .nav-dropdown { display: grid; }
-    .nav-dd-col h5 { font-size: 0.72rem; margin-bottom: 6px; padding-bottom: 4px; }
-    .nav-dd-col a { padding: 8px; font-size: 0.95rem; }
-
     .searchbar, .searchbar.compact {
         grid-template-columns: 1fr 1fr;
         gap: 6px;

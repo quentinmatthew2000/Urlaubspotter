@@ -374,10 +374,14 @@ function renderHeader(activePage = '') {
     const header = document.querySelector('.site-header .inner');
     if (!header) return;
     header.innerHTML = `
-        <a href="Homepagina.html" class="site-logo">Urlaubspotter</a>
         <button class="nav-toggle" aria-label="Menu" aria-expanded="false" type="button">
             <span></span><span></span><span></span>
         </button>
+        <a href="index.html" class="site-logo">Urlaubspotter</a>
+        <div class="site-actions">
+            <button class="site-action" type="button" aria-label="Favorieten">♡</button>
+            <button class="site-action" type="button" aria-label="Zoeken">🔍</button>
+        </div>
         <nav class="site-nav">
             <a href="Homepagina.html" ${activePage === 'home' ? 'class="active"' : ''}>Home</a>
             <span class="has-dropdown">
@@ -457,18 +461,17 @@ function bindMobileNav(header) {
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         toggle.classList.toggle('open', open);
     });
-    // Accordion-toggle voor dropdown-secties (alleen op touch/mobiel — klik toggelt open)
+    // Accordion-toggle voor dropdown-secties: drawer wordt nu op alle breedtes
+    // gebruikt, dus klik toggelt open/dicht ongeacht viewport.
     nav.querySelectorAll('.has-dropdown > a').forEach(link => {
         link.addEventListener('click', (e) => {
-            if (window.matchMedia('(max-width: 900px)').matches) {
-                e.preventDefault();
-                const parent = link.parentElement;
-                // Sluit andere open secties
-                nav.querySelectorAll('.has-dropdown.open').forEach(el => {
-                    if (el !== parent) el.classList.remove('open');
-                });
-                parent.classList.toggle('open');
-            }
+            e.preventDefault();
+            const parent = link.parentElement;
+            // Sluit andere open secties
+            nav.querySelectorAll('.has-dropdown.open').forEach(el => {
+                if (el !== parent) el.classList.remove('open');
+            });
+            parent.classList.toggle('open');
         });
     });
 }
