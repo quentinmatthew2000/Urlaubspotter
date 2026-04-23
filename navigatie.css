@@ -693,10 +693,18 @@ button.usp-more:hover .usp-circle {
 /* ========== TABS ========== */
 .tabs { margin-top: 48px; }
 .tab-buttons {
+    /* Sticky onder de site-header, op alle breedtes. Ancestors (body/html,
+       #app, .page, .detail-container) gebruiken overflow-x: clip en hebben
+       geen transform, dus de sticky-context is de viewport. */
+    position: sticky;
+    top: var(--header-height, 64px);
+    z-index: 30;
+    background: #fff;
     display: flex;
     gap: 8px;
     border-bottom: 2px solid var(--border);
     margin-bottom: 32px;
+    padding: 6px 0;
     flex-wrap: wrap;
 }
 .tab-button {
@@ -993,19 +1001,13 @@ button.usp-more:hover .usp-circle {
     .main-image { height: 280px; }
 }
 
-/* Sticky tabs op tablet/mobiel — blijven zichtbaar tijdens scrollen.
-   top-offset = hoogte van de sticky site-header, zodat de tabs net eronder
-   blijven plakken en niet onder de header wegvallen. */
+/* Op tablet/mobiel: laat tabs horizontaal scrollen i.p.v. wrappen.
+   De sticky-gedraging staat in de basis-rule, dus hier alleen de
+   layout-verschillen. */
 @media (max-width: 768px) {
     .tabs { margin-top: 28px; }
     .tab-buttons {
-        position: sticky;
-        top: var(--header-height, 64px);
-        z-index: 20;
-        background: #fff;
         margin-bottom: 20px;
-        padding: 6px 0;
-        border-bottom: 2px solid var(--border);
         flex-wrap: nowrap;
         overflow-x: auto;
         overflow-y: hidden;
