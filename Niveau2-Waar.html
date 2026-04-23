@@ -23,50 +23,20 @@
     <div class="chips" id="active-filters" style="margin-top:16px"></div>
 </section>
 
-<!-- 1. REDACTIE (alleen bij preset) -->
-<div class="section-bg-alt-wrap preset-only" style="display:none">
-<section class="section">
+<!-- GESCHIKTE ACCOMMODATIES (alleen bij preset) -->
+<section class="section preset-only" style="display:none">
     <div class="section-head">
         <div>
-            <span class="eyebrow">Van de redactie</span>
-            <h2>Reisverslagen van onze redactie</h2>
-            <p class="lead">Onze redactie test jaarlijks honderden accommodaties. Lees hun eerlijke ervaringen en tips.</p>
+            <span class="eyebrow">Voor jou geselecteerd</span>
+            <h2 id="matches-title">Geschikte accommodaties</h2>
+            <p class="lead" id="matches-lead">Accommodaties op jouw gekozen bestemming.</p>
         </div>
-        <a class="link" href="#">Alle reisverslagen →</a>
+        <a class="link" id="matches-all-link" href="Navigatie.html">Bekijk alle →</a>
     </div>
-    <div class="editorial-grid">
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
-                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
-                <p>Wat viel ons op bij deze populaire camping aan de Noordzee?</p>
-                <a class="link" href="#">Lees het verslag →</a>
-            </div>
-        </article>
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
-                <h3>Een week wandelen in Zuid-Tirol</h3>
-                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best?</p>
-                <a class="link" href="#">Lees het verslag →</a>
-            </div>
-        </article>
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
-                <h3>Wellness-weekenden in Nederland getest</h3>
-                <p>Van thermen in Limburg tot saunalandschap op de Veluwe.</p>
-                <a class="link" href="#">Lees het verslag →</a>
-            </div>
-        </article>
-    </div>
+    <div class="listing-grid" id="matches-listing"></div>
 </section>
-</div>
 
-<!-- 2. WAT (alleen bij preset) -->
+<!-- WAT (alleen bij preset) -->
 <section class="section" id="what-section" style="display:none">
     <div class="section-head">
         <div>
@@ -78,7 +48,7 @@
     <div class="cat-grid small" id="what-tiles"></div>
 </section>
 
-<!-- 3. BLOG — Tips & reisverhalen -->
+<!-- BLOG — Tips & reisverhalen (sleepbaar) -->
 <div class="section-bg-alt-wrap">
 <section class="section">
     <div class="section-head">
@@ -88,7 +58,7 @@
         </div>
         <a class="link" href="#">Alle artikelen →</a>
     </div>
-    <div class="blog-grid" id="blog-preview"></div>
+    <div class="blog-grid" id="blog-preview" data-rail="260"></div>
 </section>
 </div>
 
@@ -133,6 +103,49 @@
 </section>
 </div>
 
+<!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset) -->
+<div class="section-bg-alt-wrap preset-only" style="display:none">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Van de redactie</span>
+            <h2>Reisverslagen van onze redactie</h2>
+            <p class="lead">Onze redactie test jaarlijks honderden accommodaties. Lees hun eerlijke ervaringen en tips.</p>
+        </div>
+        <a class="link" href="#">Alle reisverslagen →</a>
+    </div>
+    <div class="editorial-grid" data-rail="320">
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
+                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
+                <p>Wat viel ons op bij deze populaire camping aan de Noordzee?</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
+                <h3>Een week wandelen in Zuid-Tirol</h3>
+                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best?</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
+                <h3>Wellness-weekenden in Nederland getest</h3>
+                <p>Van thermen in Limburg tot saunalandschap op de Veluwe.</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+    </div>
+</section>
+</div>
+
 <section class="section">
     <div class="news-social" id="news-social"></div>
 </section>
@@ -143,7 +156,7 @@
 </footer>
 
 <script src="site-data.js?v=3"></script>
-<script src="site.js?v=4"></script>
+<script src="site.js?v=6"></script>
 <script>
     renderHeader('waar');
 
@@ -168,6 +181,13 @@
             `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(wherePre)} ${whereLabel}</span>`,
             `<a class="chip" href="Niveau2-Waar.html">✕ Andere keuze</a>`
         ].join('');
+
+        // Geschikte accommodaties (filter op where)
+        const matches = DATA.filter({ where: wherePre });
+        document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
+        document.getElementById('matches-lead').textContent = `Accommodaties in ${whereLabel}.`;
+        document.getElementById('matches-all-link').href = `Navigatie.html?where=${wherePre}`;
+        renderListingPreview('matches-listing', matches, { limit: 6 });
     } else {
         document.getElementById('active-filters').style.display = 'none';
     }
@@ -191,6 +211,12 @@
     renderFooter();
     bindCarousel('nl-carousel');
     bindCarousel('eu-carousel');
+
+    // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
+    document.querySelectorAll('[data-rail]').forEach(el => {
+        const min = parseInt(el.dataset.rail, 10) || 300;
+        makeHorizontalRail(el, { itemMinWidth: min });
+    });
 </script>
 </body>
 </html>

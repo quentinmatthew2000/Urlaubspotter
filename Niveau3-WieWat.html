@@ -27,7 +27,75 @@
     <div class="chips" id="active-filters"></div>
 </section>
 
-<!-- 1. REDACTIE -->
+<!-- GESCHIKTE ACCOMMODATIES — direct onder de selectiebalk -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Voor jou geselecteerd</span>
+            <h2 id="listing-title">Geschikte accommodaties</h2>
+            <p class="lead" id="listing-lead">Accommodaties die voldoen aan jouw combinatie.</p>
+        </div>
+        <a class="link" id="all-link" href="Navigatie.html">Verfijn verder →</a>
+    </div>
+    <div class="listing-grid cols-3" id="listing"></div>
+</section>
+
+<!-- Subcategorie bij camping -->
+<section class="section" id="campingtype-section" style="display:none">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Type camping</span>
+            <h2>Wat voor camping zoek je?</h2>
+            <p class="lead">Van natuurcamping tot camping met waterpark — kies het type dat bij jullie past.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="campingtype-tiles"></div>
+</section>
+
+<!-- DERDE DIMENSIE: WAAR — landen -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Kies nu een bestemming</span>
+            <h2>Naar welk land wil je?</h2>
+            <p class="lead">Kies eerst op landniveau. Op de volgende stap kun je nog per regio filteren.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="where-tiles"></div>
+</section>
+
+<!-- BLOG — Tips (sleepbaar) -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Inspiratie</span>
+            <h2>Tips voor jouw combinatie</h2>
+        </div>
+        <a class="link" href="#">Alle artikelen →</a>
+    </div>
+    <div class="blog-grid" id="blog-preview" data-rail="260"></div>
+</section>
+</div>
+
+<!-- KEUZEHULP -->
+<section class="section" id="keuzehulp-block"></section>
+
+<!-- Populaire regio's NL -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Of kies direct een regio in Nederland</span>
+            <h2>Populaire regio's</h2>
+            <p class="lead">Voor wie meteen weet welke Nederlandse provincie.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="regions-tiles"></div>
+</section>
+</div>
+
+<!-- REDACTIE — direct boven de nieuwsbrief (sleepbaar) -->
 <div class="section-bg-alt-wrap">
 <section class="section">
     <div class="section-head">
@@ -38,7 +106,7 @@
         </div>
         <a class="link" href="#">Alle reisverslagen →</a>
     </div>
-    <div class="editorial-grid">
+    <div class="editorial-grid" data-rail="320">
         <article class="editorial-card">
             <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
             <div class="editorial-card-body">
@@ -70,74 +138,6 @@
 </section>
 </div>
 
-<!-- 2a. Subcategorie bij camping -->
-<section class="section" id="campingtype-section" style="display:none">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Type camping</span>
-            <h2>Wat voor camping zoek je?</h2>
-            <p class="lead">Van natuurcamping tot camping met waterpark — kies het type dat bij jullie past.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="campingtype-tiles"></div>
-</section>
-
-<!-- 2b. DERDE DIMENSIE: WAAR — landen -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Kies nu een bestemming</span>
-            <h2>Naar welk land wil je?</h2>
-            <p class="lead">Kies eerst op landniveau. Op de volgende stap kun je nog per regio filteren.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="where-tiles"></div>
-</section>
-
-<!-- 3. BLOG -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Inspiratie</span>
-            <h2>Tips voor jouw combinatie</h2>
-        </div>
-        <a class="link" href="#">Alle artikelen →</a>
-    </div>
-    <div class="blog-grid" id="blog-preview"></div>
-</section>
-</div>
-
-<!-- 4. LISTING -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Gefilterd aanbod</span>
-            <h2 id="listing-title">Accommodaties die matchen</h2>
-            <p class="lead" id="listing-lead">We tonen hier de accommodaties die voldoen aan jouw combinatie.</p>
-        </div>
-        <a class="link" id="all-link" href="Navigatie.html">Verfijn verder →</a>
-    </div>
-    <div class="listing-grid cols-3" id="listing"></div>
-</section>
-
-<!-- 5. KEUZEHULP -->
-<section class="section" id="keuzehulp-block"></section>
-
-<!-- 6. Populaire regio's NL -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Of kies direct een regio in Nederland</span>
-            <h2>Populaire regio's</h2>
-            <p class="lead">Voor wie meteen weet welke Nederlandse provincie.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="regions-tiles"></div>
-</section>
-</div>
-
 <section class="section">
     <div class="news-social" id="news-social"></div>
 </section>
@@ -148,7 +148,7 @@
 </footer>
 
 <script src="site-data.js?v=3"></script>
-<script src="site.js?v=4"></script>
+<script src="site.js?v=6"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
@@ -206,16 +206,22 @@
         });
     }
 
-    // Listing
+    // Geschikte accommodaties
     const filtered = DATA.filter({ who, what });
     renderListingPreview('listing', filtered, { limit: 9 });
-    document.getElementById('listing-title').textContent = `${filtered.length} accommodaties die matchen`;
+    document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
     document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({who, what}).toString()}`;
 
     renderBlogPreview('blog-preview', `${whoLabel || ''} ${whatLabel || ''}`.trim() || 'Vakantie');
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
+
+    // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
+    document.querySelectorAll('[data-rail]').forEach(el => {
+        const min = parseInt(el.dataset.rail, 10) || 300;
+        makeHorizontalRail(el, { itemMinWidth: min });
+    });
 </script>
 </body>
 </html>

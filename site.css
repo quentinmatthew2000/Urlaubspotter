@@ -8,6 +8,7 @@
     --accent-dark: #e8651a;
     --secondary: #6c757d;
     --text: #212529;
+    --text-muted: #555;
     --bg: #ffffff;
     --bg-light: #f8f9fa;
     --border: #e9ecef;
@@ -580,13 +581,13 @@ button { font-family: inherit; cursor: pointer; }
     font-weight: 600;
 }
 .editorial-card h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     line-height: 1.35;
     text-wrap: balance;
     margin: 0;
 }
-.editorial-card p { font-size: 0.95rem; line-height: 1.55; color: var(--text-muted, #555); margin: 0; }
+.editorial-card p { font-size: 0.92rem; line-height: 1.55; color: var(--text-muted); margin: 0; }
 .editorial-card .link { margin-top: auto; padding-top: 6px; font-weight: 500; }
 
 /* ============ GENERIC HORIZONTAL RAIL (blog/offer/listing/editorial) ============ */
@@ -934,6 +935,16 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ============ RESPONSIVE ============ */
+/* Tablet (iPad) */
+@media (max-width: 1024px) {
+    .section { padding: 48px 20px; }
+    .listing-grid { gap: 18px; }
+    .offer-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+    .nav-dropdown { min-width: 480px; padding: 18px; }
+    .nav-dropdown.wide { min-width: 600px; }
+}
+
+/* Tablet / klein */
 @media (max-width: 900px) {
     .searchbar, .searchbar.compact {
         grid-template-columns: 1fr 1fr;
@@ -948,17 +959,57 @@ button { font-family: inherit; cursor: pointer; }
     .editorial-block { grid-template-columns: 1fr; }
     .keuzehulp-cta { grid-template-columns: 1fr; }
     .news-social { grid-template-columns: 1fr; }
+    .listing-grid, .listing-grid.cols-3 {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .offer-grid { grid-template-columns: 1fr; }
+    /* Dropdown nav werkt niet goed op tablet — inklappen naar inline links */
+    .nav-dropdown { display: none !important; }
+    .site-nav .has-dropdown > a::after { content: none; }
 }
+
+/* Mobiel */
 @media (max-width: 640px) {
-    .site-header .inner { gap: 12px; padding: 12px 16px; }
-    .site-nav { gap: 2px; }
-    .site-nav a { padding: 6px 10px; font-size: 0.85rem; }
-    .hero { padding: 48px 20px 80px; }
-    .hero.big { padding: 64px 20px 110px; }
-    .searchbar-floating { padding: 0 16px; margin-top: -46px; }
-    .section { padding: 40px 16px; }
+    .site-header .inner { gap: 8px; padding: 10px 14px; flex-wrap: wrap; }
+    .site-logo { font-size: 1.15rem; }
+    .site-nav {
+        gap: 0;
+        margin-left: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        flex: 1 1 100%;
+        order: 3;
+        padding-top: 4px;
+        border-top: 1px solid var(--border);
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { padding: 6px 10px; font-size: 0.82rem; white-space: nowrap; }
+    .hero { padding: 44px 18px 76px; }
+    .hero.big { padding: 56px 18px 100px; }
+    .hero h1 { letter-spacing: -0.01em; }
+    .searchbar-floating { padding: 0 14px; margin-top: -44px; }
+    .section { padding: 32px 14px; }
+    .section.tight { padding: 22px 14px; }
+    .section-head { margin-bottom: 18px; }
     .searchbar, .searchbar.compact { grid-template-columns: 1fr; }
     .searchbar-field { padding: 10px 14px; }
-    .editorial-block { padding: 24px 20px; }
-    .keuzehulp-cta { padding: 28px 22px; }
+    .editorial-block { padding: 22px 18px; }
+    .keuzehulp-cta { padding: 26px 20px; }
+    .listing-grid, .listing-grid.cols-3 {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .cat-grid, .cat-grid.small {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+    .breadcrumb { padding: 14px 14px 0; font-size: 0.82rem; }
+    /* Horizontale rails: kleinere kaartbreedte op mobiel */
+    .hrail > * {
+        flex: 0 0 min(85vw, var(--hrail-min, 300px));
+        min-width: min(85vw, var(--hrail-min, 300px));
+    }
+    .footer-inner { gap: 20px; }
+    .footer-col h4 { font-size: 0.85rem; }
 }
+

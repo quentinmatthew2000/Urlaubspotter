@@ -439,7 +439,7 @@ function renderHeader(activePage = '') {
                 </div>
             </span>
             <a href="Keuzehulp.html" ${activePage === 'keuzehulp' ? 'class="active"' : ''}>Keuzehulp</a>
-            <a href="Navigatie.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
+            <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
         </nav>
     `;
 }

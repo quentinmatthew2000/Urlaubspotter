@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alle vakanties · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=6">
+    <style>
+        /* Alle-vakanties specifieke layout: sidebar + resultaten */
+        .av-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+        .av-sidebar {
+            position: sticky;
+            top: calc(var(--header-h) + 16px);
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        .av-filter-group { margin-bottom: 20px; }
+        .av-filter-group:last-child { margin-bottom: 0; }
+        .av-filter-group h4 {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .av-filter-group select,
+        .av-filter-group input[type="range"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: white;
+        }
+        .av-filter-group input[type="range"] { padding: 0; }
+        .av-price-label {
+            display: flex; justify-content: space-between;
+            font-size: 0.85rem; color: var(--text);
+            margin-top: 6px;
+        }
+        .av-reset {
+            width: 100%;
+            margin-top: 8px;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+            cursor: pointer;
+        }
+        .av-reset:hover { color: var(--primary); border-color: var(--primary); }
+        .av-main-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .av-main-head h1 {
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            font-weight: 800;
+        }
+        .av-main-head .count { color: var(--secondary); font-weight: 600; }
+        .av-sort { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        .av-sort select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            font-family: inherit;
+            font-weight: 600;
+        }
+        .av-toggle-filters {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        @media (max-width: 900px) {
+            .av-layout { grid-template-columns: 1fr; }
+            .av-sidebar { position: static; }
+            .av-sidebar.collapsed { display: none; }
+            .av-toggle-filters { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc">
+    <a href="index.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Alle vakanties</span>
+</nav>
+
+<div class="av-layout">
+    <button class="av-toggle-filters" id="toggle-filters">Filters tonen / verbergen</button>
+
+    <aside class="av-sidebar" id="sidebar">
+        <div class="av-filter-group">
+            <h4>Type vakantie</h4>
+            <select id="f-what">
+                <option value="">Alle types</option>
+            </select>
+        </div>
+        <div class="av-filter-group">
+            <h4>Bestemming</h4>
+            <select id="f-where">
+                <option value="">Alle bestemmingen</option>
+            </select>
+        </div>
+        <div class="av-filter-group">
+            <h4>Reisgezelschap</h4>
+            <select id="f-who">
+                <option value="">Iedereen</option>
+            </select>
+        </div>
+        <div class="av-filter-group">
+            <h4>Prijs per nacht</h4>
+            <input type="range" id="f-price" min="50" max="300" step="5" value="300">
+            <div class="av-price-label">
+                <span>€50</span>
+                <span>max <strong id="price-val">€300</strong></span>
+            </div>
+        </div>
+        <button class="av-reset" id="reset">Filters wissen</button>
+    </aside>
+
+    <main>
+        <div class="av-main-head">
+            <div>
+                <h1>Alle vakanties</h1>
+                <p class="count"><span id="count">0</span> accommodaties</p>
+            </div>
+            <div class="av-sort">
+                <label for="sort">Sorteer:</label>
+                <select id="sort">
+                    <option value="popular">Populair</option>
+                    <option value="rating">Hoogste beoordeling</option>
+                    <option value="price-asc">Prijs laag → hoog</option>
+                    <option value="price-desc">Prijs hoog → laag</option>
+                </select>
+            </div>
+        </div>
+        <div class="listing-grid" id="listing"></div>
+    </main>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=6"></script>
+<script>
+    renderHeader('nav');
+    renderFooter();
+
+    // Populate filter dropdowns (hergebruik bestaande data)
+    const fWhat = document.getElementById('f-what');
+    DATA.what().forEach(([v, l]) => fWhat.add(new Option(l, v)));
+    const fWho = document.getElementById('f-who');
+    DATA.who().forEach(([v, l]) => fWho.add(new Option(l, v)));
+    const fWhere = document.getElementById('f-where');
+    const nlGroup = document.createElement('optgroup'); nlGroup.label = 'Nederland';
+    DATA.whereNL().forEach(([v, l]) => nlGroup.appendChild(new Option(l, v)));
+    const euGroup = document.createElement('optgroup'); euGroup.label = 'Europa';
+    DATA.whereEU().forEach(([v, l]) => euGroup.appendChild(new Option(l, v)));
+    fWhere.appendChild(nlGroup); fWhere.appendChild(euGroup);
+
+    // Preset vanuit URL (zodat Navigatie-links ook werken)
+    const qp = new URLSearchParams(location.search);
+    if (qp.get('what')) fWhat.value = qp.get('what');
+    if (qp.get('who')) fWho.value = qp.get('who');
+    if (qp.get('where')) fWhere.value = qp.get('where');
+
+    const priceInput = document.getElementById('f-price');
+    const priceVal = document.getElementById('price-val');
+    const sortSel = document.getElementById('sort');
+    const listingEl = document.getElementById('listing');
+    const countEl = document.getElementById('count');
+
+    function applyFilters() {
+        const what = fWhat.value;
+        const who = fWho.value;
+        const where = fWhere.value;
+        const maxPrice = parseInt(priceInput.value, 10);
+        priceVal.textContent = `€${maxPrice}`;
+
+        let list = DATA.filter({ what: what || undefined, who: who || undefined, where: where || undefined });
+        list = list.filter(a => a.price <= maxPrice);
+
+        const mode = sortSel.value;
+        if (mode === 'rating') list = [...list].sort((a, b) => b.rating - a.rating);
+        else if (mode === 'price-asc') list = [...list].sort((a, b) => a.price - b.price);
+        else if (mode === 'price-desc') list = [...list].sort((a, b) => b.price - a.price);
+
+        countEl.textContent = list.length;
+        renderListingPreview('listing', list, { limit: 50 });
+    }
+
+    [fWhat, fWho, fWhere, priceInput, sortSel].forEach(el => el.addEventListener('input', applyFilters));
+    document.getElementById('reset').addEventListener('click', () => {
+        fWhat.value = ''; fWho.value = ''; fWhere.value = '';
+        priceInput.value = 300; sortSel.value = 'popular';
+        applyFilters();
+    });
+
+    document.getElementById('toggle-filters').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+    });
+
+    applyFilters();
+</script>
+</body>
+</html>

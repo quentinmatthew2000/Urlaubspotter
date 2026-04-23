@@ -25,7 +25,55 @@
     <div class="chips" id="active-filters"></div>
 </section>
 
-<!-- 1. REDACTIE -->
+<!-- GESCHIKTE ACCOMMODATIES — direct onder de selectiebalk -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Voor jou geselecteerd</span>
+            <h2 id="listing-title">Geschikte accommodaties</h2>
+            <p class="lead">Accommodaties die voldoen aan jouw combinatie.</p>
+        </div>
+        <a class="link" id="all-link" href="Navigatie.html">Verfijn verder →</a>
+    </div>
+    <div class="listing-grid cols-3" id="listing"></div>
+</section>
+
+<!-- WIE -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Kies nu een reisgezelschap</span>
+            <h2>Met wie ga je?</h2>
+            <p class="lead">Verfijn met gezin, koppel, vrienden, senioren of met huisdier.</p>
+        </div>
+        <div class="carousel-nav">
+            <button class="carousel-btn" data-dir="prev">‹</button>
+            <button class="carousel-btn" data-dir="next">›</button>
+        </div>
+    </div>
+    <div class="carousel" id="who-carousel">
+        <div class="carousel-track" id="who-tiles"></div>
+    </div>
+</section>
+
+<!-- BLOG (sleepbaar) -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Inspiratie</span>
+            <h2>Reisverhalen</h2>
+        </div>
+        <a class="link" href="#">Alle artikelen →</a>
+    </div>
+    <div class="blog-grid" id="blog-preview" data-rail="260"></div>
+</section>
+</div>
+
+<!-- KEUZEHULP -->
+<section class="section" id="keuzehulp-block"></section>
+
+<!-- REDACTIE — direct boven de nieuwsbrief (sleepbaar) -->
 <div class="section-bg-alt-wrap">
 <section class="section">
     <div class="section-head">
@@ -36,7 +84,7 @@
         </div>
         <a class="link" href="#">Alle reisverslagen →</a>
     </div>
-    <div class="editorial-grid">
+    <div class="editorial-grid" data-rail="320">
         <article class="editorial-card">
             <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
             <div class="editorial-card-body">
@@ -68,58 +116,12 @@
 </section>
 </div>
 
-<!-- 2. WIE -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Kies nu een reisgezelschap</span>
-            <h2>Met wie ga je?</h2>
-            <p class="lead">Verfijn met gezin, koppel, vrienden, senioren of met huisdier.</p>
-        </div>
-        <div class="carousel-nav">
-            <button class="carousel-btn" data-dir="prev">‹</button>
-            <button class="carousel-btn" data-dir="next">›</button>
-        </div>
-    </div>
-    <div class="carousel" id="who-carousel">
-        <div class="carousel-track" id="who-tiles"></div>
-    </div>
-</section>
-
-<!-- 3. BLOG -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Inspiratie</span>
-            <h2>Reisverhalen</h2>
-        </div>
-        <a class="link" href="#">Alle artikelen →</a>
-    </div>
-    <div class="blog-grid" id="blog-preview"></div>
-</section>
-</div>
-
-<!-- 4. LISTING -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Gefilterd aanbod</span>
-            <h2 id="listing-title">Accommodaties die matchen</h2>
-        </div>
-        <a class="link" id="all-link" href="Navigatie.html">Verfijn verder →</a>
-    </div>
-    <div class="listing-grid cols-3" id="listing"></div>
-</section>
-
-<!-- 5. KEUZEHULP -->
-<section class="section" id="keuzehulp-block"></section>
 <section class="section"><div class="news-social" id="news-social"></div></section>
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
 <script src="site-data.js?v=3"></script>
-<script src="site.js?v=4"></script>
+<script src="site.js?v=6"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const what = params.get('what') || '';
@@ -154,7 +156,7 @@
 
     const filtered = DATA.filter({ what, where });
     renderListingPreview('listing', filtered, { limit: 9 });
-    document.getElementById('listing-title').textContent = `${filtered.length} accommodaties die matchen`;
+    document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
     document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({what, where}).toString()}`;
 
     renderBlogPreview('blog-preview', `${whatLabel || ''} ${whereLabel || ''}`.trim() || 'Vakantie');
@@ -162,6 +164,12 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('who-carousel');
+
+    // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
+    document.querySelectorAll('[data-rail]').forEach(el => {
+        const min = parseInt(el.dataset.rail, 10) || 300;
+        makeHorizontalRail(el, { itemMinWidth: min });
+    });
 </script>
 </body>
 </html>

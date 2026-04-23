@@ -23,7 +23,7 @@
     <div class="chips" id="active-filters" style="margin-top:16px"></div>
 </section>
 
-<!-- WAT CAROUSEL (altijd zichtbaar — dit is de 'eigen' dimensie) -->
+<!-- WAT CAROUSEL — alleen zichtbaar als GEEN vakantietype gekozen is -->
 <div class="section-bg-alt-wrap" id="what-section">
 <section class="section">
     <div class="section-head">
@@ -42,7 +42,77 @@
 </section>
 </div>
 
-<!-- 1. REDACTIE (alleen bij preset) -->
+<!-- GESCHIKTE ACCOMMODATIES (alleen bij preset) -->
+<section class="section preset-only" style="display:none">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Voor jou geselecteerd</span>
+            <h2 id="matches-title">Geschikte accommodaties</h2>
+            <p class="lead" id="matches-lead">Accommodaties die passen bij jouw gekozen vakantietype.</p>
+        </div>
+        <a class="link" id="matches-all-link" href="Navigatie.html">Bekijk alle →</a>
+    </div>
+    <div class="listing-grid" id="matches-listing"></div>
+</section>
+
+<!-- WIE (alleen bij preset) -->
+<section class="section preset-only" style="display:none">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Met wie ga je?</span>
+            <h2 id="who-title">Met wie ga je op vakantie?</h2>
+            <p class="lead">Selecteer je reisgezelschap voor passende aanbevelingen.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="who-tiles"></div>
+</section>
+
+<!-- BLOG — Tips & reisverhalen (sleepbaar) -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Inspiratie</span>
+            <h2>Tips per vakantietype</h2>
+        </div>
+        <a class="link" href="#">Alle artikelen →</a>
+    </div>
+    <div class="blog-grid" id="blog-preview" data-rail="260"></div>
+</section>
+</div>
+
+<!-- WAAR — Kies een land (alleen bij preset) -->
+<div id="where-section" style="display:none">
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Waar wil je naartoe?</span>
+                <h2>Kies een land</h2>
+                <p class="lead">Start breed met een land — op de volgende stap kun je per regio verfijnen.</p>
+            </div>
+        </div>
+        <div class="cat-grid small" id="countries-tiles"></div>
+    </section>
+</div>
+
+<!-- KEUZEHULP -->
+<section class="section" id="keuzehulp-block"></section>
+
+<!-- WAAR — Populaire regio's (alleen bij preset) -->
+<div class="section-bg-alt-wrap where-regio-wrap" style="display:none">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Of kies een regio in Nederland</span>
+            <h2>Populaire regio's</h2>
+            <p class="lead">Direct zoeken in een specifieke Nederlandse provincie.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="regions-tiles"></div>
+</section>
+</div>
+
+<!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset) -->
 <div class="section-bg-alt-wrap preset-only" style="display:none">
 <section class="section">
     <div class="section-head">
@@ -53,7 +123,7 @@
         </div>
         <a class="link" href="#">Alle reisverslagen →</a>
     </div>
-    <div class="editorial-grid">
+    <div class="editorial-grid" data-rail="320">
         <article class="editorial-card">
             <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
             <div class="editorial-card-body">
@@ -85,63 +155,6 @@
 </section>
 </div>
 
-<!-- 2. WIE (alleen bij preset) — "Wat voor vakantie" bevindt zich al bovenaan -->
-<section class="section preset-only" style="display:none">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Met wie ga je?</span>
-            <h2 id="who-title">Met wie ga je op vakantie?</h2>
-            <p class="lead">Selecteer je reisgezelschap voor passende aanbevelingen.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="who-tiles"></div>
-</section>
-
-<!-- 3. BLOG — Tips & reisverhalen -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Inspiratie</span>
-            <h2>Tips per vakantietype</h2>
-        </div>
-        <a class="link" href="#">Alle artikelen →</a>
-    </div>
-    <div class="blog-grid" id="blog-preview"></div>
-</section>
-</div>
-
-<!-- 4. WAAR — Kies een land (alleen bij preset) -->
-<div id="where-section" style="display:none">
-    <section class="section">
-        <div class="section-head">
-            <div>
-                <span class="eyebrow">Waar wil je naartoe?</span>
-                <h2>Kies een land</h2>
-                <p class="lead">Start breed met een land — op de volgende stap kun je per regio verfijnen.</p>
-            </div>
-        </div>
-        <div class="cat-grid small" id="countries-tiles"></div>
-    </section>
-</div>
-
-<!-- 5. KEUZEHULP -->
-<section class="section" id="keuzehulp-block"></section>
-
-<!-- 6. WAAR — Populaire regio's (alleen bij preset) -->
-<div class="section-bg-alt-wrap where-regio-wrap" style="display:none">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Of kies een regio in Nederland</span>
-            <h2>Populaire regio's</h2>
-            <p class="lead">Direct zoeken in een specifieke Nederlandse provincie.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="regions-tiles"></div>
-</section>
-</div>
-
 <section class="section">
     <div class="news-social" id="news-social"></div>
 </section>
@@ -152,7 +165,7 @@
 </footer>
 
 <script src="site-data.js?v=3"></script>
-<script src="site.js?v=4"></script>
+<script src="site.js?v=6"></script>
 <script>
     renderHeader('wat');
 
@@ -171,12 +184,21 @@
         document.getElementById('page-title').textContent = `${whatLabel}`;
         document.getElementById('page-lead').textContent = `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
         document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${whatLabel}`;
+        // Verberg de algemene "Alle vakantietypes" carousel als het type al gekozen is
+        document.getElementById('what-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
         document.getElementById('active-filters').innerHTML = [
             `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${whatLabel}</span>`,
             `<a class="chip" href="Niveau2-Wat.html">✕ Andere keuze</a>`
         ].join('');
+
+        // Geschikte accommodaties (filter op what)
+        const matches = DATA.filter({ what: whatPre });
+        document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
+        document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${whatLabel.toLowerCase()}.`;
+        document.getElementById('matches-all-link').href = `Navigatie.html?what=${whatPre}`;
+        renderListingPreview('matches-listing', matches, { limit: 6 });
     } else {
         document.getElementById('active-filters').style.display = 'none';
     }
@@ -198,12 +220,17 @@
         gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
     });
 
-    const preview = whatPre ? DATA.filter({ what: whatPre }) : SITE_DATA.accommodations;
     renderBlogPreview('blog-preview', whatLabel || 'Vakantietype');
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('what-carousel');
+
+    // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
+    document.querySelectorAll('[data-rail]').forEach(el => {
+        const min = parseInt(el.dataset.rail, 10) || 300;
+        makeHorizontalRail(el, { itemMinWidth: min });
+    });
 </script>
 </body>
 </html>
