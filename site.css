@@ -21,15 +21,17 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: var(--text);
     background: var(--bg);
     line-height: 1.55;
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
-img { max-width: 100%; display: block; }
+img { max-width: 100%; display: block; height: auto; }
 a { color: var(--primary); text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 
@@ -74,6 +76,33 @@ button { font-family: inherit; cursor: pointer; }
 }
 .site-nav a:hover { background: var(--primary-light); color: var(--primary); }
 .site-nav a.active { color: var(--primary); background: var(--primary-light); }
+
+/* Hamburger knop — alleen zichtbaar op mobiel */
+.nav-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    margin-left: auto;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+.nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ============ SEARCHBAR (kidsvakantiegids-stijl) ============ */
 .searchbar-wrap {
@@ -944,8 +973,64 @@ button { font-family: inherit; cursor: pointer; }
     .nav-dropdown.wide { min-width: 600px; }
 }
 
-/* Tablet / klein */
+/* Tablet / klein — hamburger-accordion nav */
 @media (max-width: 900px) {
+    .site-header .inner { gap: 12px; padding: 12px 16px; flex-wrap: wrap; }
+    .nav-toggle { display: flex; }
+    .site-nav {
+        flex: 1 1 100%;
+        flex-direction: column;
+        align-items: stretch;
+        margin-left: 0;
+        order: 3;
+        gap: 0;
+        border-top: 1px solid var(--border);
+        margin-top: 8px;
+        padding-top: 8px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+    }
+    .site-nav.open { max-height: 80vh; overflow-y: auto; }
+    .site-nav > a,
+    .site-nav > .has-dropdown > a {
+        display: block;
+        padding: 14px 8px;
+        border-radius: 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 1rem;
+    }
+    .site-nav .has-dropdown > a::after {
+        content: '+';
+        float: right;
+        font-size: 1.1rem;
+        color: var(--secondary);
+        margin-left: auto;
+    }
+    .site-nav .has-dropdown.open > a::after { content: '−'; }
+    .nav-dropdown {
+        position: static;
+        display: none;
+        grid-template-columns: 1fr;
+        min-width: 0;
+        width: 100%;
+        margin: 0;
+        padding: 8px 16px 12px;
+        background: var(--bg-light);
+        border: none;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+        box-shadow: none;
+        gap: 12px;
+    }
+    .nav-dropdown.wide { grid-template-columns: 1fr; min-width: 0; }
+    .site-nav .has-dropdown.open .nav-dropdown { display: grid; }
+    .site-nav .has-dropdown:hover .nav-dropdown,
+    .site-nav .has-dropdown:focus-within .nav-dropdown { display: none; }
+    .site-nav .has-dropdown.open .nav-dropdown { display: grid; }
+    .nav-dd-col h5 { font-size: 0.72rem; margin-bottom: 6px; padding-bottom: 4px; }
+    .nav-dd-col a { padding: 8px; font-size: 0.95rem; }
+
     .searchbar, .searchbar.compact {
         grid-template-columns: 1fr 1fr;
         gap: 6px;
@@ -963,27 +1048,12 @@ button { font-family: inherit; cursor: pointer; }
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
     .offer-grid { grid-template-columns: 1fr; }
-    /* Dropdown nav werkt niet goed op tablet — inklappen naar inline links */
-    .nav-dropdown { display: none !important; }
-    .site-nav .has-dropdown > a::after { content: none; }
 }
 
 /* Mobiel */
 @media (max-width: 640px) {
-    .site-header .inner { gap: 8px; padding: 10px 14px; flex-wrap: wrap; }
+    .site-header .inner { gap: 8px; padding: 10px 14px; }
     .site-logo { font-size: 1.15rem; }
-    .site-nav {
-        gap: 0;
-        margin-left: 0;
-        overflow-x: auto;
-        scrollbar-width: none;
-        flex: 1 1 100%;
-        order: 3;
-        padding-top: 4px;
-        border-top: 1px solid var(--border);
-    }
-    .site-nav::-webkit-scrollbar { display: none; }
-    .site-nav a { padding: 6px 10px; font-size: 0.82rem; white-space: nowrap; }
     .hero { padding: 44px 18px 76px; }
     .hero.big { padding: 56px 18px 100px; }
     .hero h1 { letter-spacing: -0.01em; }

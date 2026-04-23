@@ -63,9 +63,9 @@ const valueLabels = {
     'camping': 'Kamperen', 'hotel': 'Hotel', 'holiday-park': 'Vakantiepark', 'glamping': 'Glamping',
     'wellness': 'Wellness', 'adventure-trip': 'Actief / Avontuur', 'city-trip': 'Weekendje weg',
     'sun': 'Zonvakantie', 'winter': 'Wintervakantie',
-    // Budget — exact de 7 uit de navigatie
+    // Budget
     'budget': 'Budget (€ – €€)', 'comfort': 'Comfort (€€ – €€€)', 'luxe': 'Luxe (€€€ – €€€€)',
-    'last-minute': 'Last Minutes', 'korting': 'Korting', 'aanbiedingen': 'Aanbiedingen', 'pakketreizen': 'Pakketreizen',
+    'last-minute': 'Last Minutes', 'aanbiedingen': 'Aanbiedingen', 'pakketreizen': 'Pakketreizen',
     // Bestemming
     'drenthe': 'Drenthe', 'gelderland': 'Gelderland', 'limburg': 'Limburg', 'zeeland': 'Zeeland',
     'noord-holland': 'Noord-Holland', 'overijssel': 'Overijssel', 'flevoland': 'Flevoland',

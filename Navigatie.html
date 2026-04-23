@@ -4,65 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="navigatie.css?v=4">
+    <link rel="stylesheet" href="navigatie.css?v=5">
 </head>
 <body>
 <div id="app">
     <!-- HEADER (blijft zichtbaar op alle subpagina's) -->
-    <header id="header" class="header hidden">
+    <header id="header" class="header">
         <div class="header-content">
             <button id="back-btn" class="back-button" onclick="app.goBack()">← Terug</button>
-            <a href="Homepagina.html" class="header-logo">🌍 Urlaubspotter</a>
+            <a href="index.html" class="header-logo">🌍 Urlaubspotter</a>
             <div id="active-filters-display" class="active-filters"></div>
         </div>
     </header>
-
-    <!-- PAGE: HOME (fallback — normaal kom je hier via Homepagina.html) -->
-    <div id="page-home" class="page active">
-        <div class="hero">
-            <div class="hero-content">
-                <h1>🌍 Vind jouw perfecte vakantie</h1>
-                <p>Ontdek handgeselecteerde accommodaties, afgestemd op jouw wensen</p>
-                <div class="category-selection">
-                    <button class="category-card" onclick="app.startFromEntry('what', 'hotel')">
-                        <span class="emoji">🏨</span>
-                        <span class="label">Hotels</span>
-                    </button>
-                    <button class="category-card" onclick="app.startFromEntry('what', 'camping')">
-                        <span class="emoji">⛺</span>
-                        <span class="label">Kamperen</span>
-                    </button>
-                    <button class="category-card" onclick="app.startFromEntry('what', 'holiday-park')">
-                        <span class="emoji">🎡</span>
-                        <span class="label">Vakantieparken</span>
-                    </button>
-                    <button class="category-card" onclick="app.startFromEntry('what', 'weekend')">
-                        <span class="emoji">🗓️</span>
-                        <span class="label">Weekendjes weg</span>
-                    </button>
-                    <button class="category-card" onclick="app.startFromEntry('what', 'zon')">
-                        <span class="emoji">☀️</span>
-                        <span class="label">Zonvakanties</span>
-                    </button>
-                    <button class="category-card" onclick="app.startFromEntry('what', 'winter')">
-                        <span class="emoji">❄️</span>
-                        <span class="label">Wintervakanties</span>
-                    </button>
-                    <a class="category-card" href="Navigatie.html?tag=aanbiedingen" style="text-decoration:none;color:inherit;">
-                        <span class="emoji">€</span>
-                        <span class="label">Aanbiedingen</span>
-                    </a>
-                    <a class="category-card" href="Navigatie.html?tag=lastminute" style="text-decoration:none;color:inherit;">
-                        <span class="emoji">⏱</span>
-                        <span class="label">Last minutes</span>
-                    </a>
-                </div>
-                <p class="home-hint">
-                    Of ga naar de <a href="Homepagina.html">volledige homepagina</a>
-                </p>
-            </div>
-        </div>
-    </div>
 
     <!-- PAGE: CATEGORY (Niveau 2 — WIE / WAT / WAAR) -->
     <div id="page-category" class="page">
@@ -349,6 +302,6 @@
 
 <script src="site-data.js?v=2"></script>
 <script src="site.js?v=2"></script>
-<script src="navigatie.js?v=6"></script>
+<script src="navigatie.js?v=7"></script>
 </body>
 </html>

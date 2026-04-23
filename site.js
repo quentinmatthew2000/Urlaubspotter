@@ -25,6 +25,26 @@ function renderSearchbar(containerId, { big = false, compact = false, preset = {
     container.innerHTML = `
         <form class="${cls}" onsubmit="return submitSearchbar(event)">
             <div class="searchbar-field">
+                <label>Met wie ga je?</label>
+                <div class="select-wrap">
+                    <select name="who" data-placeholder="${!preset.who}">
+                        <option value="">Kies reisgezelschap</option>
+                        ${whoOpts}
+                    </select>
+                    <span class="select-arrow">▼</span>
+                </div>
+            </div>
+            <div class="searchbar-field">
+                <label>Wat zoek je?</label>
+                <div class="select-wrap">
+                    <select name="what" data-placeholder="${!preset.what}">
+                        <option value="">Kies vakantietype</option>
+                        ${whatOpts}
+                    </select>
+                    <span class="select-arrow">▼</span>
+                </div>
+            </div>
+            <div class="searchbar-field">
                 <label>Waar wil je naartoe?</label>
                 <div class="select-wrap">
                     <select name="where" data-placeholder="${!preset.where}">
@@ -45,26 +65,6 @@ function renderSearchbar(containerId, { big = false, compact = false, preset = {
                     <span class="select-arrow">▼</span>
                 </div>
             </div>
-            <div class="searchbar-field">
-                <label>Wat zoek je?</label>
-                <div class="select-wrap">
-                    <select name="what" data-placeholder="${!preset.what}">
-                        <option value="">Kies vakantietype</option>
-                        ${whatOpts}
-                    </select>
-                    <span class="select-arrow">▼</span>
-                </div>
-            </div>
-            <div class="searchbar-field">
-                <label>Met wie ga je?</label>
-                <div class="select-wrap">
-                    <select name="who" data-placeholder="${!preset.who}">
-                        <option value="">Kies reisgezelschap</option>
-                        ${whoOpts}
-                    </select>
-                    <span class="select-arrow">▼</span>
-                </div>
-            </div>
             <button type="submit" class="searchbar-btn">Toon vakanties →</button>
         </form>
     `;
@@ -81,12 +81,11 @@ function submitSearchbar(e) {
     e.preventDefault();
     const form = e.target;
     const params = new URLSearchParams();
-    ['where','what','who'].forEach(k => {
+    ['who','what','where','type'].forEach(k => {
         const val = form.elements[k]?.value;
         if (val) params.set(k, val);
     });
-    // 'type' (NL/Europa) is informatief; niet naar filter doorgegeven
-    window.location.href = 'Navigatie.html' + (params.toString() ? '?' + params.toString() : '');
+    window.location.href = 'alle-vakanties.html' + (params.toString() ? '?' + params.toString() : '');
     return false;
 }
 
@@ -376,6 +375,9 @@ function renderHeader(activePage = '') {
     if (!header) return;
     header.innerHTML = `
         <a href="Homepagina.html" class="site-logo">Urlaubspotter</a>
+        <button class="nav-toggle" aria-label="Menu" aria-expanded="false" type="button">
+            <span></span><span></span><span></span>
+        </button>
         <nav class="site-nav">
             <a href="Homepagina.html" ${activePage === 'home' ? 'class="active"' : ''}>Home</a>
             <span class="has-dropdown">
@@ -442,6 +444,33 @@ function renderHeader(activePage = '') {
             <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
         </nav>
     `;
+    bindMobileNav(header);
+}
+
+// Hamburger + accordion (mobiel) — vanilla JS, geen library
+function bindMobileNav(header) {
+    const toggle = header.querySelector('.nav-toggle');
+    const nav = header.querySelector('.site-nav');
+    if (!toggle || !nav) return;
+    toggle.addEventListener('click', () => {
+        const open = nav.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.classList.toggle('open', open);
+    });
+    // Accordion-toggle voor dropdown-secties (alleen op touch/mobiel — klik toggelt open)
+    nav.querySelectorAll('.has-dropdown > a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                e.preventDefault();
+                const parent = link.parentElement;
+                // Sluit andere open secties
+                nav.querySelectorAll('.has-dropdown.open').forEach(el => {
+                    if (el !== parent) el.classList.remove('open');
+                });
+                parent.classList.toggle('open');
+            }
+        });
+    });
 }
 
 function renderFooter() {

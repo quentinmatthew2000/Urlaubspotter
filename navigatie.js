@@ -7,7 +7,7 @@
 const app = {
     // ========== STATE ==========
     state: {
-        currentPage: 'home',
+        currentPage: 'listing',
         pageHistory: [],
         activeFilters: {
             who: [], what: [], where: [],
@@ -507,7 +507,8 @@ const app = {
         } else if (filter && this.labels[filter]) {
             this.openCategoryPage(filter);
         } else {
-            this.goToPage('home');
+            // Geen parameters of bekende filter → stuur gebruiker naar de nieuwe Alle vakanties-pagina
+            window.location.replace('alle-vakanties.html');
         }
     },
 
@@ -532,13 +533,10 @@ const app = {
         target.classList.add('active');
         this.state.currentPage = pageName;
 
-        // Header tonen op alle subpagina's, niet op home
+        // Header blijft altijd zichtbaar (oude 'home' fallback is verwijderd)
         const header = document.getElementById('header');
-        if (pageName === 'home') header.classList.add('hidden');
-        else {
-            header.classList.remove('hidden');
-            this.updateHeader();
-        }
+        header.classList.remove('hidden');
+        this.updateHeader();
         window.scrollTo(0, 0);
     },
 
@@ -548,11 +546,11 @@ const app = {
             this.goToPage(prev, false);
             return;
         }
-        // Fallback: terug naar homepagina
-        const flow = { category: 'home', combination: 'category', listing: 'combination', detail: 'listing' };
+        // Fallback: terug naar de homepagina (index)
+        const flow = { combination: 'category', listing: 'combination', detail: 'listing' };
         const prev = flow[this.state.currentPage];
         if (prev) this.goToPage(prev, false);
-        else window.location.href = 'Homepagina.html';
+        else window.location.href = 'index.html';
     },
 
     // ========== ENTRY VAN HOMEPAGINA ==========
