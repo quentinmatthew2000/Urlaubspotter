@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wat voor vakantie? · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc"></nav>
+
+<section class="section tight">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow" id="eyebrow">Niveau 2 — Wat</span>
+            <h2 id="page-title">Wat voor vakantie zoek jij?</h2>
+            <p class="lead" id="page-lead">Van relaxed kamperen tot luxe wellness — kies een vakantietype, of combineer met reisgezelschap of bestemming.</p>
+        </div>
+    </div>
+    <div class="chips" id="active-filters" style="margin-top:16px"></div>
+</section>
+
+<!-- WAT CAROUSEL (altijd zichtbaar — dit is de 'eigen' dimensie) -->
+<div class="section-bg-alt-wrap" id="what-section">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Kies jouw vakantietype</span>
+            <h2>Alle vakantietypes</h2>
+        </div>
+        <div class="carousel-nav">
+            <button class="carousel-btn" data-dir="prev">‹</button>
+            <button class="carousel-btn" data-dir="next">›</button>
+        </div>
+    </div>
+    <div class="carousel" id="what-carousel">
+        <div class="carousel-track" id="what-tiles"></div>
+    </div>
+</section>
+</div>
+
+<!-- 1. REDACTIE (alleen bij preset) -->
+<div class="section-bg-alt-wrap preset-only" style="display:none">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Van de redactie</span>
+            <h2>Reisverslagen van onze redactie</h2>
+            <p class="lead">Onze redactie test jaarlijks honderden accommodaties. Lees hun eerlijke ervaringen en tips.</p>
+        </div>
+        <a class="link" href="#">Alle reisverslagen →</a>
+    </div>
+    <div class="editorial-grid">
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
+                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
+                <p>Wat viel ons op bij deze populaire camping aan de Noordzee? We sliepen er met ons gezin en beoordelen alles.</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
+                <h3>Een week wandelen in Zuid-Tirol</h3>
+                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best? Mark test drie opties in de Dolomieten.</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
+                <h3>Wellness-weekenden in Nederland getest</h3>
+                <p>Van thermen in Limburg tot saunalandschap op de Veluwe — Anouk deelt haar gouden tips.</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+    </div>
+</section>
+</div>
+
+<!-- 2. WIE (alleen bij preset) — "Wat voor vakantie" bevindt zich al bovenaan -->
+<section class="section preset-only" style="display:none">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Met wie ga je?</span>
+            <h2 id="who-title">Met wie ga je op vakantie?</h2>
+            <p class="lead">Selecteer je reisgezelschap voor passende aanbevelingen.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="who-tiles"></div>
+</section>
+
+<!-- 3. BLOG — Tips & reisverhalen -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Inspiratie</span>
+            <h2>Tips per vakantietype</h2>
+        </div>
+        <a class="link" href="#">Alle artikelen →</a>
+    </div>
+    <div class="blog-grid" id="blog-preview"></div>
+</section>
+</div>
+
+<!-- 4. WAAR — Kies een land (alleen bij preset) -->
+<div id="where-section" style="display:none">
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Waar wil je naartoe?</span>
+                <h2>Kies een land</h2>
+                <p class="lead">Start breed met een land — op de volgende stap kun je per regio verfijnen.</p>
+            </div>
+        </div>
+        <div class="cat-grid small" id="countries-tiles"></div>
+    </section>
+</div>
+
+<!-- 5. KEUZEHULP -->
+<section class="section" id="keuzehulp-block"></section>
+
+<!-- 6. WAAR — Populaire regio's (alleen bij preset) -->
+<div class="section-bg-alt-wrap where-regio-wrap" style="display:none">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Of kies een regio in Nederland</span>
+            <h2>Populaire regio's</h2>
+            <p class="lead">Direct zoeken in een specifieke Nederlandse provincie.</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="regions-tiles"></div>
+</section>
+</div>
+
+<section class="section">
+    <div class="news-social" id="news-social"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=4"></script>
+<script>
+    renderHeader('wat');
+
+    const params = new URLSearchParams(location.search);
+    const whatPre = params.get('what') || '';
+    const whatLabel = whatPre ? DATA.label('what', whatPre) : '';
+
+    document.getElementById('bc').innerHTML = whatPre
+        ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+           `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
+           `<span class="current">${whatLabel}</span>`].join('')
+        : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+           `<span class="current">Wat voor vakantie?</span>`].join('');
+
+    if (whatPre) {
+        document.getElementById('page-title').textContent = `${whatLabel}`;
+        document.getElementById('page-lead').textContent = `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
+        document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${whatLabel}`;
+        document.getElementById('where-section').style.display = '';
+        document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
+        document.getElementById('active-filters').innerHTML = [
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${whatLabel}</span>`,
+            `<a class="chip" href="Niveau2-Wat.html">✕ Andere keuze</a>`
+        ].join('');
+    } else {
+        document.getElementById('active-filters').style.display = 'none';
+    }
+
+    renderCategoryTiles('what-tiles', DATA.what(), {
+        linkBuilder: (v) => `Niveau2-Wat.html?what=${v}`,
+        gradient: SITE_DATA.gradients.what
+    });
+    renderCategoryTiles('who-tiles', DATA.who(), {
+        linkBuilder: (v) => whatPre ? `Niveau3-WieWat.html?who=${v}&what=${whatPre}` : `Niveau2-Wie.html?who=${v}`,
+        gradient: SITE_DATA.gradients.who
+    });
+    renderCategoryTiles('countries-tiles', DATA.countries(), {
+        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}`,
+        gradient: SITE_DATA.gradients.where
+    });
+    renderCategoryTiles('regions-tiles', DATA.whereNL(), {
+        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}`,
+        gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+    });
+
+    const preview = whatPre ? DATA.filter({ what: whatPre }) : SITE_DATA.accommodations;
+    renderBlogPreview('blog-preview', whatLabel || 'Vakantietype');
+    renderKeuzehulpCTA('keuzehulp-block');
+    renderNewsSocial('news-social');
+    renderFooter();
+    bindCarousel('what-carousel');
+</script>
+</body>
+</html>

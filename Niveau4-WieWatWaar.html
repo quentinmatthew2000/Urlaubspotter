@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wie + Wat + Waar · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css">
+    <style>
+        /* Niveau 4 styling: listing-heavy, meer filterpagina-look */
+        .filter-bar {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .filter-bar .count { font-size: 1.1rem; font-weight: 700; }
+        .filter-bar .count small { color: var(--secondary); font-weight: 500; }
+        .sort-wrap { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        .sort-wrap select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+<nav class="breadcrumb" id="bc"></nav>
+
+<section class="section tight">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Niveau 4 — Alle filters actief</span>
+            <h2 id="page-title">Jouw perfecte match</h2>
+            <p class="lead" id="page-lead">Alle drie de filters zijn actief. Hier staan de accommodaties die aan jouw volledige wens voldoen.</p>
+        </div>
+    </div>
+    <div id="top-searchbar"></div>
+</section>
+
+<section class="section tight">
+    <div class="chips" id="active-filters"></div>
+</section>
+
+<!-- Listing = hoofdcontent -->
+<section class="section">
+    <div class="filter-bar">
+        <div class="count"><span id="count">0</span> <small>accommodaties gevonden</small></div>
+        <div class="sort-wrap">
+            <span>Sorteren:</span>
+            <select id="sort">
+                <option value="popular">Meest populair</option>
+                <option value="rating">Hoogste beoordeling</option>
+                <option value="price-asc">Prijs laag → hoog</option>
+                <option value="price-desc">Prijs hoog → laag</option>
+            </select>
+        </div>
+    </div>
+    <div class="listing-grid cols-3" id="listing"></div>
+</section>
+
+<!-- WIDER NET SUGGESTIES (wanneer weinig matches) -->
+<div class="section-bg-alt-wrap" id="wider-net-wrap" style="display:none">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Net daarbuiten</span>
+            <h2>Ook interessant voor jou</h2>
+            <p class="lead">Accommodaties die op 2 van de 3 criteria matchen.</p>
+        </div>
+    </div>
+    <div class="listing-grid cols-3" id="suggestions"></div>
+</section>
+</div>
+
+<!-- EDITORIAL: kort, niet dominant -->
+<section class="section">
+    <div class="editorial-block">
+        <div class="visual" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎯</div>
+        <div>
+            <h3>Dichtbij de perfecte match</h3>
+            <p id="ed-text">Wil je nog meer verfijnen op prijs, voorzieningen of beoordeling? Gebruik het volledige filtersysteem.</p>
+            <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+                <a class="btn-accent" id="to-nav">Open filtersysteem →</a>
+                <a class="chip" href="Keuzehulp.html">Of: start de Keuzehulp</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="keuzehulp-block"></section>
+<section class="section"><div class="news-social" id="news-social"></div></section>
+
+<footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
+
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=4"></script>
+<script>
+    const params = new URLSearchParams(location.search);
+    const who = params.get('who') || '';
+    const what = params.get('what') || '';
+    const where = params.get('where') || '';
+
+    renderHeader('');
+    renderSearchbar('top-searchbar', { compact: true, preset: { who, what, where } });
+
+    const whoLabel = who ? DATA.label('who', who) : '';
+    const whatLabel = what ? DATA.label('what', what) : '';
+    const whereLabel = where ? DATA.label('where', where) : '';
+
+    document.getElementById('bc').innerHTML = [
+        `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+        `<a href="Niveau2-Wie.html">Wie</a>`, `<span class="sep">›</span>`,
+        `<a href="Niveau2-Wat.html">Wat</a>`, `<span class="sep">›</span>`,
+        `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
+        `<span class="current">${whoLabel || '—'} · ${whatLabel || '—'} · ${whereLabel || '—'}</span>`
+    ].join('');
+
+    if (whoLabel && whatLabel && whereLabel) {
+        document.getElementById('page-title').textContent = `${whatLabel} voor ${whoLabel} in ${whereLabel}`;
+        document.getElementById('page-lead').textContent = `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
+    }
+
+    const activeChips = [];
+    [['who', who, whoLabel], ['what', what, whatLabel], ['where', where, whereLabel]].forEach(([dim, val, lbl]) => {
+        if (!val) return;
+        activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(val)} ${lbl}</span>`);
+    });
+    activeChips.push(`<a class="chip" href="Niveau3-WieWat.html?who=${who}&what=${what}">+ Wijzig bestemming</a>`);
+    activeChips.push(`<a class="chip" href="Niveau3-WieWaar.html?who=${who}&where=${where}">+ Wijzig type</a>`);
+    activeChips.push(`<a class="chip" href="Niveau3-WaarWat.html?where=${where}&what=${what}">+ Wijzig gezelschap</a>`);
+    document.getElementById('active-filters').innerHTML = activeChips.join('');
+
+    document.getElementById('to-nav').href = `Navigatie.html?${new URLSearchParams({who, what, where}).toString()}`;
+
+    // Filter + sorteer
+    let matches = DATA.filter({ who, what, where });
+
+    function sortListing() {
+        const mode = document.getElementById('sort').value;
+        const copy = [...matches];
+        if (mode === 'rating') copy.sort((a,b) => b.rating - a.rating);
+        else if (mode === 'price-asc') copy.sort((a,b) => a.price - b.price);
+        else if (mode === 'price-desc') copy.sort((a,b) => b.price - a.price);
+        // 'popular' = default volgorde
+        renderListingPreview('listing', copy, { limit: 24 });
+        document.getElementById('count').textContent = copy.length;
+    }
+    document.getElementById('sort').addEventListener('change', sortListing);
+    sortListing();
+
+    // Suggesties: minstens 2 van 3 match
+    if (matches.length < 4) {
+        const suggestions = SITE_DATA.accommodations.filter(a => {
+            if (matches.find(m => m.id === a.id)) return false;
+            let hits = 0;
+            if (who && a.who.includes(who)) hits++;
+            if (what && a.what.includes(what)) hits++;
+            if (where && a.where === where) hits++;
+            return hits >= 2;
+        }).slice(0, 6);
+        if (suggestions.length) {
+            document.getElementById('wider-net-wrap').style.display = '';
+            renderListingPreview('suggestions', suggestions, { limit: 6 });
+        }
+    }
+
+    renderKeuzehulpCTA('keuzehulp-block');
+    renderNewsSocial('news-social');
+    renderFooter();
+</script>
+</body>
+</html>

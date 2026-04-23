@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
+    <link rel="stylesheet" href="navigatie.css?v=4">
+</head>
+<body>
+<div id="app">
+    <!-- HEADER (blijft zichtbaar op alle subpagina's) -->
+    <header id="header" class="header hidden">
+        <div class="header-content">
+            <button id="back-btn" class="back-button" onclick="app.goBack()">← Terug</button>
+            <a href="Homepagina.html" class="header-logo">🌍 Urlaubspotter</a>
+            <div id="active-filters-display" class="active-filters"></div>
+        </div>
+    </header>
+
+    <!-- PAGE: HOME (fallback — normaal kom je hier via Homepagina.html) -->
+    <div id="page-home" class="page active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>🌍 Vind jouw perfecte vakantie</h1>
+                <p>Ontdek handgeselecteerde accommodaties, afgestemd op jouw wensen</p>
+                <div class="category-selection">
+                    <button class="category-card" onclick="app.startFromEntry('what', 'hotel')">
+                        <span class="emoji">🏨</span>
+                        <span class="label">Hotels</span>
+                    </button>
+                    <button class="category-card" onclick="app.startFromEntry('what', 'camping')">
+                        <span class="emoji">⛺</span>
+                        <span class="label">Kamperen</span>
+                    </button>
+                    <button class="category-card" onclick="app.startFromEntry('what', 'holiday-park')">
+                        <span class="emoji">🎡</span>
+                        <span class="label">Vakantieparken</span>
+                    </button>
+                    <button class="category-card" onclick="app.startFromEntry('what', 'weekend')">
+                        <span class="emoji">🗓️</span>
+                        <span class="label">Weekendjes weg</span>
+                    </button>
+                    <button class="category-card" onclick="app.startFromEntry('what', 'zon')">
+                        <span class="emoji">☀️</span>
+                        <span class="label">Zonvakanties</span>
+                    </button>
+                    <button class="category-card" onclick="app.startFromEntry('what', 'winter')">
+                        <span class="emoji">❄️</span>
+                        <span class="label">Wintervakanties</span>
+                    </button>
+                    <a class="category-card" href="Navigatie.html?tag=aanbiedingen" style="text-decoration:none;color:inherit;">
+                        <span class="emoji">€</span>
+                        <span class="label">Aanbiedingen</span>
+                    </a>
+                    <a class="category-card" href="Navigatie.html?tag=lastminute" style="text-decoration:none;color:inherit;">
+                        <span class="emoji">⏱</span>
+                        <span class="label">Last minutes</span>
+                    </a>
+                </div>
+                <p class="home-hint">
+                    Of ga naar de <a href="Homepagina.html">volledige homepagina</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: CATEGORY (Niveau 2 — WIE / WAT / WAAR) -->
+    <div id="page-category" class="page">
+        <div class="filter-page">
+            <div class="page-intro">
+                <h2 id="category-title">Verfijn jouw keuze</h2>
+                <p class="subtitle" id="category-subtitle">Kies waar je mee wilt beginnen — jij bepaalt de volgorde</p>
+                <div class="match-counter">
+                    <span id="match-count">0</span>
+                    <span class="match-label">accommodaties gevonden</span>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>👥 Wie gaat er mee?</h3>
+                <div class="filter-chips" id="filter-who"></div>
+            </div>
+
+            <div class="filter-group">
+                <h3>🏖️ Wat voor vakantie?</h3>
+                <div class="filter-chips" id="filter-what"></div>
+            </div>
+
+            <div class="filter-group">
+                <h3>🗺️ Waar wil je heen?</h3>
+                <div class="filter-chips" id="filter-where"></div>
+            </div>
+
+            <button class="btn-primary btn-large" onclick="app.goToCombination()">
+                Verder verfijnen →
+            </button>
+            <button class="btn-secondary btn-large" onclick="app.goToListing()">
+                Direct resultaten zien
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE: COMBINATION (Niveau 3 — verdieping) -->
+    <div id="page-combination" class="page">
+        <div class="filter-page">
+            <div class="page-intro">
+                <h2>Stel jouw ideale vakantie samen</h2>
+                <p class="subtitle">Verfijn op budget, ligging en faciliteiten</p>
+                <div class="match-counter">
+                    <span id="combo-match-count">0</span>
+                    <span class="match-label">accommodaties gevonden</span>
+                </div>
+            </div>
+
+            <div id="combination-filters"></div>
+
+            <div class="filter-group">
+                <h3>🏠 Type accommodatie</h3>
+                <div class="filter-chips" id="filter-accommodation"></div>
+            </div>
+
+            <div class="filter-group">
+                <h3>📍 Ligging</h3>
+                <div class="filter-chips" id="filter-location"></div>
+            </div>
+
+            <div class="filter-group">
+                <h3>💰 Budget</h3>
+                <div class="filter-chips" id="filter-budget"></div>
+            </div>
+
+            <div class="filter-group">
+                <h3>✨ Faciliteiten</h3>
+                <div class="filter-chips" id="filter-facilities"></div>
+            </div>
+
+            <button class="btn-primary btn-large" onclick="app.goToListing()">
+                Toon resultaten →
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE: LISTING (Niveau 4) -->
+    <div id="page-listing" class="page">
+        <div class="listing-layout">
+            <aside class="sidebar">
+                <h3>🔍 Resultaten verfijnen</h3>
+                <div class="filter-group compact">
+                    <h4>👥 Wie?</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-who"></div>
+                </div>
+                <div class="filter-group compact">
+                    <h4>🏖️ Wat?</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-what"></div>
+                </div>
+                <div class="filter-group compact">
+                    <h4>🗺️ Waar?</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-where"></div>
+                </div>
+                <div class="filter-group compact">
+                    <h4>🏠 Type</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-accommodation"></div>
+                </div>
+                <div class="filter-group compact">
+                    <h4>📍 Ligging</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-location"></div>
+                </div>
+                <div class="filter-group compact">
+                    <h4>💰 Budget</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-budget"></div>
+                </div>
+                <div class="filter-group compact">
+                    <h4>✨ Faciliteiten</h4>
+                    <div class="filter-chips-compact" id="sidebar-filter-facilities"></div>
+                </div>
+                <button class="btn-text" onclick="app.clearFilters()">Filters wissen</button>
+            </aside>
+
+            <main class="main-content">
+                <div class="listing-header">
+                    <div>
+                        <h2>Jouw resultaten</h2>
+                        <p class="results-count"><span id="results-count">0</span> accommodaties</p>
+                    </div>
+                    <div class="sort-controls">
+                        <label for="sort-select">Sorteer op:</label>
+                        <select id="sort-select" onchange="app.updateListing()">
+                            <option value="default">Standaard</option>
+                            <option value="price-asc">Prijs (laag naar hoog)</option>
+                            <option value="price-desc">Prijs (hoog naar laag)</option>
+                            <option value="rating-desc">Beoordeling (hoog naar laag)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="accommodations-grid" id="accommodations-grid"></div>
+                <div id="no-results" class="no-results">
+                    Geen accommodaties gevonden die aan jouw criteria voldoen.
+                    <br><button class="btn-text" onclick="app.clearFilters()">Filters wissen</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- PAGE: DETAIL (Niveau 5) -->
+    <div id="page-detail" class="page">
+        <div class="detail-container">
+            <!-- Compacte header met titel, sterren en actie-iconen -->
+            <div class="detail-header-bar">
+                <button class="icon-btn" onclick="app.goBack()" aria-label="Terug">←</button>
+                <div class="detail-header-title">
+                    <h1 id="detail-title"></h1>
+                    <span id="detail-stars" class="detail-stars"></span>
+                </div>
+                <div class="detail-header-actions">
+                    <button class="icon-btn" aria-label="Delen">⇪</button>
+                    <button class="icon-btn" aria-label="Favoriet">♡</button>
+                </div>
+            </div>
+
+            <!-- Foto slider -->
+            <div class="detail-slider">
+                <img id="detail-main-image" alt="Accommodatie" class="slider-image" loading="lazy">
+                <div class="slider-counter"><span id="slider-index">1</span>/<span id="slider-total">1</span></div>
+                <button class="slider-nav slider-prev" onclick="app.sliderNav(-1)" aria-label="Vorige">‹</button>
+                <button class="slider-nav slider-next" onclick="app.sliderNav(1)" aria-label="Volgende">›</button>
+            </div>
+            <div class="gallery-thumbnails" id="gallery-thumbnails"></div>
+
+            <!-- USP icoonrij (WIFI, Pool, Hond, Natuur, TV, Fiets, Meer) -->
+            <div class="usp-row" id="usp-row"></div>
+
+            <!-- "In het kort" blok -->
+            <div class="in-het-kort">
+                <h3 class="ihk-title">🔍 <span>IN HET KORT</span></h3>
+                <ul class="ihk-list" id="ihk-list"></ul>
+            </div>
+
+            <p id="detail-location" class="location"></p>
+            <p id="detail-description" class="description"></p>
+
+            <!-- Prijs & CTA -->
+            <div class="price-section">
+                <div class="price-block">
+                    <span class="price-label">Vanaf</span>
+                    <span id="detail-price" class="price"></span>
+                    <span class="price-unit" id="price-unit">per nacht</span>
+                </div>
+                <div class="price-toggle">
+                    <button class="toggle-btn active" data-toggle="night" onclick="app.togglePriceView('night')">Per nacht</button>
+                    <button class="toggle-btn" data-toggle="person" onclick="app.togglePriceView('person')">Per persoon</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="details">Details</button>
+                    <button class="tab-button" data-tab="rooms">Kamers</button>
+                    <button class="tab-button" data-tab="info">Info</button>
+                    <button class="tab-button" data-tab="prices">Prijzen</button>
+                </div>
+
+                <div id="tab-details" class="tab-content active">
+                    <!-- Oordeel van de redactie -->
+                    <div class="editorial-card">
+                        <div class="editorial-header">
+                            <span class="editorial-icon">✎</span>
+                            <h3>OORDEEL VAN DE REDACTIE</h3>
+                        </div>
+                        <p id="editorial-verdict"></p>
+                    </div>
+
+                    <h3 style="margin-top: 36px;">Over deze accommodatie</h3>
+                    <p id="detail-long-description"></p>
+
+                    <h3 style="margin-top: 30px;">Belangrijkste faciliteiten</h3>
+                    <div class="facilities-list" id="detail-facilities"></div>
+
+                    <!-- Reisverslagen van onze redactie -->
+                    <h3 class="editorial-stories-heading" style="margin-top: 36px;">Reisverslagen van onze redactie</h3>
+                    <div id="editorial-stories" class="editorial-stories"></div>
+
+                    <h3 style="margin-top: 36px;">Beoordelingen van gasten</h3>
+                    <div id="reviews-section"></div>
+                </div>
+
+                <div id="tab-rooms" class="tab-content">
+                    <h3>Beschikbare kamertypes</h3>
+                    <div id="rooms-list"></div>
+                </div>
+
+                <div id="tab-info" class="tab-content">
+                    <!-- Klimaat -->
+                    <div class="climate-block">
+                        <h3 id="climate-title">Weer & Klimaat</h3>
+                        <div class="climate-months" id="climate-months"></div>
+                    </div>
+
+                    <!-- Locatie & hotspots -->
+                    <h3 class="hotspot-heading" style="margin-top: 36px;">Locatie &amp; hotspots</h3>
+                    <div class="hotspot-map" id="hotspot-map"></div>
+                    <p class="hotspot-legend">
+                        <span class="legend-dot legend-dot-blue"></span> Blauw = accommodatie ·
+                        <span class="legend-dot legend-dot-yellow"></span> geel = bezienswaardigheden
+                    </p>
+                    <ul id="hotspots-list" class="hotspots-list"></ul>
+
+                    <!-- Beoordelingskader -->
+                    <h3 style="margin-top: 36px;">Beoordelingskader</h3>
+                    <div class="rating-frame" id="rating-frame"></div>
+
+                    <h3 style="margin-top: 36px;">Veelgestelde vragen</h3>
+                    <div id="faq-accordion"></div>
+
+                    <h3 style="margin-top: 30px;">Locatie &amp; praktische info</h3>
+                    <p id="location-info"></p>
+                </div>
+
+                <div id="tab-prices" class="tab-content">
+                    <h3>Prijzen vergelijken</h3>
+                    <div class="price-controls">
+                        <label for="price-date">Aankomstdatum:</label>
+                        <input type="date" id="price-date">
+                        <label for="price-sort">Sorteer:</label>
+                        <select id="price-sort" onchange="app.sortPrices()">
+                            <option value="price-asc">Prijs (laag naar hoog)</option>
+                            <option value="price-desc">Prijs (hoog naar laag)</option>
+                        </select>
+                    </div>
+                    <table class="price-comparison" id="price-table"></table>
+                </div>
+            </div>
+
+            <section class="alternatives-section">
+                <h2>💡 Vergelijkbare accommodaties</h2>
+                <div class="cards-grid" id="alternatives-grid"></div>
+            </section>
+        </div>
+
+        <!-- Sticky CTA — "Bekijk prijzen" altijd zichtbaar -->
+        <div class="sticky-cta" id="sticky-cta">
+            <div class="sticky-cta-info">
+                <span class="sticky-cta-title" id="sticky-cta-title"></span>
+                <span class="sticky-cta-price">vanaf <strong id="sticky-cta-price"></strong></span>
+            </div>
+            <button class="btn-primary" onclick="app.switchTab('prices')">Bekijk prijzen</button>
+        </div>
+    </div>
+</div>
+
+<script src="site-data.js?v=2"></script>
+<script src="site.js?v=2"></script>
+<script src="navigatie.js?v=6"></script>
+</body>
+</html>

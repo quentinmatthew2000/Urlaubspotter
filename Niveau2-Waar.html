@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waar wil je heen? · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc"></nav>
+
+<section class="section tight">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow" id="eyebrow">Niveau 2 — Waar</span>
+            <h2 id="page-title">Waar wil jij heen?</h2>
+            <p class="lead" id="page-lead">Van de Veluwe tot de Algarve — kies een bestemming en ontdek alle accommodaties.</p>
+        </div>
+    </div>
+    <div class="chips" id="active-filters" style="margin-top:16px"></div>
+</section>
+
+<!-- 1. REDACTIE (alleen bij preset) -->
+<div class="section-bg-alt-wrap preset-only" style="display:none">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Van de redactie</span>
+            <h2>Reisverslagen van onze redactie</h2>
+            <p class="lead">Onze redactie test jaarlijks honderden accommodaties. Lees hun eerlijke ervaringen en tips.</p>
+        </div>
+        <a class="link" href="#">Alle reisverslagen →</a>
+    </div>
+    <div class="editorial-grid">
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
+                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
+                <p>Wat viel ons op bij deze populaire camping aan de Noordzee?</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
+                <h3>Een week wandelen in Zuid-Tirol</h3>
+                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best?</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
+                <h3>Wellness-weekenden in Nederland getest</h3>
+                <p>Van thermen in Limburg tot saunalandschap op de Veluwe.</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+    </div>
+</section>
+</div>
+
+<!-- 2. WAT (alleen bij preset) -->
+<section class="section" id="what-section" style="display:none">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Wat voor vakantie?</span>
+            <h2>Kies een vakantietype</h2>
+            <p class="lead">Welk type vakantie zoek je op deze bestemming?</p>
+        </div>
+    </div>
+    <div class="cat-grid small" id="what-tiles"></div>
+</section>
+
+<!-- 3. BLOG — Tips & reisverhalen -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Inspiratie</span>
+            <h2>Tips & reisverhalen</h2>
+        </div>
+        <a class="link" href="#">Alle artikelen →</a>
+    </div>
+    <div class="blog-grid" id="blog-preview"></div>
+</section>
+</div>
+
+<!-- 4. WAAR — Kies een land (Europa carousel, altijd zichtbaar) -->
+<section class="section" id="eu-wrap">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Waar wil je naartoe?</span>
+            <h2>Kies een land</h2>
+            <p class="lead">Verder weg — Europese bestemmingen.</p>
+        </div>
+        <div class="carousel-nav">
+            <button class="carousel-btn" data-dir="prev">‹</button>
+            <button class="carousel-btn" data-dir="next">›</button>
+        </div>
+    </div>
+    <div class="carousel" id="eu-carousel">
+        <div class="carousel-track" id="eu-tiles"></div>
+    </div>
+</section>
+
+<!-- 5. KEUZEHULP -->
+<section class="section" id="keuzehulp-block"></section>
+
+<!-- 6. WAAR — Populaire regio's NL (altijd zichtbaar) -->
+<div class="section-bg-alt-wrap">
+<section class="section" id="nl-wrap">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Of kies een regio in Nederland</span>
+            <h2>Populaire regio's</h2>
+            <p class="lead">Dichtbij op vakantie — kies een Nederlandse provincie.</p>
+        </div>
+        <div class="carousel-nav">
+            <button class="carousel-btn" data-dir="prev">‹</button>
+            <button class="carousel-btn" data-dir="next">›</button>
+        </div>
+    </div>
+    <div class="carousel" id="nl-carousel">
+        <div class="carousel-track" id="nl-tiles"></div>
+    </div>
+</section>
+</div>
+
+<section class="section">
+    <div class="news-social" id="news-social"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=4"></script>
+<script>
+    renderHeader('waar');
+
+    const params = new URLSearchParams(location.search);
+    const wherePre = params.get('where') || '';
+    const whereLabel = wherePre ? DATA.label('where', wherePre) : '';
+
+    document.getElementById('bc').innerHTML = wherePre
+        ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+           `<a href="Niveau2-Waar.html">Waar wil je heen?</a>`, `<span class="sep">›</span>`,
+           `<span class="current">${whereLabel}</span>`].join('')
+        : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+           `<span class="current">Waar wil je heen?</span>`].join('');
+
+    if (wherePre) {
+        document.getElementById('page-title').textContent = `Vakantie in ${whereLabel}`;
+        document.getElementById('page-lead').textContent = `Je kiest ${whereLabel}. Kies nu een vakantietype of je reisgezelschap.`;
+        document.getElementById('eyebrow').textContent = `Niveau 2 — Waar › ${whereLabel}`;
+        document.getElementById('what-section').style.display = '';
+        document.querySelectorAll('.preset-only').forEach(el => el.style.display = '');
+        document.getElementById('active-filters').innerHTML = [
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(wherePre)} ${whereLabel}</span>`,
+            `<a class="chip" href="Niveau2-Waar.html">✕ Andere keuze</a>`
+        ].join('');
+    } else {
+        document.getElementById('active-filters').style.display = 'none';
+    }
+
+    renderCategoryTiles('nl-tiles', DATA.whereNL(), {
+        linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
+        gradient: SITE_DATA.gradients.where
+    });
+    renderCategoryTiles('eu-tiles', DATA.whereEU(), {
+        linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
+        gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+    });
+    renderCategoryTiles('what-tiles', DATA.what(), {
+        linkBuilder: (v) => `Niveau3-WaarWat.html?where=${wherePre}&what=${v}`,
+        gradient: SITE_DATA.gradients.what
+    });
+
+    renderBlogPreview('blog-preview', whereLabel || 'Bestemming');
+    renderKeuzehulpCTA('keuzehulp-block');
+    renderNewsSocial('news-social');
+    renderFooter();
+    bindCarousel('nl-carousel');
+    bindCarousel('eu-carousel');
+</script>
+</body>
+</html>

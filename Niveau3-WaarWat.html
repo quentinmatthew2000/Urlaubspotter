@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waar + Wat · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+<nav class="breadcrumb" id="bc"></nav>
+
+<section class="section tight">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Niveau 3 — Waar + Wat</span>
+            <h2 id="page-title">Vakantietype + bestemming</h2>
+            <p class="lead" id="page-lead">Twee filters actief. Kies nu een reisgezelschap of bekijk direct het aanbod.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section tight">
+    <div class="chips" id="active-filters"></div>
+</section>
+
+<!-- 1. REDACTIE -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Van de redactie</span>
+            <h2>Reisverslagen van onze redactie</h2>
+            <p class="lead">Onze redactie test jaarlijks honderden accommodaties. Lees hun eerlijke ervaringen en tips.</p>
+        </div>
+        <a class="link" href="#">Alle reisverslagen →</a>
+    </div>
+    <div class="editorial-grid">
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
+                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
+                <p>Wat viel ons op bij deze populaire camping aan de Noordzee?</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
+                <h3>Een week wandelen in Zuid-Tirol</h3>
+                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best?</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
+                <h3>Wellness-weekenden in Nederland getest</h3>
+                <p>Van thermen in Limburg tot saunalandschap op de Veluwe.</p>
+                <a class="link" href="#">Lees het verslag →</a>
+            </div>
+        </article>
+    </div>
+</section>
+</div>
+
+<!-- 2. WIE -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Kies nu een reisgezelschap</span>
+            <h2>Met wie ga je?</h2>
+            <p class="lead">Verfijn met gezin, koppel, vrienden, senioren of met huisdier.</p>
+        </div>
+        <div class="carousel-nav">
+            <button class="carousel-btn" data-dir="prev">‹</button>
+            <button class="carousel-btn" data-dir="next">›</button>
+        </div>
+    </div>
+    <div class="carousel" id="who-carousel">
+        <div class="carousel-track" id="who-tiles"></div>
+    </div>
+</section>
+
+<!-- 3. BLOG -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Inspiratie</span>
+            <h2>Reisverhalen</h2>
+        </div>
+        <a class="link" href="#">Alle artikelen →</a>
+    </div>
+    <div class="blog-grid" id="blog-preview"></div>
+</section>
+</div>
+
+<!-- 4. LISTING -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Gefilterd aanbod</span>
+            <h2 id="listing-title">Accommodaties die matchen</h2>
+        </div>
+        <a class="link" id="all-link" href="Navigatie.html">Verfijn verder →</a>
+    </div>
+    <div class="listing-grid cols-3" id="listing"></div>
+</section>
+
+<!-- 5. KEUZEHULP -->
+<section class="section" id="keuzehulp-block"></section>
+<section class="section"><div class="news-social" id="news-social"></div></section>
+
+<footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
+
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=4"></script>
+<script>
+    const params = new URLSearchParams(location.search);
+    const what = params.get('what') || '';
+    const where = params.get('where') || '';
+
+    renderHeader('');
+
+    const whatLabel = what ? DATA.label('what', what) : null;
+    const whereLabel = where ? DATA.label('where', where) : null;
+    document.getElementById('bc').innerHTML = [
+        `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+        `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
+        `<a href="Niveau2-Wat.html">Wat</a>`, `<span class="sep">›</span>`,
+        `<span class="current">${whereLabel || 'Alle bestemmingen'} · ${whatLabel || 'Alle types'}</span>`
+    ].join('');
+
+    if (whatLabel && whereLabel) {
+        document.getElementById('page-title').textContent = `${whatLabel} in ${whereLabel}`;
+    }
+
+    const chips = [];
+    if (whereLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
+    if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel}</span>`);
+    chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
+    chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
+    document.getElementById('active-filters').innerHTML = chips.join('');
+
+    renderCategoryTiles('who-tiles', DATA.who(), {
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&where=${where}`,
+        gradient: SITE_DATA.gradients.who
+    });
+
+    const filtered = DATA.filter({ what, where });
+    renderListingPreview('listing', filtered, { limit: 9 });
+    document.getElementById('listing-title').textContent = `${filtered.length} accommodaties die matchen`;
+    document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({what, where}).toString()}`;
+
+    renderBlogPreview('blog-preview', `${whatLabel || ''} ${whereLabel || ''}`.trim() || 'Vakantie');
+    renderKeuzehulpCTA('keuzehulp-block');
+    renderNewsSocial('news-social');
+    renderFooter();
+    bindCarousel('who-carousel');
+</script>
+</body>
+</html>
