@@ -24,8 +24,8 @@ function toggleFavorite(id) {
 }
 
 // ============ SEARCHBAR ============
-// Render 4 dropdowns (Waar groepen NL/EU, Bestemmingen placeholder, Wat, Wie)
-// en link naar Navigatie.html?who=&what=&where=
+// Render 3 dropdowns (Wie, Wat, Waar) en link naar
+// alle-vakanties.html?who=&what=&where=
 function renderSearchbar(containerId, { big = false, compact = false, preset = {} } = {}) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -77,17 +77,6 @@ function renderSearchbar(containerId, { big = false, compact = false, preset = {
                     <span class="select-arrow">▼</span>
                 </div>
             </div>
-            <div class="searchbar-field">
-                <label>Type bestemming</label>
-                <div class="select-wrap">
-                    <select name="type" data-placeholder="true">
-                        <option value="">Bestemmingen</option>
-                        <option value="nederland">Nederland</option>
-                        <option value="europa">Europa</option>
-                    </select>
-                    <span class="select-arrow">▼</span>
-                </div>
-            </div>
             <button type="submit" class="searchbar-btn">Toon vakanties →</button>
         </form>
     `;
@@ -104,7 +93,7 @@ function submitSearchbar(e) {
     e.preventDefault();
     const form = e.target;
     const params = new URLSearchParams();
-    ['who','what','where','type'].forEach(k => {
+    ['who','what','where'].forEach(k => {
         const val = form.elements[k]?.value;
         if (val) params.set(k, val);
     });

@@ -195,10 +195,6 @@
     if (qp.get('what')) fWhat.value = qp.get('what');
     if (qp.get('who')) fWho.value = qp.get('who');
     if (qp.get('where')) fWhere.value = qp.get('where');
-    // 'type' filtert op regio-groep (NL vs Europa) wanneer geen specifieke where gezet is
-    const typePre = qp.get('type') || '';
-    const nlKeys = DATA.whereNL().map(([v]) => v);
-    const euKeys = DATA.whereEU().map(([v]) => v);
     // 'q' = vrije zoekopdracht vanuit de header-zoekbalk (matcht naam of locatie)
     const qText = (qp.get('q') || '').trim().toLowerCase();
 
@@ -217,9 +213,6 @@
 
         let list = DATA.filter({ what: what || undefined, who: who || undefined, where: where || undefined });
         list = list.filter(a => a.price <= maxPrice);
-        // Type-filter (NL/Europa) toepassen wanneer geen specifieke bestemming gekozen is
-        if (!where && typePre === 'nederland') list = list.filter(a => nlKeys.includes(a.where));
-        else if (!where && typePre === 'europa') list = list.filter(a => euKeys.includes(a.where));
         // Vrije zoekopdracht (?q=) matcht naam of locatie (case-insensitive)
         if (qText) list = list.filter(a =>
             (a.name || '').toLowerCase().includes(qText) ||
