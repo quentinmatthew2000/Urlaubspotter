@@ -802,7 +802,7 @@ const app = {
                     <p class="story-excerpt">${s.excerpt}</p>
                     <div class="story-footer">
                         <span>${s.replies} reacties</span>
-                        <a href="#" class="story-read" onclick="event.preventDefault();">Lees reisverslag →</a>
+                        <a href="${s.id ? 'reisverslag-detail.html?id=' + s.id : 'reisverslagen.html'}" class="story-read">Lees reisverslag →</a>
                     </div>
                 </article>
             `).join('');
