@@ -270,7 +270,7 @@ button { font-family: inherit; cursor: pointer; }
     box-shadow: var(--shadow-md);
     padding: 10px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr) auto;
+    grid-template-columns: repeat(3, 1fr) auto;
     gap: 4px;
     align-items: stretch;
 }
