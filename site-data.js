@@ -158,7 +158,145 @@ const SITE_DATA = {
           tags: ['Bos','Bungalow'], emoji: '🌳' },
         { id: 18, name: 'Utrechtse Stadsapartement', location: 'Utrecht', price: 110, rating: 8.5, reviews: 189,
           who: ['couples','solo','friends'], what: ['city-trip'], where: 'utrecht',
-          tags: ['Stad','Cultuur'], emoji: '🏰' }
+          tags: ['Stad','Cultuur'], emoji: '🏰' },
+
+        // --- Uitbreiding (19–48): dekking per who/what/where + kern-combinaties
+        // Patroon volgt dezelfde vorm als hierboven; locations = slug-match where.
+        // Doel: elk label heeft minstens 2–3 matches en combinaties als
+        // families+camping+NL / couples+wellness+EU / friends+winter+oostenrijk
+        // zijn expliciet aanwezig.
+
+        // Limburg (NL)
+        { id: 19, name: 'Limburgs Kasteelhotel', location: 'Limburg', price: 185, rating: 9.0, reviews: 221,
+          who: ['couples','seniors'], what: ['hotel','wellness'], where: 'limburg',
+          tags: ['Kasteel','Wellness'], emoji: '🏰' },
+        { id: 20, name: 'Heuvelland Familie Camping', location: 'Limburg', price: 72, rating: 8.5, reviews: 314,
+          who: ['families-kids','families-babies','pets'], what: ['camping'], where: 'limburg',
+          tags: ['Camping','Natuur'], emoji: '⛺' },
+        { id: 21, name: 'Maastricht Stadshotel', location: 'Limburg', price: 128, rating: 8.7, reviews: 267,
+          who: ['couples','solo','friends'], what: ['city-trip','hotel'], where: 'limburg',
+          tags: ['Stad','Cultuur'], emoji: '🏙️' },
+
+        // Overijssel
+        { id: 22, name: 'Twentse Natuurcamping', location: 'Overijssel', price: 65, rating: 8.4, reviews: 196,
+          who: ['families-kids','pets','families-teens'], what: ['camping'], where: 'overijssel',
+          tags: ['Natuur','Camping'], emoji: '🌲' },
+        { id: 23, name: 'Salland Wellness Resort', location: 'Overijssel', price: 165, rating: 9.0, reviews: 182,
+          who: ['couples','seniors'], what: ['wellness','hotel'], where: 'overijssel',
+          tags: ['Wellness','Rust'], emoji: '💆' },
+
+        // Flevoland
+        { id: 24, name: 'Oostvaarders Eco-Glamping', location: 'Flevoland', price: 145, rating: 8.8, reviews: 118,
+          who: ['couples','friends'], what: ['glamping'], where: 'flevoland',
+          tags: ['Eco','Natuur'], emoji: '✨' },
+        { id: 25, name: 'Markermeer Watersport Resort', location: 'Flevoland', price: 138, rating: 8.6, reviews: 203,
+          who: ['friends','families-teens'], what: ['adventure-trip','holiday-park'], where: 'flevoland',
+          tags: ['Water','Sport'], emoji: '🌊' },
+
+        // Zuid-Holland
+        { id: 26, name: 'Kinderdijk Fiets-B&B', location: 'Zuid-Holland', price: 98, rating: 8.7, reviews: 156,
+          who: ['seniors','couples','solo'], what: ['hotel'], where: 'zuid-holland',
+          tags: ['Fietsen','Erfgoed'], emoji: '🚴' },
+        { id: 27, name: 'Scheveningen Beachhouse', location: 'Zuid-Holland', price: 155, rating: 8.5, reviews: 298,
+          who: ['families-kids','couples','families-teens'], what: ['hotel','sun'], where: 'zuid-holland',
+          tags: ['Aan zee','Gezinnen'], emoji: '🏖️' },
+        { id: 28, name: 'Rotterdam Design Hotel', location: 'Zuid-Holland', price: 148, rating: 8.8, reviews: 341,
+          who: ['couples','solo','friends'], what: ['city-trip','hotel'], where: 'zuid-holland',
+          tags: ['Stad','Design'], emoji: '🏙️' },
+
+        // Zeeland (extra)
+        { id: 29, name: 'Zeeuwse Dijk Camping', location: 'Zeeland', price: 58, rating: 8.3, reviews: 412,
+          who: ['families-babies','families-kids','pets'], what: ['camping'], where: 'zeeland',
+          tags: ['Camping','Aan zee'], emoji: '⛺' },
+        { id: 30, name: 'Veerse Meer Glamping', location: 'Zeeland', price: 168, rating: 9.1, reviews: 134,
+          who: ['couples','friends'], what: ['glamping','wellness'], where: 'zeeland',
+          tags: ['Glamping','Water'], emoji: '✨' },
+
+        // Drenthe (extra)
+        { id: 31, name: 'Drents Heide Chalet', location: 'Drenthe', price: 115, rating: 8.6, reviews: 177,
+          who: ['seniors','couples'], what: ['holiday-park','wellness'], where: 'drenthe',
+          tags: ['Natuur','Rust'], emoji: '🌳' },
+        { id: 32, name: 'Hondsrug Boerencamping', location: 'Drenthe', price: 62, rating: 8.5, reviews: 224,
+          who: ['pets','families-kids','families-babies'], what: ['camping'], where: 'drenthe',
+          tags: ['Boerderij','Dierenvriendelijk'], emoji: '🐄' },
+
+        // Noord-Holland (extra)
+        { id: 33, name: 'Texel Duinen Villa', location: 'Noord-Holland', price: 178, rating: 9.0, reviews: 212,
+          who: ['families-kids','pets','couples'], what: ['holiday-park'], where: 'noord-holland',
+          tags: ['Eiland','Duinen'], emoji: '🏖️' },
+
+        // Friesland (extra)
+        { id: 34, name: 'Waddeneiland Beach Hotel', location: 'Friesland', price: 158, rating: 8.9, reviews: 189,
+          who: ['couples','seniors','solo'], what: ['hotel','sun'], where: 'friesland',
+          tags: ['Eiland','Rust'], emoji: '🏖️' },
+
+        // Groningen (extra)
+        { id: 35, name: 'Wadvogels Natuurretraite', location: 'Groningen', price: 132, rating: 8.8, reviews: 97,
+          who: ['solo','seniors','couples'], what: ['wellness'], where: 'groningen',
+          tags: ['Rust','Natuur'], emoji: '🌾' },
+
+        // Noord-Brabant (extra)
+        { id: 36, name: 'Efteling-gebied Familiehotel', location: 'Noord-Brabant', price: 182, rating: 8.7, reviews: 498,
+          who: ['families-babies','families-kids','families-teens'], what: ['hotel','holiday-park'], where: 'noord-brabant',
+          tags: ['Attracties','Kinderpret'], emoji: '🎡' },
+
+        // Utrecht (extra)
+        { id: 37, name: 'Heuvelrug Adventure Camping', location: 'Utrecht', price: 74, rating: 8.4, reviews: 168,
+          who: ['families-teens','friends'], what: ['camping','adventure-trip'], where: 'utrecht',
+          tags: ['Bos','Sport'], emoji: '⛺' },
+
+        // Gelderland (extra – winter in NL is schaars, maar Veluwe-ski kan ✓)
+        { id: 38, name: 'Veluwe Winter Lodge', location: 'Gelderland', price: 165, rating: 8.6, reviews: 142,
+          who: ['couples','friends','families-teens'], what: ['winter','wellness'], where: 'gelderland',
+          tags: ['Bos','Rust'], emoji: '❄️' },
+
+        // België (extra)
+        { id: 39, name: 'Antwerpen Boutique B&B', location: 'België', price: 122, rating: 8.7, reviews: 248,
+          who: ['couples','solo','friends'], what: ['city-trip','hotel'], where: 'belgie',
+          tags: ['Stad','Boutique'], emoji: '🍫' },
+
+        // Duitsland (extra)
+        { id: 40, name: 'Berlijn Design Loft', location: 'Duitsland', price: 138, rating: 8.8, reviews: 387,
+          who: ['friends','solo','couples'], what: ['city-trip','hotel'], where: 'duitsland',
+          tags: ['Stad','Design'], emoji: '🍺' },
+
+        // Frankrijk (extra)
+        { id: 41, name: 'Provence Wellness Gîte', location: 'Frankrijk', price: 192, rating: 9.2, reviews: 156,
+          who: ['couples','seniors','families-kids'], what: ['glamping','wellness'], where: 'frankrijk',
+          tags: ['Lavendel','Rust'], emoji: '🪻' },
+
+        // Spanje (extra)
+        { id: 42, name: 'Madrid Citytrip Hotel', location: 'Spanje', price: 132, rating: 8.6, reviews: 421,
+          who: ['friends','solo','couples'], what: ['city-trip','hotel'], where: 'spanje',
+          tags: ['Stad','Cultuur'], emoji: '🥘' },
+
+        // Italië (extra)
+        { id: 43, name: 'Amalfi Seaview Hotel', location: 'Italië', price: 245, rating: 9.3, reviews: 298,
+          who: ['couples','seniors'], what: ['sun','hotel','wellness'], where: 'italie',
+          tags: ['Zee','Luxe'], emoji: '🌊' },
+
+        // Portugal (extra)
+        { id: 44, name: 'Porto Surf Hostel', location: 'Portugal', price: 58, rating: 8.4, reviews: 512,
+          who: ['friends','solo','families-teens'], what: ['adventure-trip','sun'], where: 'portugal',
+          tags: ['Surf','Backpack'], emoji: '🏄' },
+
+        // Kroatië (extra)
+        { id: 45, name: 'Plitvice Wandel Lodge', location: 'Kroatië', price: 148, rating: 9.0, reviews: 187,
+          who: ['couples','friends','seniors'], what: ['adventure-trip','wellness'], where: 'kroatie',
+          tags: ['Wandelen','Natuur'], emoji: '🥾' },
+
+        // Oostenrijk (extra) — families + winter combinatie
+        { id: 46, name: 'Tirol Familie Chalet', location: 'Oostenrijk', price: 198, rating: 9.0, reviews: 234,
+          who: ['families-kids','families-teens','pets'], what: ['winter','holiday-park'], where: 'oostenrijk',
+          tags: ['Wintersport','Bergen'], emoji: '⛷️' },
+
+        // Aanvullende pets + solo + extra camping-dekking
+        { id: 47, name: 'Biesbosch Kano Camping', location: 'Noord-Brabant', price: 68, rating: 8.4, reviews: 145,
+          who: ['solo','friends','pets'], what: ['camping','adventure-trip'], where: 'noord-brabant',
+          tags: ['Water','Natuur'], emoji: '🛶' },
+        { id: 48, name: 'Zuid-Franse Glamping Deluxe', location: 'Frankrijk', price: 215, rating: 9.2, reviews: 198,
+          who: ['couples','families-kids'], what: ['glamping','sun'], where: 'frankrijk',
+          tags: ['Glamping','Luxe'], emoji: '☀️' }
     ],
     // Uitgelichte redactionele teksten per categorie
     editorial: {

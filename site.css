@@ -134,16 +134,16 @@ button { font-family: inherit; cursor: pointer; }
 .site-action:hover { background: var(--primary-light); color: var(--primary); }
 .site-search-toggle[aria-expanded="true"] { background: var(--primary-light); color: var(--primary); }
 
-/* Zoekbalk-paneel: klapt onder de header uit op klik van het 🔍-icoon */
+/* Zoekbalk-paneel: klapt onder de header uit op klik van het 🔍-icoon.
+   Zelfde reden als .site-nav: display:none wanneer gesloten, anders zou
+   een lege flex-rij een gap onder de header trekken. */
 .site-search {
     flex: 1 1 100%;
     order: 4;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.2s ease;
+    display: none;
     position: relative;
 }
-.site-search.open { max-height: 420px; overflow: visible; }
+.site-search.open { display: block; }
 .site-search-form {
     display: flex;
     align-items: center;
@@ -221,21 +221,24 @@ button { font-family: inherit; cursor: pointer; }
 .ss-empty { padding: 16px; color: var(--secondary); text-align: center; font-size: 0.9rem; }
 
 /* Navigatie-drawer: standaard ingeklapt, klapt open via hamburger op alle
-   breakpoints (3-koloms header = mobile-first ontwerp). */
+   breakpoints (3-koloms header = mobile-first ontwerp).
+   BELANGRIJK: wanneer gesloten gebruiken we display:none, zodat dit element
+   géén flex-rij of gap claimt in de header — anders zou er onder de header
+   een zichtbare witte strook staan (max-height:0 neutraliseert alleen de
+   content-hoogte, niet de flex-row/gap/margin/padding/border). */
 .site-nav {
     flex: 1 1 100%;
     order: 3;
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 0;
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid var(--border);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s ease;
+    max-height: 80vh;
+    overflow-y: auto;
 }
-.site-nav.open { max-height: 80vh; overflow-y: auto; }
+.site-nav.open { display: flex; }
 .site-nav > a,
 .site-nav > .has-dropdown > a {
     display: block;
