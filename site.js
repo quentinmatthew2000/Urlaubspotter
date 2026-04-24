@@ -1,4 +1,27 @@
-// site.js — gedeelde interacties (searchbar + carousel)
+// site.js — gedeelde interacties (searchbar + carousel + favorites)
+
+// ============ FAVORITES (localStorage) ============
+// Opgeslagen accommodatie-IDs. Backend-onafhankelijk; overleeft refresh.
+const FAV_KEY = 'urlaubspotter_favorites';
+function getFavorites() {
+    try {
+        const raw = localStorage.getItem(FAV_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr.map(Number).filter(n => !Number.isNaN(n)) : [];
+    } catch (_) { return []; }
+}
+function setFavorites(ids) {
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(ids)); } catch (_) {}
+}
+function isFavorite(id) { return getFavorites().includes(Number(id)); }
+function toggleFavorite(id) {
+    const ids = getFavorites();
+    const n = Number(id);
+    const idx = ids.indexOf(n);
+    if (idx >= 0) ids.splice(idx, 1); else ids.push(n);
+    setFavorites(ids);
+    return idx < 0; // true = nu bewaard
+}
 
 // ============ SEARCHBAR ============
 // Render 4 dropdowns (Waar groepen NL/EU, Bestemmingen placeholder, Wat, Wie)
@@ -377,9 +400,12 @@ function renderHeader(activePage = '') {
         <button class="nav-toggle" aria-label="Menu" aria-expanded="false" type="button">
             <span></span><span></span><span></span>
         </button>
-        <a href="index.html" class="site-logo">Urlaubspotter</a>
+        <a href="index.html" class="site-logo" aria-label="Urlaubspotter home">
+            <img src="logo.png" alt="Urlaubspotter" onerror="this.remove()">
+            <span class="site-logo-text">Urlaubspotter</span>
+        </a>
         <div class="site-actions">
-            <button class="site-action" type="button" aria-label="Favorieten">♡</button>
+            <a class="site-action site-fav-link${activePage === 'favorites' ? ' active' : ''}" href="favorieten.html" aria-label="Favorieten" title="Favorieten">♡</a>
             <button class="site-action site-search-toggle" type="button" aria-label="Zoeken" aria-expanded="false">🔍</button>
         </div>
         <div class="site-search" id="site-search" role="search" aria-hidden="true">

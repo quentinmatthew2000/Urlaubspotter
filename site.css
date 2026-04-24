@@ -67,6 +67,22 @@ button { font-family: inherit; cursor: pointer; }
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+.site-logo img {
+    display: block;
+    height: 40px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+/* Toon tekst-fallback alleen als de <img> ontbreekt (bv. bij 404 via onerror) */
+.site-logo img + .site-logo-text { display: none; }
+@media (max-width: 640px) {
+    .site-logo img { height: 34px; }
 }
 /* Hamburger: altijd zichtbaar, links */
 .nav-toggle {

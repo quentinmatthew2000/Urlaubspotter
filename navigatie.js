@@ -424,68 +424,13 @@ const app = {
         const whatMap = { 'adventure-trip':'adventure','adventure':'adventure' };
 
         // 1) Deep-link naar detail-pagina: ?acc=<id>
+        // _ensureAccommodation() synthetiseert zo nodig een detail-record
+        // vanuit SITE_DATA, zodat alle IDs betrouwbaar openen.
         const accId = parseInt(params.get('acc'));
-        if (accId) {
-            let found = this.accommodations.find(a => a.id === accId);
-            // Fallback: synthese vanuit SITE_DATA als deze ID alleen daar bestaat
-            if (!found && typeof SITE_DATA !== 'undefined') {
-                const src = SITE_DATA.accommodations.find(a => a.id === accId);
-                if (src) {
-                    const grad = (window.gradientFor && gradientFor(src)) || 'linear-gradient(135deg,#667eea,#764ba2)';
-                    const emoji = src.emoji || '🏝️';
-                    const placeholder = `data:image/svg+xml;utf8,${encodeURIComponent(
-                        `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'>
-                         <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-                         <stop offset='0%' stop-color='#667eea'/><stop offset='100%' stop-color='#764ba2'/>
-                         </linearGradient></defs>
-                         <rect width='1200' height='700' fill='url(%23g)'/>
-                         <text x='600' y='400' font-size='240' text-anchor='middle' font-family='system-ui'>${emoji}</text>
-                         </svg>`)}`;
-                    const synth = {
-                        id: src.id,
-                        name: src.name,
-                        location: src.location,
-                        price: src.price,
-                        rating: src.rating,
-                        reviews: src.reviews,
-                        tags: src.tags || [],
-                        images: [placeholder, placeholder, placeholder],
-                        description: `${src.name} in ${src.location}. ${(src.tags||[]).join(' · ')}.`,
-                        longDescription: `${src.name} is een ${(src.tags||[]).join(', ').toLowerCase()} accommodatie in ${src.location}. Onze redactie beoordeelt deze plek met ${src.rating}/10 op basis van ${src.reviews} reviews.`,
-                        editorial: 'De redactie werkt nog aan een uitgebreid reisverslag voor deze accommodatie.',
-                        facilities: ['WiFi','Parkeren','Ontbijt inbegrepen','Kindvriendelijk'],
-                        // facilityKeys wordt gebruikt door renderDetail (USP-rij + facility-lijst)
-                        // en door filter-logica; leeg array voorkomt TypeError op .slice/.map.
-                        facilityKeys: [],
-                        accommodationKeys: [],
-                        whoKeys: src.who || [],
-                        whatKeys: src.what || [],
-                        whereKey: src.where || '',
-                        faq: [
-                            { q: 'Is parkeren inbegrepen?', a: 'Ja, gratis parkeren is beschikbaar.' },
-                            { q: 'Is er WiFi?', a: 'Ja, gratis WiFi door de hele accommodatie.' },
-                            { q: 'Wat is het annuleringsbeleid?', a: 'Gratis annuleren tot 14 dagen voor aankomst.' }
-                        ],
-                        coords: { x: 50, y: 50 },
-                        hotspots: [
-                            { name: 'Dichtstbijzijnde supermarkt', distance: '1.2 km' },
-                            { name: 'Restaurant', distance: '800 m' },
-                            { name: 'Bezienswaardigheid', distance: '3 km' }
-                        ],
-                        // rooms is overal in dit bestand een array van strings (kamernamen),
-                        // niet objects — zie andere acc-entries. Zelfde vorm aanhouden.
-                        rooms: ['Standaard kamer', 'Comfort kamer', 'Suite'],
-                        providers: [{ name: 'Booking.com', price: src.price }, { name: 'Expedia', price: Math.round(src.price*1.05) }]
-                    };
-                    this.accommodations.push(synth);
-                    found = synth;
-                }
-            }
-            if (found) {
-                this.state.activeFilters = { who:[], what:[], where:[], accommodation:[], location:[], budget:[], facilities:[] };
-                this.goToDetail(accId);
-                return;
-            }
+        if (accId && this._ensureAccommodation(accId)) {
+            this.state.activeFilters = { who:[], what:[], where:[], accommodation:[], location:[], budget:[], facilities:[] };
+            this.goToDetail(accId);
+            return;
         }
 
         // 2) Meerdere filters via ?who=&what=&where=
@@ -606,8 +551,60 @@ const app = {
         this.goToPage('listing');
     },
 
+    // Zoekt een accommodatie in this.accommodations; valt terug op SITE_DATA
+    // en synthetiseert een detail-record als de id alleen daar bestaat.
+    // Gedeeld door init() (?acc=) en goToDetail() (kaart-klik), zodat
+    // alle accommodatie-links betrouwbaar openen.
+    _ensureAccommodation(id) {
+        const n = Number(id);
+        let found = this.accommodations.find(a => a.id === n);
+        if (found) return found;
+        if (typeof SITE_DATA === 'undefined') return null;
+        const src = SITE_DATA.accommodations.find(a => a.id === n);
+        if (!src) return null;
+        const emoji = src.emoji || '🏝️';
+        const placeholder = `data:image/svg+xml;utf8,${encodeURIComponent(
+            `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'>
+             <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+             <stop offset='0%' stop-color='#667eea'/><stop offset='100%' stop-color='#764ba2'/>
+             </linearGradient></defs>
+             <rect width='1200' height='700' fill='url(%23g)'/>
+             <text x='600' y='400' font-size='240' text-anchor='middle' font-family='system-ui'>${emoji}</text>
+             </svg>`)}`;
+        const synth = {
+            id: src.id, name: src.name, location: src.location, price: src.price,
+            rating: src.rating, reviews: src.reviews, tags: src.tags || [],
+            images: [placeholder, placeholder, placeholder],
+            image: placeholder,
+            description: `${src.name} in ${src.location}. ${(src.tags||[]).join(' · ')}.`,
+            longDescription: `${src.name} is een ${(src.tags||[]).join(', ').toLowerCase()} accommodatie in ${src.location}. Onze redactie beoordeelt deze plek met ${src.rating}/10 op basis van ${src.reviews} reviews.`,
+            editorial: 'De redactie werkt nog aan een uitgebreid reisverslag voor deze accommodatie.',
+            facilities: ['WiFi','Parkeren','Ontbijt inbegrepen','Kindvriendelijk'],
+            facilityKeys: [], accommodationKeys: [],
+            whoKeys: src.who || [], whatKeys: src.what || [], whereKey: src.where || '',
+            faq: [
+                { q: 'Is parkeren inbegrepen?', a: 'Ja, gratis parkeren is beschikbaar.' },
+                { q: 'Is er WiFi?', a: 'Ja, gratis WiFi door de hele accommodatie.' },
+                { q: 'Wat is het annuleringsbeleid?', a: 'Gratis annuleren tot 14 dagen voor aankomst.' }
+            ],
+            coords: { x: 50, y: 50 },
+            hotspots: [
+                { name: 'Dichtstbijzijnde supermarkt', distance: '1.2 km' },
+                { name: 'Restaurant', distance: '800 m' },
+                { name: 'Bezienswaardigheid', distance: '3 km' }
+            ],
+            rooms: ['Standaard kamer', 'Comfort kamer', 'Suite'],
+            providers: [{ name: 'Booking.com', price: src.price }, { name: 'Expedia', price: Math.round(src.price*1.05) }]
+        };
+        this.accommodations.push(synth);
+        return synth;
+    },
+
     goToDetail(id) {
-        this.state.currentDetailId = id;
+        // Fallback-synth zorgt dat ook IDs uit SITE_DATA correct openen
+        const acc = this._ensureAccommodation(id);
+        if (!acc) { console.warn('Accommodatie niet gevonden:', id); return; }
+        this.state.currentDetailId = acc.id;
         this.renderDetail();
         this.goToPage('detail');
     },
@@ -751,6 +748,21 @@ const app = {
 
         document.getElementById('detail-location').textContent = '📍 ' + acc.location;
         document.getElementById('detail-description').textContent = acc.description;
+
+        // Favoriet-knop in de detail-header-bar: klik toggelt opslag via
+        // toggleFavorite() uit site.js; uiterlijk volgt de opgeslagen staat.
+        const favBtn = document.getElementById('detail-fav-btn');
+        if (favBtn && typeof isFavorite === 'function') {
+            const applyFavState = () => {
+                const saved = isFavorite(acc.id);
+                favBtn.classList.toggle('is-fav', saved);
+                favBtn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+                favBtn.textContent = saved ? '♥' : '♡';
+                favBtn.title = saved ? 'Verwijder uit favorieten' : 'Opslaan als favoriet';
+            };
+            applyFavState();
+            favBtn.onclick = () => { toggleFavorite(acc.id); applyFavState(); };
+        }
         document.getElementById('detail-price').textContent = `€${acc.price}`;
 
         // Sticky CTA

@@ -335,13 +335,21 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ========== DETAIL ========== */
-.detail-container { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+.detail-container {
+    max-width: 900px;
+    margin: 0 auto;
+    /* Krap top-padding zodat er geen gat tussen de sticky site-header en
+       de detail-header-bar valt. scroll-margin-top laat scroll-naar-element
+       onder de sticky header landen. */
+    padding: 16px 20px 24px;
+    scroll-margin-top: var(--header-height, 64px);
+}
 
 .detail-header-bar {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 8px 0 16px;
+    padding: 0 0 14px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 20px;
 }
@@ -363,6 +371,9 @@ img { max-width: 100%; height: auto; }
     font-family: inherit;
 }
 .icon-btn:hover { background: var(--primary-light); }
+/* Favoriet-knop: gevulde rode hartje wanneer opgeslagen */
+.icon-btn.fav-btn.is-fav { color: #e63946; border-color: #e63946; }
+.icon-btn.fav-btn.is-fav:hover { background: #ffeaea; }
 
 .detail-slider {
     position: relative;

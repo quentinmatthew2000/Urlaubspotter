@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorieten · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=12">
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc">
+    <a href="index.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Favorieten</span>
+</nav>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Mijn lijst</span>
+            <h2 id="fav-title">Favorieten</h2>
+            <p class="lead" id="fav-lead">Accommodaties die je hebt bewaard.</p>
+        </div>
+        <button type="button" class="link" id="fav-clear" style="background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;font-size:0.95rem;display:none;">Alles wissen</button>
+    </div>
+    <div class="listing-grid" id="fav-listing"></div>
+    <div id="fav-empty" class="listing-empty" style="display:none;">
+        Nog geen favorieten opgeslagen.
+        <br><br>
+        <a class="link" href="alle-vakanties.html">Bekijk alle vakanties →</a>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=3"></script>
+<script src="site.js?v=12"></script>
+<script>
+    renderHeader('favorites');
+    renderFooter();
+
+    const listingEl = document.getElementById('fav-listing');
+    const emptyEl = document.getElementById('fav-empty');
+    const titleEl = document.getElementById('fav-title');
+    const clearBtn = document.getElementById('fav-clear');
+
+    function renderFavs() {
+        const ids = getFavorites();
+        const favs = SITE_DATA.accommodations.filter(a => ids.includes(Number(a.id)));
+        titleEl.textContent = favs.length ? `${favs.length} favoriet${favs.length === 1 ? '' : 'en'}` : 'Favorieten';
+        if (!favs.length) {
+            listingEl.innerHTML = '';
+            emptyEl.style.display = 'block';
+            clearBtn.style.display = 'none';
+            return;
+        }
+        emptyEl.style.display = 'none';
+        clearBtn.style.display = '';
+        // Hergebruik bestaande kaart-rendering zodat styling overeenkomt
+        renderListingPreview('fav-listing', favs, { limit: favs.length });
+    }
+
+    clearBtn.addEventListener('click', () => {
+        if (!confirm('Alle favorieten verwijderen?')) return;
+        setFavorites([]);
+        renderFavs();
+    });
+
+    renderFavs();
+    // Sync met andere tabbladen die ook favorieten kunnen aanpassen
+    window.addEventListener('storage', (e) => { if (e.key === 'urlaubspotter_favorites') renderFavs(); });
+</script>
+</body>
+</html>
