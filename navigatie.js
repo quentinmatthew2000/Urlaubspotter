@@ -749,15 +749,17 @@ const app = {
         document.getElementById('detail-location').textContent = '📍 ' + acc.location;
         document.getElementById('detail-description').textContent = acc.description;
 
-        // Favoriet-knop in de detail-header-bar: klik toggelt opslag via
-        // toggleFavorite() uit site.js; uiterlijk volgt de opgeslagen staat.
+        // Favoriet-knop: schone SVG-hartje i.p.v. emoji. Active-state vult
+        // de SVG (fill) via .is-fav klasse; toggleFavorite() uit site.js
+        // slaat het op in localStorage.
         const favBtn = document.getElementById('detail-fav-btn');
         if (favBtn && typeof isFavorite === 'function') {
+            const heartSvg = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
             const applyFavState = () => {
                 const saved = isFavorite(acc.id);
                 favBtn.classList.toggle('is-fav', saved);
                 favBtn.setAttribute('aria-pressed', saved ? 'true' : 'false');
-                favBtn.textContent = saved ? '♥' : '♡';
+                favBtn.innerHTML = heartSvg;
                 favBtn.title = saved ? 'Verwijder uit favorieten' : 'Opslaan als favoriet';
             };
             applyFavState();
@@ -879,9 +881,24 @@ const app = {
         document.getElementById('hotspots-list').innerHTML =
             acc.hotspots.map(h => `<li><span>📍 <strong>${h.name}</strong></span><span>${h.distance}</span></li>`).join('');
 
-        // Beoordelingskader
-        const frame = acc.ratingFrame || {};
-        document.getElementById('rating-frame').innerHTML = Object.entries(frame).map(([label, val]) => {
+        // Beoordelingskader — altijd renderen, ook als ratingFrame ontbreekt.
+        // Fallback: 6 standaard-categorieën afgeleid van acc.rating zodat het
+        // blok nooit leeg blijft en een zinvol beeld geeft.
+        const defaultFrame = (() => {
+            const base = typeof acc.rating === 'number' ? acc.rating : 8.5;
+            const clamp = (n) => Math.max(5, Math.min(10, n));
+            return {
+                ligging:           clamp(base + 0.3),
+                schoon:            clamp(base + 0.1),
+                personeel:         clamp(base + 0.2),
+                voorzieningen:     clamp(base - 0.1),
+                'prijs/kwaliteit': clamp(base - 0.3),
+                eten:              clamp(base - 0.2)
+            };
+        })();
+        const frame = (acc.ratingFrame && Object.keys(acc.ratingFrame).length) ? acc.ratingFrame : defaultFrame;
+        document.getElementById('rating-frame').innerHTML = Object.entries(frame).map(([label, raw]) => {
+            const val = Number(raw) || 0;
             const pct = Math.max(0, Math.min(100, (val / 10) * 100));
             const cap = label.charAt(0).toUpperCase() + label.slice(1);
             return `
@@ -909,22 +926,44 @@ const app = {
         // Prices
         this.renderPriceComparison(acc);
 
-        // Alternatieven
-        const alts = this.accommodations
-            .filter(a => a.id !== acc.id &&
-                (a.whereKey === acc.whereKey || a.whatKeys.some(w => acc.whatKeys.includes(w))))
-            .slice(0, 3);
-        document.getElementById('alternatives-grid').innerHTML = alts.map(a => `
-            <div class="card" onclick="app.goToDetail(${a.id})">
-                <img src="${a.image}" alt="${a.name}" loading="lazy">
-                <div class="card-content">
-                    <h3>${a.name}</h3>
-                    <p class="card-location">${a.location}</p>
-                    <div class="card-rating">⭐ ${a.rating.toFixed(1)}/10</div>
-                    <div class="card-price">€${a.price}/nacht</div>
-                </div>
-            </div>
-        `).join('');
+        // Vergelijkbare accommodaties: match op zelfde where of gedeelde what,
+        // huidige uitsluiten, altijd minstens 3 resultaten tonen (pad aan met
+        // best-gewaardeerde populaire items als er te weinig matches zijn).
+        const curWhere = acc.whereKey || acc.where;
+        const curWhat = acc.whatKeys || acc.what || [];
+        const pool = (typeof SITE_DATA !== 'undefined' && SITE_DATA.accommodations) || [];
+        const seen = new Set([acc.id]);
+        const matches = pool.filter(a => {
+            if (seen.has(a.id)) return false;
+            return a.where === curWhere || (a.what || []).some(w => curWhat.includes(w));
+        });
+        matches.forEach(a => seen.add(a.id));
+        // Fallback: vul aan met top-rated andere accommodaties
+        const padding = pool
+            .filter(a => !seen.has(a.id))
+            .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        const alts = matches.concat(padding).slice(0, 4);
+
+        // Kleine deterministische gradient per id, zelfde aanpak als elders
+        const ALT_GRADIENTS = [
+            ['#4facfe','#00c6ff'], ['#43e97b','#38f9d7'], ['#f093fb','#f5576c'],
+            ['#fa709a','#fee140'], ['#667eea','#764ba2'], ['#84fab0','#8fd3f4']
+        ];
+        document.getElementById('alternatives-grid').innerHTML = alts.map(a => {
+            const [c1, c2] = ALT_GRADIENTS[a.id % ALT_GRADIENTS.length];
+            const emoji = a.emoji || '🏝️';
+            return `
+                <a class="card" href="Navigatie.html?acc=${a.id}" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="card-img-fallback" style="height:180px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,${c1} 0%,${c2} 100%);color:white;">${emoji}</div>
+                    <div class="card-content">
+                        <h3>${a.name}</h3>
+                        <p class="card-location">${a.location}</p>
+                        <div class="card-rating">⭐ ${(a.rating || 0).toFixed(1)}/10</div>
+                        <div class="card-price">€${a.price}/nacht</div>
+                    </div>
+                </a>
+            `;
+        }).join('');
     },
 
     renderPriceComparison(acc) {

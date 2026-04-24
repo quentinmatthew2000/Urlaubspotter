@@ -405,8 +405,12 @@ function renderHeader(activePage = '') {
             <span class="site-logo-text">Urlaubspotter</span>
         </a>
         <div class="site-actions">
-            <a class="site-action site-fav-link${activePage === 'favorites' ? ' active' : ''}" href="favorieten.html" aria-label="Favorieten" title="Favorieten">♡</a>
-            <button class="site-action site-search-toggle" type="button" aria-label="Zoeken" aria-expanded="false">🔍</button>
+            <a class="site-action site-fav-link${activePage === 'favorites' ? ' active' : ''}" href="favorieten.html" aria-label="Favorieten" title="Favorieten">
+                <svg class="icon-heart" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </a>
+            <button class="site-action site-search-toggle" type="button" aria-label="Zoeken" aria-expanded="false">
+                <svg class="icon-search" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
         </div>
         <div class="site-search" id="site-search" role="search" aria-hidden="true">
             <form class="site-search-form" onsubmit="return submitSiteSearch(event)">
@@ -704,11 +708,18 @@ function renderNewsSocial(containerId) {
             <h3>Volg ons</h3>
             <p>Reisinspiratie en behind-the-scenes op onze social kanalen.</p>
             <div class="social-icons">
-                <a href="#" title="Instagram">📷</a>
-                <a href="#" title="Facebook">👍</a>
-                <a href="#" title="YouTube">▶️</a>
-                <a href="#" title="TikTok">🎵</a>
-                <a href="#" title="Pinterest">📌</a>
+                <a href="#" aria-label="Instagram" title="Instagram" class="social-icon">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+                <a href="#" aria-label="Facebook" title="Facebook" class="social-icon">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.5-3.9 3.78-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>
+                </a>
+                <a href="#" aria-label="YouTube" title="YouTube" class="social-icon">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.12C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.4.58A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.12C4.46 20.5 12 20.5 12 20.5s7.54 0 9.4-.58a3 3 0 0 0 2.1-2.12A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+                </a>
+                <a href="#" aria-label="TikTok" title="TikTok" class="social-icon">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.1 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.14-.1z"/></svg>
+                </a>
             </div>
         </div>
     `;
@@ -718,6 +729,40 @@ function renderNewsSocial(containerId) {
 function renderBlogPreview(containerId, topic = '') {
     const el = document.getElementById(containerId);
     if (!el) return;
+
+    // Gebruik echte blog-data uit SITE_DATA als die beschikbaar is; anders
+    // tonen we nog steeds een set placeholder-kaarten zonder dood link.
+    const haveBlogs = typeof SITE_DATA !== 'undefined' && Array.isArray(SITE_DATA.blogs) && SITE_DATA.blogs.length;
+    if (haveBlogs) {
+        // Sorteer op datum (nieuw naar oud), neem eerste 4
+        const list = SITE_DATA.blogs.slice()
+            .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+            .slice(0, 4);
+        const imgFor = (spec, idx) => {
+            const m = (spec || '').match(/^gradient:([^,]+),([^|]+)\|(.+)$/);
+            if (m) {
+                const [, c1, c2, emoji] = m;
+                return { bg: `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`, emoji };
+            }
+            return { bg: GRADIENTS[idx % GRADIENTS.length], emoji: '📰' };
+        };
+        el.innerHTML = list.map((b, i) => {
+            const { bg, emoji } = imgFor(b.image, i);
+            return `
+                <a class="blog-card" href="blog-detail.html?id=${b.id}">
+                    <div class="blog-img" style="background: ${bg}">${emoji}</div>
+                    <div class="blog-body">
+                        <div class="blog-tag">${b.category}</div>
+                        <h3>${b.title}</h3>
+                        <p>${b.intro}</p>
+                    </div>
+                </a>
+            `;
+        }).join('');
+        return;
+    }
+
+    // Fallback (geen SITE_DATA.blogs): drie placeholder-kaarten
     const articles = [
         { tag: 'Reistips', title: `${topic ? topic + ': ' : ''}10 tips voor de perfecte vakantie`,
           lead: 'Van planning tot pakken — zo haal je het maximum uit je reis.', emoji: '📋', grad: GRADIENTS[0] },
@@ -727,7 +772,7 @@ function renderBlogPreview(containerId, topic = '') {
           lead: 'De ultieme paklijst voor elk type reis en gezelschap.', emoji: '🎒', grad: GRADIENTS[4] }
     ];
     el.innerHTML = articles.map(a => `
-        <a class="blog-card" href="#">
+        <a class="blog-card" href="blogs.html">
             <div class="blog-img" style="background: ${a.grad}">${a.emoji}</div>
             <div class="blog-body">
                 <div class="blog-tag">${a.tag}</div>

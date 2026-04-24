@@ -371,9 +371,12 @@ img { max-width: 100%; height: auto; }
     font-family: inherit;
 }
 .icon-btn:hover { background: var(--primary-light); }
-/* Favoriet-knop: gevulde rode hartje wanneer opgeslagen */
+.icon-btn svg { display: block; pointer-events: none; }
+/* Favoriet-knop: SVG-hart, gevuld rood wanneer opgeslagen */
 .icon-btn.fav-btn.is-fav { color: #e63946; border-color: #e63946; }
+.icon-btn.fav-btn.is-fav svg { fill: #e63946; stroke: #e63946; }
 .icon-btn.fav-btn.is-fav:hover { background: #ffeaea; }
+.icon-btn.fav-btn:hover:not(.is-fav) svg { stroke: #e63946; }
 
 .detail-slider {
     position: relative;

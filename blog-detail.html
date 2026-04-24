@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=14">
+    <style>
+        .article-wrap { max-width: 800px; margin: 0 auto; padding: 24px 20px 60px; }
+        .article-hero {
+            aspect-ratio: 16/8;
+            border-radius: 14px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 24px;
+        }
+        .article-meta {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex; gap: 10px; flex-wrap: wrap;
+        }
+        .article-meta .tag {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.78rem;
+        }
+        .article-wrap h1 {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            margin: 6px 0 12px;
+        }
+        .article-intro { font-size: 1.1rem; color: var(--text); line-height: 1.55; margin-bottom: 20px; }
+        .article-body p { font-size: 1rem; color: var(--text); line-height: 1.75; margin-bottom: 16px; }
+        .article-back { display: inline-block; margin-bottom: 16px; color: var(--primary); font-weight: 700; text-decoration: none; }
+        .article-back:hover { text-decoration: underline; }
+        .related-blogs { margin-top: 48px; }
+        .related-blogs h3 { margin-bottom: 16px; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc">
+    <a href="index.html">Home</a>
+    <span class="sep">›</span>
+    <a href="blogs.html">Blogs</a>
+    <span class="sep">›</span>
+    <span class="current" id="bc-current">…</span>
+</nav>
+
+<main class="article-wrap" id="article"></main>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=5"></script>
+<script src="site.js?v=14"></script>
+<script>
+    renderHeader('');
+    renderFooter();
+
+    function bgImage(spec) {
+        const m = (spec || '').match(/^gradient:([^,]+),([^|]+)\|(.+)$/);
+        if (!m) return '';
+        const [, c1, c2, emoji] = m;
+        return `data:image/svg+xml;utf8,${encodeURIComponent(
+            `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='600' viewBox='0 0 1200 600'>
+             <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+             <stop offset='0%' stop-color='${c1}'/><stop offset='100%' stop-color='${c2}'/>
+             </linearGradient></defs>
+             <rect width='1200' height='600' fill='url(%23g)'/>
+             <text x='600' y='380' font-size='240' text-anchor='middle' font-family='system-ui'>${emoji}</text>
+             </svg>`)}`;
+    }
+
+    const id = parseInt(new URLSearchParams(location.search).get('id'));
+    const blog = (SITE_DATA.blogs || []).find(b => b.id === id);
+    const article = document.getElementById('article');
+
+    if (!blog) {
+        article.innerHTML = `
+            <a href="blogs.html" class="article-back">← Alle blogs</a>
+            <h1>Blog niet gevonden</h1>
+            <p>Deze blog bestaat (nog) niet. <a href="blogs.html">Bekijk alle blogs →</a></p>
+        `;
+        document.getElementById('bc-current').textContent = 'Niet gevonden';
+    } else {
+        document.title = `${blog.title} · Urlaubspotter`;
+        document.getElementById('bc-current').textContent = blog.title;
+        const dateStr = blog.date ? new Date(blog.date).toLocaleDateString('nl-NL', { year:'numeric', month:'long', day:'numeric' }) : '';
+        // Content paragrafen splitsen op dubbele newline of op ". " voor leesbaarheid
+        const paragraphs = (blog.content || '').split(/\n\n+/).map(p => `<p>${p.trim()}</p>`).join('');
+        article.innerHTML = `
+            <a href="blogs.html" class="article-back">← Alle blogs</a>
+            <div class="article-hero" style="background-image:url('${bgImage(blog.image)}')"></div>
+            <div class="article-meta">
+                <span class="tag">${blog.category}</span>
+                <span>${dateStr}</span>
+            </div>
+            <h1>${blog.title}</h1>
+            <p class="article-intro">${blog.intro}</p>
+            <div class="article-body">${paragraphs}</div>
+            <section class="related-blogs">
+                <h3>Lees ook</h3>
+                <div class="blog-grid" id="related"></div>
+            </section>
+        `;
+        const related = (SITE_DATA.blogs || [])
+            .filter(b => b.id !== id && b.category === blog.category)
+            .slice(0, 3);
+        const more = (SITE_DATA.blogs || []).filter(b => b.id !== id && !related.find(r => r.id === b.id));
+        const show = related.concat(more).slice(0, 3);
+        document.getElementById('related').innerHTML = show.map(b => `
+            <a class="blog-card" href="blog-detail.html?id=${b.id}">
+                <div class="blog-img" style="background:url('${bgImage(b.image)}') center/cover;"></div>
+                <div class="blog-body">
+                    <div class="blog-tag">${b.category}</div>
+                    <h3>${b.title}</h3>
+                    <p>${b.intro}</p>
+                </div>
+            </a>
+        `).join('');
+    }
+</script>
+</body>
+</html>

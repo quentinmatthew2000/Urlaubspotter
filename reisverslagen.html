@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reisverslagen · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=14">
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc">
+    <a href="index.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Reisverslagen</span>
+</nav>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Van de redactie</span>
+            <h2>Reisverslagen</h2>
+            <p class="lead">Eerlijke verslagen van onze redactie — zelf bezocht, zelf getest.</p>
+        </div>
+    </div>
+    <div class="editorial-grid" id="stories-grid"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=5"></script>
+<script src="site.js?v=14"></script>
+<script>
+    renderHeader('');
+    renderFooter();
+
+    function bgImage(spec) {
+        const m = (spec || '').match(/^gradient:([^,]+),([^|]+)\|(.+)$/);
+        if (!m) return '';
+        const [, c1, c2, emoji] = m;
+        return `data:image/svg+xml;utf8,${encodeURIComponent(
+            `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'>
+             <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+             <stop offset='0%' stop-color='${c1}'/><stop offset='100%' stop-color='${c2}'/>
+             </linearGradient></defs>
+             <rect width='600' height='360' fill='url(%23g)'/>
+             <text x='300' y='230' font-size='140' text-anchor='middle' font-family='system-ui'>${emoji}</text>
+             </svg>`)}`;
+    }
+
+    const stories = (SITE_DATA.stories || []).slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+    const grid = document.getElementById('stories-grid');
+    if (!stories.length) {
+        grid.innerHTML = `<p style="color:var(--secondary)">Nog geen reisverslagen beschikbaar.</p>`;
+    } else {
+        grid.innerHTML = stories.map(s => `
+            <a class="editorial-card" href="reisverslag-detail.html?id=${s.id}" style="text-decoration:none;color:inherit;">
+                <div class="editorial-card-img" style="background:url('${bgImage(s.image)}') center/cover;"></div>
+                <div class="editorial-card-body">
+                    <span class="editorial-author">Door ${s.author}</span>
+                    <h3>${s.title}</h3>
+                    <p>${(s.content || '').slice(0, 140)}${(s.content || '').length > 140 ? '…' : ''}</p>
+                    <span class="link">Lees het verslag →</span>
+                </div>
+            </a>
+        `).join('');
+    }
+</script>
+</body>
+</html>

@@ -132,6 +132,10 @@ button { font-family: inherit; cursor: pointer; }
     justify-content: center;
 }
 .site-action:hover { background: var(--primary-light); color: var(--primary); }
+.site-action svg { display: block; pointer-events: none; }
+/* Gevulde hartje wanneer gebruiker op /favorieten staat */
+.site-fav-link.active .icon-heart { fill: #e63946; stroke: #e63946; }
+.site-fav-link:hover .icon-heart { stroke: #e63946; }
 .site-search-toggle[aria-expanded="true"] { background: var(--primary-light); color: var(--primary); }
 
 /* Zoekbalk-paneel: klapt onder de header uit op klik van het 🔍-icoon.
@@ -1059,11 +1063,17 @@ button { font-family: inherit; cursor: pointer; }
     background: white;
     border: 1px solid var(--border);
     border-radius: 10px;
-    font-size: 1.3rem;
+    color: var(--text);
     text-decoration: none;
-    transition: transform 0.15s, border-color 0.15s;
+    transition: transform 0.15s, border-color 0.15s, color 0.15s, background 0.15s;
 }
-.social-icons a:hover { transform: translateY(-2px); border-color: var(--primary); }
+.social-icons a svg { display: block; }
+.social-icons a:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
 
 /* ============ FOOTER ============ */
 .site-footer {

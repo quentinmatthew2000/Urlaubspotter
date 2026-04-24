@@ -321,7 +321,61 @@ const SITE_DATA = {
             'sun': 'Zon, zee en strand. Van Costa Brava tot Algarve — gegarandeerde warmte en blauw water.',
             'winter': 'Skiën, snowboarden of après-ski. Van Oostenrijk tot Zwitserland.'
         }
-    }
+    },
+
+    // ============ BLOGS ============
+    // Structuur: id, title, category, intro, content (markdown-lite), image
+    // (gradient:c1,c2|emoji), date. Gebruikt door blogs.html + blog-detail.html.
+    blogs: [
+        { id: 1, title: '10 tips voor je eerste kampeervakantie', category: 'Kamperen',
+          intro: 'Voor het eerst kamperen? Met deze tips voorkom je klassieke fouten en maak je van je trip meteen een succes.',
+          content: 'Begin klein en dichtbij huis. Kies een camping met sanitair als je nog niet eerder onder de sterren sliep. Maak een paklijst en check tot 48u van tevoren het weer. Oefen je tent opzetten in de tuin. Neem koelelementen in plaats van losse ijsblokken — handiger en minder nat. Plan je eerste avondmaal eenvoudig: pasta met saus uit blik kost 10 minuten. Noord-Europese campings zijn rustiger in juni dan in augustus. Laat de spelletjes thuis en neem een kaartspel mee: kinderen zijn sneller tevreden dan je denkt. Altijd een zaklamp binnen handbereik. Plan één rustdag per vijf actiedagen. En: geniet van de traagheid.',
+          image: 'gradient:#4facfe,#00c6ff|⛺', date: '2024-05-12' },
+        { id: 2, title: 'Hidden gems in Zeeland', category: 'Bestemmingen',
+          intro: 'Weg van de drukte van Domburg — deze Zeeuwse plekken kent bijna niemand, én ze zijn adembenemend.',
+          content: 'Sint-Anna ter Muiden bij Sluis: kleinste stadje van Nederland, doe eerst middag-ijs op het pleintje. Het Verdronken Land van Saeftinghe voor een wandeling tussen zeedijken en slikken — alleen met gids, vooraf reserveren. Oostkapelle heeft de mooiste duinen van Walcheren; ga vroeg voor zonsopgang. Kamperland voor kitesurfers, rustiger dan Vrouwenpolder. En: eet mosselen ter plekke in Yerseke, niet in de havens van Domburg.',
+          image: 'gradient:#43e97b,#38f9d7|🏖️', date: '2024-06-20' },
+        { id: 3, title: 'Wellness weekend zonder vliegen', category: 'Wellness',
+          intro: 'Van Drenthe tot de Ardennen: vijf wellness-adressen in eigen land of dichtbij. Geen vliegschaamte, wel pure rust.',
+          content: 'Thermen Bussloo in Gelderland heeft 18 sauna\'s en een rustzone waar spreken niet mag. Thermae 2000 in Valkenburg: buitenbaden met uitzicht op het Heuvelland. De Zwaluwhoeve in Hierden combineert wellness met overnachten. Bij Bodysense in Warnsveld is het klein en persoonlijk. En in de Belgische Ardennen: Elysette bij Spa — fin de siècle-gebouw, moderne treatments. Tip: vraag altijd naar weekmiddag-arrangementen; zaterdag is overal druk.',
+          image: 'gradient:#f093fb,#f5576c|💆', date: '2024-07-04' },
+        { id: 4, title: 'Wintersport met gezin: waar naartoe?', category: 'Wintersport',
+          intro: 'Tirol, Dolomieten of toch Frankrijk? We vergelijken drie populaire skigebieden voor families met kinderen.',
+          content: 'Serfaus-Fiss-Ladis in Oostenrijk is dé familie-specialist: gratis kinderopvang vanaf 2.5 jaar, brede groene pistes. Alpe di Siusi in Italië is kleinschalig, uitzicht op Dolomieten, uitstekende Italiaanse keuken. Les Gets in Frankrijk heeft dorpsgevoel en hoort bij groot skigebied Portes du Soleil. Boek in de kerstvakantie minimaal 6 maanden vooruit. Zon-ski in maart is stressvrijer en vaak goedkoper. Huur ski\'s online vooraf — tot 30% korting.',
+          image: 'gradient:#667eea,#764ba2|⛷️', date: '2024-11-15' },
+        { id: 5, title: 'Zo pak je slim in voor een stedentrip', category: 'Reistips',
+          intro: 'Handbagage only is geen straf, mits je slim inpakt. Onze complete checklist voor drie dagen weg.',
+          content: 'Rol je kleding op in plaats van vouwen — bespaart ruimte en kreukt minder. Eén goede universele adapter is genoeg voor heel Europa. Neem twee paar schoenen: één om te lopen, één voor \'s avonds. Powerbank van 10.000 mAh voldoet voor drie dagen. Packing cubes helpen om sokken/ondergoed te scheiden. Doe je toilettas in een doorzichtig zakje voor vlotte security check. En: altijd één extra shirt meer dan je denkt nodig te hebben.',
+          image: 'gradient:#fa709a,#fee140|🎒', date: '2024-03-08' },
+        { id: 6, title: 'Waarom glamping de nieuwe hotelvakantie is', category: 'Inspiratie',
+          intro: 'Luxe kamperen heet tegenwoordig glamping — en het aanbod is explosief gegroeid. Hier het waarom.',
+          content: 'Glamping combineert de vrijheid van kamperen met het comfort van een hotel: echte bedden, eigen badkamer, vaak zelfs een bubbelbad. In Nederland vind je het op boerderijcampings en in Natuurgebieden; in de Provence op lavendelvelden. De prijs ligt tussen hotel en camping: vanaf €90 per nacht voor 2 personen. Duurzaamheid is een verkoopargument — zonnepanelen, composttoiletten, lokaal voedsel. Ideaal voor koppels die willen proberen of "buiten slapen" iets voor hen is.',
+          image: 'gradient:#84fab0,#8fd3f4|✨', date: '2024-09-01' }
+    ],
+
+    // ============ REISVERSLAGEN (stories) ============
+    // Structuur: id, title, author, content (paragraaf-tekst), image, date.
+    // Gebruikt door reisverslagen.html + reisverslag-detail.html.
+    stories: [
+        { id: 1, title: '3 dagen op Camping De Lakens — eerlijke review', author: 'Lisa · Redacteur kamperen',
+          content: 'We arriveerden op een zonnige vrijdag in juni. Onze Safaritent stond op een ruime plek met directe toegang tot het bos. Eerste indruk: netjes, geen rommel, goed onderhouden. Het zwembad was schoon, ruim, met apart peuterbad. De avondanimatie was verrassend goed — geen commercieel gedoe, echt leuke acts. Sanitair kreeg een 9: modern, warm water altijd beschikbaar, nergens een vieze hoek. Minpunt: de prijzen in de supermarkt zijn aan de pittige kant. Neem zelf ontbijt mee als je wilt besparen. Na drie dagen: wij komen zeker terug.',
+          image: 'gradient:#4facfe,#00c6ff|🏕️', date: '2024-06-14' },
+        { id: 2, title: 'Een week wandelen in Zuid-Tirol', author: 'Mark · Redacteur bergvakanties',
+          content: 'Hotel, hut of appartement — de vraag voor elke bergvakantie. Ik testte alle drie in zeven dagen. De Rifugio Puez (berghut) was het avontuur: eenvoudig, samen eten met andere wandelaars, 2500m hoog. Appartement in Kastelruth: ideaal voor langere verblijven met eigen keuken. Hotel Adler in Ortisei: pure luxe maar duur. Mijn advies: hut voor dag 1-2 om hoog te komen, daarna afwisselen met appartement. En: reserveer huttenmaaltijden vooraf.',
+          image: 'gradient:#43e97b,#38f9d7|⛰️', date: '2024-08-22' },
+        { id: 3, title: 'Wellness-weekenden in Nederland getest', author: 'Anouk · Redacteur wellness',
+          content: 'Vier wellness-hotels in één maand: Thermae 2000 (Limburg), Hotel Heerlickheijd (Ermelo), Sanadome (Nijmegen), Fletcher Epe (Veluwe). Verschillen: Thermae scoort op baden, Heerlickheijd op rust, Sanadome op medische behandelingen, Fletcher op prijs. Beste combinatie rust + kwaliteit: Hotel Heerlickheijd. Meest indrukwekkende saunalandschap: Thermae 2000. Budgetkeuze: Fletcher Epe. Nooit op zaterdag gaan — weekmiddag is de gouden tip.',
+          image: 'gradient:#f093fb,#f5576c|🧖', date: '2024-09-05' },
+        { id: 4, title: 'Vergelijking: Griekse eilanden voor gezinnen', author: 'Kevin · Redacteur zonvakanties',
+          content: 'Kreta, Rhodos en Kos — alle drie binnen zes weken bezocht met twee kinderen (6 en 9). Kreta: meest variatie, van bergdorpen tot all-inclusive kust. Rhodos: beste voor geschiedenis én strand. Kos: kleinst, meest overzichtelijk, ideaal met jonge kinderen. Waterparken zijn op elk eiland te vinden. Eten: overal goed, Rhodos iets toeristischer geprijsd. Mijn eindoordeel: met peuters naar Kos, met lagere-schoolkinderen naar Kreta, met tieners naar Rhodos.',
+          image: 'gradient:#fa709a,#fee140|🌴', date: '2024-07-18' },
+        { id: 5, title: '5 onbekende skigebieden in Oostenrijk', author: 'Esther · Redacteur wintersport',
+          content: 'Weg van Kitzbühel en Sölden. Ik zocht rust, betaalbare skipassen en sneeuwzekere gebieden. Top 5: Großarltal (Salzburgerland) — dorpsgevoel, ideaal voor gevorderden; Nauders aan de Reschenpas — mooie verbinding met Italië; Alpbachtal in Tirol — één van de mooiste dorpen; Kals-Matrei bij Grossglockner — hoge ligging, sneeuwzeker; Rauris — kleine skigebied, perfect voor families. Alle passen rond €50/dag — de helft van de bekende resorts.',
+          image: 'gradient:#667eea,#764ba2|🎿', date: '2024-12-01' },
+        { id: 6, title: 'Stedentrip Porto in een lang weekend', author: 'Tim · Redacteur city-trips',
+          content: 'Donderdag aangekomen, zondag weer weg. Voldoende tijd voor Porto als je compact plant. Dag 1: Ribeira-wijk en port-proeverij in Vila Nova de Gaia (aan de overkant van de rivier). Dag 2: Livraria Lello (boekwinkel van Harry Potter — wel vroeg erbij zijn), Mercado do Bolhão en tram 1 langs de kust. Dag 3: Foz do Douro — surfwijk, visrestaurants. Hotel: Torel 1884 centraal, €150/nacht zonder ontbijt. Francesinha eten bij Cafe Santiago — beste van Porto.',
+          image: 'gradient:#84fab0,#8fd3f4|🏙️', date: '2024-10-14' }
+    ]
 };
 
 // Hulpfuncties
