@@ -10,16 +10,6 @@
 
 <header class="site-header"><div class="inner"></div></header>
 
-<!-- HERO met searchbar -->
-<section class="hero big">
-    <div class="hero-inner">
-        <h1>Vind de vakantie die bij jou past</h1>
-        <p class="lead">Onafhankelijke gids met duizenden accommodaties — van camping in Drenthe tot chalet in Oostenrijk. Filter op wie, wat en waar en start je zoektocht.</p>
-    </div>
-</section>
-
-<div class="searchbar-floating" id="hero-searchbar"></div>
-
 <!-- 1. WIE — Kies je reisgezelschap -->
 <section class="section">
     <div class="section-head">
@@ -318,7 +308,6 @@
 <script src="site.js?v=14"></script>
 <script>
     renderHeader('home');
-    renderSearchbar('hero-searchbar', { big: true });
 
     renderCategoryTiles('home-who-tiles', DATA.who(), {
         linkBuilder: (v) => `Niveau2-Wie.html?who=${v}`,
