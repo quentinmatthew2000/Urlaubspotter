@@ -70,7 +70,7 @@
             const params = new URLSearchParams();
             if (config.kind === 'type') params.set('type', config.value);
             if (config.kind === 'land') params.set('land', config.value);
-            moreLink.href = config.resultsHref || ('/accommodaties?' + params.toString());
+            moreLink.href = config.resultsHref || ('accommodaties.html?' + params.toString());
         }
 
         // Listing — eerste 8 resultaten, klikt door naar detail.
@@ -79,7 +79,7 @@
                 listingEl.innerHTML = `
                     <div class="listing-empty">
                         Nog geen accommodaties beschikbaar voor deze selectie —
-                        <a href="/accommodaties">bekijk alle accommodaties</a>.
+                        <a href="accommodaties.html">bekijk alle accommodaties</a>.
                     </div>
                 `;
             } else {
@@ -89,7 +89,7 @@
                         ? gradientFor(a)
                         : 'linear-gradient(135deg, #4facfe 0%, #00c6ff 100%)';
                     return `
-                        <a class="listing-card" href="/accommodatie?slug=${slug}">
+                        <a class="listing-card" href="accommodatie.html?slug=${slug}">
                             <div class="listing-card-img" style="background: ${grad}">
                                 ${a.emoji || '🏝️'}
                                 <span class="listing-card-badge">${DATA.label('where', a.where)}</span>

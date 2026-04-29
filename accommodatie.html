@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accommodatie · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
-    <link rel="stylesheet" href="search-navigation.css?v=3">
+    <link rel="stylesheet" href="search-navigation.css?v=4">
     <style>
         .acd-wrap {
             max-width: 1080px;
@@ -85,7 +85,7 @@
 
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=14"></script>
-<script src="search-navigation.js?v=3"></script>
+<script src="search-navigation.js?v=4"></script>
 <script>
     renderHeader('nav');
     renderFooter();
@@ -118,7 +118,7 @@
             <div class="acd-empty">
                 <h1>Accommodatie niet gevonden</h1>
                 <p class="lead">We konden geen accommodatie vinden voor "<code>${slug || id || ''}</code>".</p>
-                <a class="acd-cta" href="/accommodaties">Bekijk alle accommodaties →</a>
+                <a class="acd-cta" href="accommodaties.html">Bekijk alle accommodaties →</a>
             </div>
         `;
     } else {
@@ -130,7 +130,7 @@
         bc.innerHTML = `
             <a href="index.html">Home</a>
             <span class="sep">›</span>
-            <a href="/accommodaties?land=${acc.where}">${whereLabel}</a>
+            <a href="accommodaties.html?land=${acc.where}">${whereLabel}</a>
             <span class="sep">›</span>
             <span class="current">${acc.name}</span>
         `;

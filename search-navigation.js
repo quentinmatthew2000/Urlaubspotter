@@ -19,9 +19,9 @@
     // De bar-tabs op de homepage navigeren direct naar de Level 1 landing
     // van die categorie. In de modal wisselen ze de "Wat?"-opties.
     const CATEGORIES = [
-        { value: "hotels",         label: "Resorts & Hotels", emoji: "🏨", href: "/hotels" },
-        { value: "campings",       label: "Campings",         emoji: "🏕️", href: "/campings" },
-        { value: "vakantieparken", label: "Vakantieparken",   emoji: "🏡", href: "/vakantieparken" },
+        { value: "hotels",         label: "Resorts & Hotels", emoji: "🏨", href: "hotels.html" },
+        { value: "campings",       label: "Campings",         emoji: "🏕️", href: "campings.html" },
+        { value: "vakantieparken", label: "Vakantieparken",   emoji: "🏡", href: "vakantieparken.html" },
     ];
 
     // Categorie-tab → primaire `type`-waarde voor het filter op
@@ -396,9 +396,44 @@
                     ${whereSectionHTML(state)}
                     ${whenSectionHTML(state)}
                 `;
+                // Scroll de uitgeklapte sectie in beeld zodat de inhoud
+                // (vooral de Waar-lijst op desktop) altijd zichtbaar is.
+                if (state.activeSection) {
+                    const expanded = body.querySelector(".sn-card.expanded");
+                    if (expanded) {
+                        // RAF zodat de browser eerst layout doet.
+                        requestAnimationFrame(() => {
+                            const top = expanded.offsetTop - 8;
+                            body.scrollTo({ top, behavior: "smooth" });
+                        });
+                    }
+                }
             }
             const barTabs = container.querySelector(".sn-tabs");
             if (barTabs) barTabs.innerHTML = barTabsHTML(state.category);
+        }
+
+        // iOS Safari respecteert `overflow:hidden` op <body> niet betrouwbaar.
+        // We gebruiken de position:fixed-truc en herstellen de scrollpositie
+        // bij sluiten zodat de gebruiker terugkomt waar hij was.
+        let savedScrollY = 0;
+        function lockBody() {
+            savedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+            document.body.style.position = "fixed";
+            document.body.style.top = `-${savedScrollY}px`;
+            document.body.style.left = "0";
+            document.body.style.right = "0";
+            document.body.style.width = "100%";
+            document.body.classList.add("sn-no-scroll");
+        }
+        function unlockBody() {
+            document.body.style.position = "";
+            document.body.style.top = "";
+            document.body.style.left = "";
+            document.body.style.right = "";
+            document.body.style.width = "";
+            document.body.classList.remove("sn-no-scroll");
+            window.scrollTo(0, savedScrollY);
         }
 
         function openModal() {
@@ -409,7 +444,7 @@
             if (!state.activeSection) state.activeSection = "who";
             renderModalBody();
             requestAnimationFrame(() => modalEl.classList.add("open"));
-            document.body.classList.add("sn-no-scroll");
+            lockBody();
             document.addEventListener("keydown", onKey);
         }
 
@@ -417,7 +452,7 @@
             if (!modalEl) return;
             state.modalOpen = false;
             modalEl.classList.remove("open");
-            document.body.classList.remove("sn-no-scroll");
+            unlockBody();
             document.removeEventListener("keydown", onKey);
         }
 
@@ -588,7 +623,7 @@
             if (state.dateRange.end)   params.set("tot", state.dateRange.end);
 
             const qs = params.toString();
-            window.location.href = "/accommodaties" + (qs ? "?" + qs : "");
+            window.location.href = "accommodaties.html" + (qs ? "?" + qs : "");
         }
 
         renderBar();

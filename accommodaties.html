@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accommodaties · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
-    <link rel="stylesheet" href="search-navigation.css?v=3">
+    <link rel="stylesheet" href="search-navigation.css?v=4">
     <style>
         /* Niveau 4 — alle filters actief. Sidebar + resultaten, met
            zichtbare actieve-filter-chips bovenaan. */
@@ -170,7 +170,11 @@
                 <option value="">Alle bestemmingen</option>
             </select>
         </div>
-        <div class="ac-filter-group">
+        <!-- Reisdata-filter is bewust verborgen op de resultatenpagina
+             (Wanneer wordt later opnieuw geactiveerd zodra het backend-
+             beschikbaarheidsmodel klaar is). De input-elementen blijven
+             aanwezig zodat applyFilters niets stukmaakt. -->
+        <div class="ac-filter-group" hidden style="display:none">
             <h4>Reisdata</h4>
             <div class="ac-date-row">
                 <input type="date" id="f-van" aria-label="Van" />
@@ -216,7 +220,7 @@
 
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=14"></script>
-<script src="search-navigation.js?v=3"></script>
+<script src="search-navigation.js?v=4"></script>
 <script>
     renderHeader('nav');
     renderFooter();
@@ -281,7 +285,7 @@
             const slug = slugify(a.name);
             const grad = (typeof gradientFor === 'function') ? gradientFor(a) : 'linear-gradient(135deg,#4facfe 0%,#00c6ff 100%)';
             return `
-                <a class="listing-card" href="/accommodatie?slug=${slug}">
+                <a class="listing-card" href="accommodatie.html?slug=${slug}">
                     <div class="listing-card-img" style="background: ${grad}">
                         ${a.emoji || '🏝️'}
                         <span class="listing-card-badge">${DATA.label('where', a.where)}</span>
@@ -361,10 +365,8 @@
                 : DATA.label('where', land);
             chips.push(chipHTML(`Land: ${label}`, () => { fLand.value = ''; applyFilters(); }));
         }
-        if (fVan.value || fTot.value) {
-            const dateLabel = `${fVan.value || '…'} → ${fTot.value || '…'}`;
-            chips.push(chipHTML(`Reis: ${dateLabel}`, () => { fVan.value = ''; fTot.value = ''; applyFilters(); }));
-        }
+        // Datum-chip is bewust uitgeschakeld zolang Wanneer niet zichtbaar
+        // is op de resultatenpagina (zie verborgen filter-group).
         activeWrap.innerHTML = chips.join('');
         activeWrap.style.display = chips.length ? 'flex' : 'none';
         // Bind remove handlers (delegation: click sets data-key id)
