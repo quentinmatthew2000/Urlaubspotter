@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vakantie in Frankrijk · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="search-navigation.css?v=3">
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+<div id="hero-searchbar"></div>
+<nav class="breadcrumb" id="landing-breadcrumb"></nav>
+<section class="section tight" id="landing-hero"></section>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Geselecteerde accommodaties</span>
+            <h2><span id="landing-count">0</span> resultaten</h2>
+        </div>
+        <a class="link" id="landing-more" href="/accommodaties">Bekijk alle →</a>
+    </div>
+    <div class="listing-grid" id="landing-listing" data-rail="280"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=5"></script>
+<script src="site.js?v=14"></script>
+<script src="landing.js?v=1"></script>
+<script src="search-navigation.js?v=3"></script>
+<script>
+    renderHeader('waar');
+    renderFooter();
+    renderSearchNavigation('hero-searchbar');
+    renderLandingPage({
+        kind: 'land',
+        value: 'frankrijk',
+        eyebrow: 'Niveau 1 — Frankrijk',
+        title: 'Vakantie in Frankrijk',
+        lead: 'Van Parijs tot de Provence — ontdek de beste accommodaties in Frankrijk.',
+        breadcrumb: 'Frankrijk'
+    });
+    document.querySelectorAll('[data-rail]').forEach(el => {
+        const min = parseInt(el.dataset.rail, 10) || 300;
+        makeHorizontalRail(el, { itemMinWidth: min });
+    });
+</script>
+</body>
+</html>

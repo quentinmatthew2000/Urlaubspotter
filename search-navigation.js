@@ -24,6 +24,26 @@
         { value: "vakantieparken", label: "Vakantieparken",   emoji: "🏡", href: "/vakantieparken" },
     ];
 
+    // Categorie-tab → primaire `type`-waarde voor het filter op
+    // /accommodaties. Sluit aan op de 'what'-keys in site-data.js.
+    const CATEGORY_TYPE_MAP = {
+        hotels: "hotel",
+        campings: "camping",
+        vakantieparken: "holiday-park",
+    };
+
+    // Vertaling van Wie-chip-values naar de doelgroep-keys die de
+    // resultatenpagina kent (zelfde als SITE_DATA.labels.who).
+    const WHO_TO_DATA = {
+        volwassenen: null,
+        vrienden:    "friends",
+        alleen:      "solo",
+        gezinnen:    "families-kids",
+        senioren:    "seniors",
+        koppels:     "couples",
+        huisdieren:  "pets",
+    };
+
     const WHO_OPTIONS = [
         { value: "volwassenen", label: "Volwassenen" },
         { value: "vrienden",    label: "Vrienden" },
@@ -63,13 +83,15 @@
     // Bestemmingen mappen op Level 1 landing pages (per land).
     // "In de buurt" heeft geen landing — selecteren slaat het op zonder
     // direct te navigeren, gebruiker kan daarna "Zoeken" gebruiken.
+    // `land` is de slug die op /accommodaties als ?land= filter gebruikt
+    // wordt en is ook de pad-segment voor de Level 1 country landing.
     const WHERE_SUGGESTIONS = [
-        { value: "near",       title: "In de buurt",                 sub: "Rondkijken in je omgeving",                                 icon: "🧭",  landing: null },
-        { value: "parijs",     title: "Parijs, Frankrijk",           sub: "Voor bezienswaardigheden zoals Eiffeltoren",                icon: "🗼",  landing: "/frankrijk" },
-        { value: "londen",     title: "Londen, Verenigd Koninkrijk", sub: "Voor het bruisende nachtleven",                             icon: "🌉",  landing: "/verenigd-koninkrijk" },
-        { value: "maastricht", title: "Maastricht, Limburg",         sub: "Populaire bestemming",                                      icon: "🏙️", landing: "/nederland" },
-        { value: "antwerpen",  title: "Antwerpen, België",           sub: "Voor bezienswaardigheden zoals MAS - Museum aan de Stroom", icon: "🏛️", landing: "/belgie" },
-        { value: "valencia",   title: "Valencia, Spanje",            sub: "Voor de verbluffende architectuur",                         icon: "🏟️", landing: "/spanje" },
+        { value: "near",       title: "In de buurt",                 sub: "Rondkijken in je omgeving",                                 icon: "🧭",  land: null },
+        { value: "parijs",     title: "Parijs, Frankrijk",           sub: "Voor bezienswaardigheden zoals Eiffeltoren",                icon: "🗼",  land: "frankrijk" },
+        { value: "londen",     title: "Londen, Verenigd Koninkrijk", sub: "Voor het bruisende nachtleven",                             icon: "🌉",  land: "verenigd-koninkrijk" },
+        { value: "maastricht", title: "Maastricht, Limburg",         sub: "Populaire bestemming",                                      icon: "🏙️", land: "nederland" },
+        { value: "antwerpen",  title: "Antwerpen, België",           sub: "Voor bezienswaardigheden zoals MAS - Museum aan de Stroom", icon: "🏛️", land: "belgie" },
+        { value: "valencia",   title: "Valencia, Spanje",            sub: "Voor de verbluffende architectuur",                         icon: "🏟️", land: "spanje" },
     ];
 
     // -------- State --------
@@ -272,10 +294,14 @@
                         </li>
                     `).join("")}
                 </ul>
-                ${!state.whereExpanded && !state.whereQuery ? `
-                    <button type="button" class="sn-where-expand" data-sn-where-expand aria-label="Toon meer bestemmingen">
+                ${state.whereQuery ? "" : `
+                    <button type="button"
+                            class="sn-where-expand${state.whereExpanded ? " is-open" : ""}"
+                            data-sn-where-toggle
+                            aria-label="${state.whereExpanded ? 'Toon minder bestemmingen' : 'Toon meer bestemmingen'}"
+                            aria-expanded="${state.whereExpanded}">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>` : ""}
+                    </button>`}
             </div>
         `;
     }
@@ -449,26 +475,23 @@
                     return;
                 }
 
-                if (e.target.closest("[data-sn-where-expand]")) {
-                    state.whereExpanded = true;
+                if (e.target.closest("[data-sn-where-toggle]")) {
+                    state.whereExpanded = !state.whereExpanded;
                     renderModalBody();
                     const inp = modalEl.querySelector("[data-sn-where-input]");
-                    if (inp) inp.focus();
+                    if (state.whereExpanded && inp) inp.focus();
                     return;
                 }
 
                 const whereItem = e.target.closest("[data-sn-where]");
                 if (whereItem) {
-                    const value = whereItem.dataset.snWhere;
-                    const suggestion = WHERE_SUGGESTIONS.find(s => s.value === value);
-                    if (suggestion?.landing) {
-                        // Direct naar Level 1 landing pagina.
-                        window.location.href = suggestion.landing;
-                        return;
-                    }
-                    // Geen landing (bijv. "In de buurt") → opslaan en door
-                    // naar Wanneer.
-                    state.whereSelected = value;
+                    // Selecteren slaat op én klapt door naar Wanneer; de
+                    // CTA "Zoeken" stuurt later alle filters mee naar
+                    // /accommodaties. (Country-landings (/spanje etc.)
+                    // zijn los bereikbaar — geen auto-navigate vanaf
+                    // hier omdat de gebruiker mogelijk eerst nog Wie /
+                    // Wat / Wanneer wil instellen.)
+                    state.whereSelected = whereItem.dataset.snWhere;
                     state.whereQuery = "";
                     state.activeSection = "when";
                     renderModalBody();
@@ -530,16 +553,42 @@
         }
 
         function submitSearch() {
+            // Bouw de querystring voor /accommodaties volgens het schema:
+            //   type        — primaire what-key (afgeleid van categorie-tab)
+            //   doelgroep   — CSV van Who-keys vertaald via WHO_TO_DATA
+            //   land        — country-slug (bijv. spanje, frankrijk)
+            //   q           — vrije zoekterm als geen suggestie gekozen
+            //   van/tot     — start/end datum
+            //   wat         — CSV met sub-types (informatief, voor chips)
             const params = new URLSearchParams();
-            params.set("cat", state.category);
-            if (state.whoSelection.length)  params.set("wie",  state.whoSelection.join(","));
-            if (state.whatSelection.length) params.set("wat",  state.whatSelection.join(","));
-            if (state.whereSelected && state.whereSelected !== "near") params.set("waar", state.whereSelected);
-            if (state.whereSelected === "near") params.set("waar", "in-de-buurt");
-            if (state.whereQuery && !state.whereSelected) params.set("q", state.whereQuery);
+
+            // Type leiden we af van de categorie-tab; geen filter als we
+            // niet eenduidig kunnen mappen.
+            const type = CATEGORY_TYPE_MAP[state.category];
+            if (type) params.set("type", type);
+
+            // Doelgroep — vertaal Wie-chips naar bestaande SITE_DATA-keys.
+            const doelgroep = state.whoSelection
+                .map(v => WHO_TO_DATA[v])
+                .filter(Boolean);
+            if (doelgroep.length) params.set("doelgroep", doelgroep.join(","));
+
+            if (state.whatSelection.length) params.set("wat", state.whatSelection.join(","));
+
+            // Land afleiden uit selectie → suggestie → land-slug.
+            if (state.whereSelected) {
+                const sugg = WHERE_SUGGESTIONS.find(s => s.value === state.whereSelected);
+                if (sugg?.land) params.set("land", sugg.land);
+                else if (state.whereSelected === "near") params.set("land", "in-de-buurt");
+            } else if (state.whereQuery) {
+                params.set("q", state.whereQuery);
+            }
+
             if (state.dateRange.start) params.set("van", state.dateRange.start);
             if (state.dateRange.end)   params.set("tot", state.dateRange.end);
-            window.location.href = "/accommodaties?" + params.toString();
+
+            const qs = params.toString();
+            window.location.href = "/accommodaties" + (qs ? "?" + qs : "");
         }
 
         renderBar();

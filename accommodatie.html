@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodatie · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="search-navigation.css?v=3">
+    <style>
+        .acd-wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .acd-hero {
+            border-radius: 18px;
+            min-height: 280px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 32px;
+            color: white;
+            font-size: 4rem;
+            margin-bottom: 24px;
+        }
+        .acd-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 28px;
+            align-items: start;
+        }
+        @media (max-width: 800px) {
+            .acd-grid { grid-template-columns: 1fr; }
+        }
+        .acd-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+        }
+        .acd-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .acd-tag {
+            background: var(--bg-light, #f3f4f6);
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+        .acd-meta-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            gap: 12px; flex-wrap: wrap;
+            border-top: 1px solid var(--border);
+            margin-top: 16px; padding-top: 16px;
+            font-size: 0.95rem;
+        }
+        .acd-cta {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 14px;
+        }
+        .acd-empty {
+            text-align: center;
+            padding: 48px 24px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+<div id="hero-searchbar"></div>
+
+<nav class="breadcrumb" id="acd-bc"></nav>
+
+<div class="acd-wrap" id="acd-content"></div>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=5"></script>
+<script src="site.js?v=14"></script>
+<script src="search-navigation.js?v=3"></script>
+<script>
+    renderHeader('nav');
+    renderFooter();
+    renderSearchNavigation('hero-searchbar');
+
+    // Slug-based dynamic routing zonder server: lees ?slug= uit de URL
+    // (of fallback ?id=) en zoek de accommodatie op basis van de
+    // genormaliseerde naam.
+    function slugify(s) {
+        return String(s).toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
+    const qp = new URLSearchParams(location.search);
+    const slug = qp.get('slug');
+    const id = qp.get('id');
+
+    let acc = null;
+    if (slug) acc = SITE_DATA.accommodations.find(a => slugify(a.name) === slug);
+    if (!acc && id) acc = SITE_DATA.accommodations.find(a => String(a.id) === id);
+
+    const bc = document.getElementById('acd-bc');
+    const main = document.getElementById('acd-content');
+
+    if (!acc) {
+        // Edge case (item 6): onbekende slug → fallback naar /accommodaties.
+        bc.innerHTML = `<a href="index.html">Home</a><span class="sep">›</span><span class="current">Niet gevonden</span>`;
+        main.innerHTML = `
+            <div class="acd-empty">
+                <h1>Accommodatie niet gevonden</h1>
+                <p class="lead">We konden geen accommodatie vinden voor "<code>${slug || id || ''}</code>".</p>
+                <a class="acd-cta" href="/accommodaties">Bekijk alle accommodaties →</a>
+            </div>
+        `;
+    } else {
+        const grad = (typeof gradientFor === 'function')
+            ? gradientFor(acc)
+            : 'linear-gradient(135deg, #4facfe 0%, #00c6ff 100%)';
+        const whereLabel = DATA.label('where', acc.where);
+
+        bc.innerHTML = `
+            <a href="index.html">Home</a>
+            <span class="sep">›</span>
+            <a href="/accommodaties?land=${acc.where}">${whereLabel}</a>
+            <span class="sep">›</span>
+            <span class="current">${acc.name}</span>
+        `;
+
+        main.innerHTML = `
+            <div class="acd-hero" style="background: ${grad}">
+                <span aria-hidden="true">${acc.emoji || '🏝️'}</span>
+            </div>
+            <div class="acd-grid">
+                <div>
+                    <h1 style="font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 6px;">${acc.name}</h1>
+                    <p class="lead">📍 ${acc.location} · ${whereLabel}</p>
+                    <div class="acd-tags">
+                        ${acc.tags.map(t => `<span class="acd-tag">${t}</span>`).join('')}
+                    </div>
+                    <div class="acd-card" style="margin-top: 18px;">
+                        <h2 style="margin-bottom: 8px;">Over deze accommodatie</h2>
+                        <p>${acc.name} is een populaire keuze voor ${acc.who.map(w => DATA.label('who', w)).join(', ')}.
+                        Het type accommodatie sluit aan bij ${acc.what.map(w => DATA.label('what', w)).join(', ')}.</p>
+                        <div class="acd-meta-row">
+                            <span>★ ${acc.rating.toFixed(1)} · ${acc.reviews} reviews</span>
+                            <span><strong>€${acc.price}</strong> per nacht</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="acd-card">
+                    <h3 style="margin-bottom: 8px;">Boeken</h3>
+                    <p style="color: var(--secondary); font-size: 0.95rem;">Vanaf <strong>€${acc.price}</strong> per nacht. Beschikbaarheid op aanvraag.</p>
+                    <a class="acd-cta" href="#">Beschikbaarheid checken →</a>
+                </aside>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>

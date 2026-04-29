@@ -365,12 +365,18 @@
     padding: 4px 0 0;
     display: flex;
     flex-direction: column;
-    /* Lange lijst is intern scrollbaar zodat de Wanneer-sectie en CTA
-       altijd bereikbaar blijven, ook op kleine schermen. */
+    /* Lange lijst is intern scrollbaar — voorkomt dat items op tablet/
+       desktop afgekapt worden en houdt Wanneer + CTA bereikbaar. */
     max-height: 320px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+}
+@media (min-width: 720px) {
+    .sn-where-list { max-height: 440px; }
+}
+@media (min-width: 1024px) {
+    .sn-where-list { max-height: 500px; }
 }
 .sn-where-item {
     display: grid;
@@ -421,6 +427,12 @@
     justify-content: center;
 }
 .sn-where-expand:hover { color: var(--sn-text); }
+.sn-where-expand svg {
+    transition: transform 0.18s ease;
+}
+.sn-where-expand.is-open svg {
+    transform: rotate(180deg);  /* chevron-up wanneer lijst uitgeklapt is */
+}
 
 /* Wanneer — twee datumvelden naast elkaar (Van + Tot). Op smalle
    schermen klappen ze automatisch onder elkaar. */

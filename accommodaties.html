@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodaties · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="search-navigation.css?v=3">
+    <style>
+        /* Niveau 4 — alle filters actief. Sidebar + resultaten, met
+           zichtbare actieve-filter-chips bovenaan. */
+        .ac-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+        .ac-sidebar {
+            position: sticky;
+            top: calc(var(--header-h) + 16px);
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        .ac-filter-group { margin-bottom: 20px; }
+        .ac-filter-group:last-child { margin-bottom: 0; }
+        .ac-filter-group h4 {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .ac-filter-group select,
+        .ac-filter-group input[type="date"],
+        .ac-filter-group input[type="range"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: white;
+            box-sizing: border-box;
+        }
+        .ac-filter-group input[type="range"] { padding: 0; }
+        .ac-date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .ac-price-label {
+            display: flex; justify-content: space-between;
+            font-size: 0.85rem; color: var(--text);
+            margin-top: 6px;
+        }
+        .ac-reset {
+            width: 100%;
+            margin-top: 8px;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+            cursor: pointer;
+        }
+        .ac-reset:hover { color: var(--primary); border-color: var(--primary); }
+        .ac-active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .ac-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px 6px 12px;
+            border: 1px solid var(--primary);
+            background: var(--primary-light, #eaf4ff);
+            color: var(--primary);
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .ac-chip button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: inherit;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 2px 4px;
+        }
+        .ac-main-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .ac-main-head h1 {
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            font-weight: 800;
+        }
+        .ac-main-head .count { color: var(--secondary); font-weight: 600; }
+        .ac-sort { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        .ac-sort select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            font-family: inherit;
+            font-weight: 600;
+        }
+        .ac-toggle-filters {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        @media (max-width: 900px) {
+            .ac-layout { grid-template-columns: 1fr; }
+            .ac-sidebar { position: static; }
+            .ac-sidebar.collapsed { display: none; }
+            .ac-toggle-filters { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<!-- Zoeknavigatie blijft beschikbaar zodat gebruikers hun filters
+     kunnen verfijnen zonder terug naar de homepage. -->
+<div id="hero-searchbar"></div>
+
+<nav class="breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Accommodaties</span>
+</nav>
+
+<div class="ac-layout">
+    <button class="ac-toggle-filters" id="toggle-filters">Filters tonen / verbergen</button>
+
+    <aside class="ac-sidebar" id="sidebar">
+        <div class="ac-filter-group">
+            <h4>Type</h4>
+            <select id="f-type">
+                <option value="">Alle types</option>
+            </select>
+        </div>
+        <div class="ac-filter-group">
+            <h4>Doelgroep</h4>
+            <select id="f-doelgroep" multiple size="4" style="min-height:120px"></select>
+        </div>
+        <div class="ac-filter-group">
+            <h4>Land / regio</h4>
+            <select id="f-land">
+                <option value="">Alle bestemmingen</option>
+            </select>
+        </div>
+        <div class="ac-filter-group">
+            <h4>Reisdata</h4>
+            <div class="ac-date-row">
+                <input type="date" id="f-van" aria-label="Van" />
+                <input type="date" id="f-tot" aria-label="Tot" />
+            </div>
+        </div>
+        <div class="ac-filter-group">
+            <h4>Prijs per nacht</h4>
+            <input type="range" id="f-price" min="50" max="300" step="5" value="300">
+            <div class="ac-price-label">
+                <span>€50</span>
+                <span>max <strong id="price-val">€300</strong></span>
+            </div>
+        </div>
+        <button class="ac-reset" id="reset">Filters wissen</button>
+    </aside>
+
+    <main>
+        <div class="ac-main-head">
+            <div>
+                <h1>Accommodaties</h1>
+                <p class="count"><span id="count">0</span> resultaten</p>
+            </div>
+            <div class="ac-sort">
+                <label for="sort">Sorteer:</label>
+                <select id="sort">
+                    <option value="popular">Populair</option>
+                    <option value="rating">Hoogste beoordeling</option>
+                    <option value="price-asc">Prijs laag → hoog</option>
+                    <option value="price-desc">Prijs hoog → laag</option>
+                </select>
+            </div>
+        </div>
+        <div class="ac-active-filters" id="active-filters"></div>
+        <div class="listing-grid" id="listing"></div>
+    </main>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=5"></script>
+<script src="site.js?v=14"></script>
+<script src="search-navigation.js?v=3"></script>
+<script>
+    renderHeader('nav');
+    renderFooter();
+    renderSearchNavigation('hero-searchbar');
+
+    // ---- Filter UI populeren ------------------------------------------
+    const fType = document.getElementById('f-type');
+    DATA.what().forEach(([v, l]) => fType.add(new Option(l, v)));
+    const fDoelgroep = document.getElementById('f-doelgroep');
+    DATA.who().forEach(([v, l]) => fDoelgroep.add(new Option(l, v)));
+    const fLand = document.getElementById('f-land');
+    const nlGroup = document.createElement('optgroup'); nlGroup.label = 'Nederland';
+    nlGroup.appendChild(new Option('Heel Nederland', 'nederland'));
+    DATA.whereNL().forEach(([v, l]) => nlGroup.appendChild(new Option(l, v)));
+    const euGroup = document.createElement('optgroup'); euGroup.label = 'Europa';
+    DATA.whereEU().forEach(([v, l]) => euGroup.appendChild(new Option(l, v)));
+    fLand.appendChild(nlGroup);
+    fLand.appendChild(euGroup);
+
+    // ---- URL → state ---------------------------------------------------
+    const qp = new URLSearchParams(location.search);
+    const NL_KEYS = Object.keys(SITE_DATA.labels.whereNL);
+
+    if (qp.get('type'))      fType.value = qp.get('type');
+    if (qp.get('land'))      fLand.value = qp.get('land');
+    if (qp.get('van'))       document.getElementById('f-van').value = qp.get('van');
+    if (qp.get('tot'))       document.getElementById('f-tot').value = qp.get('tot');
+    if (qp.get('doelgroep')) {
+        const wanted = new Set(qp.get('doelgroep').split(','));
+        Array.from(fDoelgroep.options).forEach(o => { o.selected = wanted.has(o.value); });
+    }
+
+    const qText = (qp.get('q') || '').trim().toLowerCase();
+
+    // ---- Refs ----------------------------------------------------------
+    const priceInput  = document.getElementById('f-price');
+    const priceVal    = document.getElementById('price-val');
+    const sortSel     = document.getElementById('sort');
+    const listingEl   = document.getElementById('listing');
+    const countEl     = document.getElementById('count');
+    const activeWrap  = document.getElementById('active-filters');
+    const fVan        = document.getElementById('f-van');
+    const fTot        = document.getElementById('f-tot');
+
+    function selectedDoelgroep() {
+        return Array.from(fDoelgroep.selectedOptions).map(o => o.value);
+    }
+
+    function slugify(s) {
+        return String(s).toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
+    // ---- Listing render met /accommodatie?slug=... links ---------------
+    function renderResults(list) {
+        if (list.length === 0) {
+            listingEl.innerHTML = `<div class="listing-empty">Geen accommodaties gevonden — pas je filters aan of <a href="index.html">begin opnieuw</a>.</div>`;
+            return;
+        }
+        listingEl.innerHTML = list.map(a => {
+            const slug = slugify(a.name);
+            const grad = (typeof gradientFor === 'function') ? gradientFor(a) : 'linear-gradient(135deg,#4facfe 0%,#00c6ff 100%)';
+            return `
+                <a class="listing-card" href="/accommodatie?slug=${slug}">
+                    <div class="listing-card-img" style="background: ${grad}">
+                        ${a.emoji || '🏝️'}
+                        <span class="listing-card-badge">${DATA.label('where', a.where)}</span>
+                    </div>
+                    <div class="listing-card-body">
+                        <h3>${a.name}</h3>
+                        <p class="listing-card-loc">📍 ${a.location}</p>
+                        <div class="listing-card-tags">
+                            ${a.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                        <div class="listing-card-foot">
+                            <span class="listing-card-rating">★ ${a.rating.toFixed(1)} · ${a.reviews}</span>
+                            <span class="listing-card-price">€${a.price}<small>/nacht</small></span>
+                        </div>
+                    </div>
+                </a>`;
+        }).join('');
+    }
+
+    // ---- Filter-pipeline -----------------------------------------------
+    function applyFilters() {
+        const type = fType.value;
+        const doelgroep = selectedDoelgroep();
+        const land = fLand.value;
+        const maxPrice = parseInt(priceInput.value, 10);
+        priceVal.textContent = `€${maxPrice}`;
+
+        let list = SITE_DATA.accommodations.slice();
+
+        if (type) list = list.filter(a => a.what.includes(type));
+
+        // Doelgroep is multi-select: een match telt als ELKE accommodatie
+        // tenminste één van de gekozen doelgroepen ondersteunt.
+        if (doelgroep.length) {
+            list = list.filter(a => doelgroep.some(d => a.who.includes(d)));
+        }
+
+        // 'land=nederland' = match op alle NL-provincies; verder direct match.
+        if (land === 'nederland') {
+            list = list.filter(a => NL_KEYS.includes(a.where));
+        } else if (land && land !== 'in-de-buurt') {
+            list = list.filter(a => a.where === land);
+        }
+
+        list = list.filter(a => a.price <= maxPrice);
+
+        if (qText) list = list.filter(a =>
+            (a.name || '').toLowerCase().includes(qText) ||
+            (a.location || '').toLowerCase().includes(qText)
+        );
+
+        const mode = sortSel.value;
+        if (mode === 'rating')          list = [...list].sort((a, b) => b.rating - a.rating);
+        else if (mode === 'price-asc')  list = [...list].sort((a, b) => a.price - b.price);
+        else if (mode === 'price-desc') list = [...list].sort((a, b) => b.price - a.price);
+
+        countEl.textContent = list.length;
+        renderResults(list);
+        renderActiveFilters({ type, doelgroep, land });
+    }
+
+    // ---- Zichtbare actieve-filter chips --------------------------------
+    function renderActiveFilters({ type, doelgroep, land }) {
+        const chips = [];
+        if (type) {
+            chips.push(chipHTML(`Type: ${DATA.label('what', type)}`, () => { fType.value = ''; applyFilters(); }));
+        }
+        doelgroep.forEach(d => {
+            chips.push(chipHTML(`Doelgroep: ${DATA.label('who', d)}`, () => {
+                Array.from(fDoelgroep.options).forEach(o => { if (o.value === d) o.selected = false; });
+                applyFilters();
+            }));
+        });
+        if (land) {
+            const label = land === 'nederland' ? 'Nederland'
+                : land === 'in-de-buurt' ? 'In de buurt'
+                : DATA.label('where', land);
+            chips.push(chipHTML(`Land: ${label}`, () => { fLand.value = ''; applyFilters(); }));
+        }
+        if (fVan.value || fTot.value) {
+            const dateLabel = `${fVan.value || '…'} → ${fTot.value || '…'}`;
+            chips.push(chipHTML(`Reis: ${dateLabel}`, () => { fVan.value = ''; fTot.value = ''; applyFilters(); }));
+        }
+        activeWrap.innerHTML = chips.join('');
+        activeWrap.style.display = chips.length ? 'flex' : 'none';
+        // Bind remove handlers (delegation: click sets data-key id)
+        activeWrap.querySelectorAll('button[data-chip-idx]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const idx = parseInt(btn.dataset.chipIdx, 10);
+                const fn = chipRemovers[idx];
+                if (fn) fn();
+            });
+        });
+    }
+
+    let chipRemovers = [];
+    function chipHTML(label, onRemove) {
+        const idx = chipRemovers.push(onRemove) - 1;
+        return `<span class="ac-chip">${label}<button type="button" data-chip-idx="${idx}" aria-label="Filter verwijderen">×</button></span>`;
+    }
+    // Reset chipRemovers list each render so old indices don't leak.
+    const _origRender = renderActiveFilters;
+    renderActiveFilters = function (...args) { chipRemovers = []; return _origRender.apply(this, args); };
+
+    // ---- Bindings ------------------------------------------------------
+    [fType, fLand, priceInput, sortSel, fVan, fTot].forEach(el => el.addEventListener('input', applyFilters));
+    fDoelgroep.addEventListener('change', applyFilters);
+
+    document.getElementById('reset').addEventListener('click', () => {
+        fType.value = '';
+        Array.from(fDoelgroep.options).forEach(o => { o.selected = false; });
+        fLand.value = '';
+        fVan.value = '';
+        fTot.value = '';
+        priceInput.value = 300;
+        sortSel.value = 'popular';
+        history.replaceState(null, '', location.pathname);
+        applyFilters();
+    });
+
+    document.getElementById('toggle-filters').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+    });
+
+    applyFilters();
+</script>
+</body>
+</html>
