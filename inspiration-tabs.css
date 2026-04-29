@@ -83,44 +83,69 @@
 }
 .it-tabs.has-overflow::after { opacity: 1; }
 
-/* ---------- Items grid ---------- */
+/* ---------- Items grid (pill-cards, matcht "Populaire combinaties") ---------- */
 .it-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    column-gap: 32px;
-    row-gap: 18px;
+    /* Mobiel: 2 kolommen voor compact scannen. Tablet/desktop schalen
+       naar 3 kolommen — 4 zou de pills te smal maken voor de langste
+       labels (bijv. "De leukste vakanties voor wintersport"). */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
     padding: 4px 0 16px;
 }
-@media (min-width: 600px) {
-    .it-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
     .it-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        column-gap: 40px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
     }
 }
 
 .it-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 12px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    min-width: 0;
+    min-height: 64px;
+}
+.it-item:hover {
+    border-color: var(--primary, #0070f3);
+    background: var(--primary-light, #eaf4ff);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.it-item:active { transform: scale(0.99); }
+
+.it-item-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+    /* Vaste breedte zodat alle titels uitlijnen ongeacht emoji-breedte. */
+    width: 28px;
+    text-align: center;
+}
+.it-item-text {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 6px 0;
-    text-decoration: none;
-    color: inherit;
-    transition: opacity 0.15s ease;
     min-width: 0;
 }
-.it-item:hover { opacity: 0.7; }
 .it-item-title {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--text, #222);
-    line-height: 1.3;
+    line-height: 1.25;
     word-break: break-word;
 }
+.it-item:hover .it-item-title { color: var(--primary, #0070f3); }
 .it-item-sub {
-    font-size: 0.92rem;
+    font-size: 0.82rem;
     color: var(--secondary, #6b7280);
-    line-height: 1.3;
+    line-height: 1.25;
 }

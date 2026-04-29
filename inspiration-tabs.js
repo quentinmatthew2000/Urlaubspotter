@@ -22,48 +22,50 @@
     const NIVWAAR = (where)     => `Niveau2-Waar.html?where=${where}`;
     const NIVWAAR_ALL           = `Niveau2-Waar.html`;
 
+    // Iedere item krijgt een emoji-icon links zodat de pills visueel
+    // aansluiten op het bestaande "Populaire combinaties" blok.
     const TABS = [
         {
             id: "populair",
             label: "Populair",
             items: [
-                { title: "Gezin + Camping",                          sub: "Combinatie", href: COMBO("families-kids", "camping") },
-                { title: "Vrienden + Weekendje weg",                 sub: "Combinatie", href: COMBO("friends",        "city-trip") },
-                { title: "Koppels + Wellness",                       sub: "Combinatie", href: COMBO("couples",        "wellness") },
-                { title: "Senioren + Hotel",                         sub: "Combinatie", href: COMBO("seniors",        "hotel") },
-                { title: "Huisdier + Camping",                       sub: "Combinatie", href: COMBO("pets",           "camping") },
-                { title: "Gezinnen met tieners + Aquapark",          sub: "Combinatie", href: COMBO("families-teens", "camping") },
-                { title: "Familie + Wintersport",                    sub: "Combinatie", href: COMBO("families-kids",  "winter") },
-                { title: "Alleen reizend + Actief / Avontuur",       sub: "Combinatie", href: COMBO("solo",           "adventure-trip") },
+                { icon: "👨‍👩‍👧", title: "Gezin + Camping",                    sub: "Populaire combinatie", href: COMBO("families-kids", "camping") },
+                { icon: "👫",     title: "Vrienden + Weekendje weg",            sub: "Populaire combinatie", href: COMBO("friends",        "city-trip") },
+                { icon: "💑",     title: "Koppels + Wellness",                  sub: "Populaire combinatie", href: COMBO("couples",        "wellness") },
+                { icon: "👴",     title: "Senioren + Hotel",                    sub: "Populaire combinatie", href: COMBO("seniors",        "hotel") },
+                { icon: "🐕",     title: "Huisdier + Camping",                  sub: "Populaire combinatie", href: COMBO("pets",           "camping") },
+                { icon: "🌊",     title: "Gezinnen met tieners + Aquapark",     sub: "Populaire combinatie", href: COMBO("families-teens", "camping") },
+                { icon: "⛷️",     title: "Familie + Wintersport",               sub: "Populaire combinatie", href: COMBO("families-kids",  "winter") },
+                { icon: "🧗",     title: "Alleen reizend + Actief / Avontuur",  sub: "Populaire combinatie", href: COMBO("solo",           "adventure-trip") },
             ],
         },
         {
             id: "reisgezelschap",
             label: "Reisgezelschap",
             items: [
-                { title: "Op vakantie met tieners",                  sub: "Reisgezelschap", href: NIVWIE("families-teens") },
-                { title: "Op vakantie als koppel",                   sub: "Reisgezelschap", href: NIVWIE("couples") },
-                { title: "Met vrienden op vakantie",                 sub: "Reisgezelschap", href: NIVWIE("friends") },
-                { title: "Met familie op vakantie",                  sub: "Reisgezelschap", href: NIVWIE("families-kids") },
-                { title: "Alleen op vakantie",                       sub: "Reisgezelschap", href: NIVWIE("solo") },
-                { title: "Met huisdieren op vakantie",               sub: "Reisgezelschap", href: NIVWIE("pets") },
-                { title: "Met senioren op vakantie",                 sub: "Reisgezelschap", href: NIVWIE("seniors") },
-                { title: "Met baby's op vakantie",                   sub: "Reisgezelschap", href: NIVWIE("families-babies") },
-                { title: "Met jonge kinderen op vakantie",           sub: "Reisgezelschap", href: NIVWIE("families-kids") },
+                { icon: "🧑",     title: "Op vakantie met tieners",             sub: "Reisgezelschap", href: NIVWIE("families-teens") },
+                { icon: "💑",     title: "Op vakantie als koppel",              sub: "Reisgezelschap", href: NIVWIE("couples") },
+                { icon: "👫",     title: "Met vrienden op vakantie",            sub: "Reisgezelschap", href: NIVWIE("friends") },
+                { icon: "👨‍👩‍👧", title: "Met familie op vakantie",             sub: "Reisgezelschap", href: NIVWIE("families-kids") },
+                { icon: "🚶",     title: "Alleen op vakantie",                  sub: "Reisgezelschap", href: NIVWIE("solo") },
+                { icon: "🐕",     title: "Met huisdieren op vakantie",          sub: "Reisgezelschap", href: NIVWIE("pets") },
+                { icon: "👴",     title: "Met senioren op vakantie",            sub: "Reisgezelschap", href: NIVWIE("seniors") },
+                { icon: "👶",     title: "Met baby's op vakantie",              sub: "Reisgezelschap", href: NIVWIE("families-babies") },
+                { icon: "👧",     title: "Met jonge kinderen op vakantie",      sub: "Reisgezelschap", href: NIVWIE("families-kids") },
             ],
         },
         {
             id: "vakantietype",
             label: "Vakantietype",
             items: [
-                { title: "Op vakantie naar de Camping",              sub: "Vakantietype", href: "campings.html" },
-                { title: "Op vakantie in een resort",                sub: "Vakantietype", href: "hotels.html" },
-                { title: "Op vakantie in een hotel",                 sub: "Vakantietype", href: NIVWAT("hotel") },
-                { title: "Op vakantie in een vakantiepark",          sub: "Vakantietype", href: "vakantieparken.html" },
-                { title: "Op vakantie in een glamping",              sub: "Vakantietype", href: NIVWAT("glamping") },
-                { title: "Op vakantie in de natuur",                 sub: "Vakantietype", href: NIVWAT("adventure-trip") },
-                { title: "De leukste zonvakanties",                  sub: "Vakantietype", href: NIVWAT("sun") },
-                { title: "De leukste vakanties voor wintersport",    sub: "Vakantietype", href: NIVWAT("winter") },
+                { icon: "⛺",     title: "Op vakantie naar de Camping",         sub: "Vakantietype", href: "campings.html" },
+                { icon: "🌴",     title: "Op vakantie in een resort",           sub: "Vakantietype", href: "hotels.html" },
+                { icon: "🏨",     title: "Op vakantie in een hotel",            sub: "Vakantietype", href: NIVWAT("hotel") },
+                { icon: "🎡",     title: "Op vakantie in een vakantiepark",     sub: "Vakantietype", href: "vakantieparken.html" },
+                { icon: "✨",     title: "Op vakantie in een glamping",         sub: "Vakantietype", href: NIVWAT("glamping") },
+                { icon: "🌲",     title: "Op vakantie in de natuur",            sub: "Vakantietype", href: NIVWAT("adventure-trip") },
+                { icon: "☀️",     title: "De leukste zonvakanties",             sub: "Vakantietype", href: NIVWAT("sun") },
+                { icon: "⛷️",     title: "De leukste vakanties voor wintersport", sub: "Vakantietype", href: NIVWAT("winter") },
             ],
         },
         {
@@ -72,14 +74,14 @@
             items: [
                 // Continenten zonder eigen pagina linken naar de generieke
                 // Niveau2-Waar-pagina; geen 404's.
-                { title: "Op vakantie in Europa",                    sub: "Bestemming", href: NIVWAAR_ALL },
-                { title: "Op vakantie in Azië",                      sub: "Bestemming", href: NIVWAAR_ALL },
-                { title: "Op vakantie in eigen land",                sub: "Bestemming", href: NIVWAAR_ALL },
-                { title: "Op vakantie in Nederland",                 sub: "Bestemming", href: "nederland.html" },
-                { title: "Op vakantie in Afrika",                    sub: "Bestemming", href: NIVWAAR_ALL },
-                { title: "Vakanties aan zee",                        sub: "Bestemming", href: NIVWAAR("zeeland") },
-                { title: "Vakantie in de bergen",                    sub: "Bestemming", href: NIVWAAR("oostenrijk") },
-                { title: "Op vakantie in Scandinavië",               sub: "Bestemming", href: NIVWAAR_ALL },
+                { icon: "🌍",     title: "Op vakantie in Europa",              sub: "Bestemming", href: NIVWAAR_ALL },
+                { icon: "🌏",     title: "Op vakantie in Azië",                sub: "Bestemming", href: NIVWAAR_ALL },
+                { icon: "🏡",     title: "Op vakantie in eigen land",          sub: "Bestemming", href: NIVWAAR_ALL },
+                { icon: "🇳🇱",     title: "Op vakantie in Nederland",           sub: "Bestemming", href: "nederland.html" },
+                { icon: "🦁",     title: "Op vakantie in Afrika",              sub: "Bestemming", href: NIVWAAR_ALL },
+                { icon: "🏖️",     title: "Vakanties aan zee",                  sub: "Bestemming", href: NIVWAAR("zeeland") },
+                { icon: "⛰️",     title: "Vakantie in de bergen",              sub: "Bestemming", href: NIVWAAR("oostenrijk") },
+                { icon: "❄️",     title: "Op vakantie in Scandinavië",         sub: "Bestemming", href: NIVWAAR_ALL },
             ],
         },
     ];
@@ -108,16 +110,19 @@
             const tab = TABS.find(t => t.id === activeTab) || TABS[0];
             return tab.items.map(it => `
                 <a class="it-item" href="${it.href}">
-                    <span class="it-item-title">${escapeHTML(it.title)}</span>
-                    <span class="it-item-sub">${escapeHTML(it.sub)}</span>
+                    <span class="it-item-icon" aria-hidden="true">${it.icon || ""}</span>
+                    <span class="it-item-text">
+                        <span class="it-item-title">${escapeHTML(it.title)}</span>
+                        <span class="it-item-sub">${escapeHTML(it.sub)}</span>
+                    </span>
                 </a>
             `).join("");
         }
 
         function render() {
             container.innerHTML = `
-                <section class="it-section" aria-label="Inspiratie voor toekomstige uitstapjes">
-                    <h2 class="it-title">Inspiratie voor toekomstige uitstapjes</h2>
+                <section class="it-section" aria-label="Inspiratie voor jou">
+                    <h2 class="it-title">Inspiratie voor jou</h2>
                     <div class="it-tabs">
                         <div class="it-tabs-track" role="tablist" data-it-track>
                             ${tabsHTML()}
