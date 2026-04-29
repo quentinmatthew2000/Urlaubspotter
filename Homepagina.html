@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
     <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="search-navigation.css?v=1">
 </head>
 <body>
 
 <header class="site-header"><div class="inner"></div></header>
+
+<!-- Nieuwe homepage zoeknavigatie (collapsed bar + Wie/Wat/Waar/Wanneer modal) -->
+<div id="hero-searchbar"></div>
 
 <!-- 1. WIE — Kies je reisgezelschap -->
 <section class="section">
@@ -306,8 +310,10 @@
 
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=14"></script>
+<script src="search-navigation.js?v=1"></script>
 <script>
     renderHeader('home');
+    renderSearchNavigation('hero-searchbar');
 
     renderCategoryTiles('home-who-tiles', DATA.who(), {
         linkBuilder: (v) => `Niveau2-Wie.html?who=${v}`,

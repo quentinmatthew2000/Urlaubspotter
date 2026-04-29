@@ -1,0 +1,425 @@
+/* ============================================================
+   search-navigation.css — geïsoleerde styles voor de nieuwe
+   homepage zoekbalk + fullscreen modal (Wie / Wat / Waar / Wanneer).
+   Alle selectors leven onder .sn-* zodat er geen overlap is met
+   site.css. Niets buiten deze prefix wordt aangepast.
+   ============================================================ */
+
+:root {
+    --sn-accent: #ff385c;
+    --sn-accent-dark: #e0314f;
+    --sn-text: #222;
+    --sn-text-soft: #6b7280;
+    --sn-border: #dddddd;
+    --sn-border-soft: #ebebeb;
+    --sn-bg-soft: #f7f7f7;
+    --sn-radius-pill: 999px;
+    --sn-radius-card: 18px;
+    --sn-shadow-card: 0 4px 14px rgba(0, 0, 0, 0.08);
+    --sn-shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+/* ============ COLLAPSED BAR (onder de header) ============ */
+.sn-bar-wrap {
+    width: 100%;
+    background: #fff;
+    padding: 16px 24px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.sn-bar {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius-pill);
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: var(--sn-shadow-card);
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.sn-bar:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); }
+.sn-bar:active { transform: scale(0.995); }
+
+.sn-bar-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--sn-text);
+}
+.sn-bar-text {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--sn-text);
+    letter-spacing: -0.01em;
+}
+
+/* Categorie tabs */
+.sn-tabs {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 28px;
+    width: 100%;
+    max-width: 480px;
+}
+.sn-tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 4px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--sn-text-soft);
+    font: inherit;
+    position: relative;
+    transition: color 0.18s ease;
+}
+.sn-tab:hover { color: var(--sn-text); }
+.sn-tab.active { color: var(--sn-text); }
+.sn-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 0;
+    height: 2px;
+    background: var(--sn-text);
+    border-radius: 2px;
+}
+.sn-tab-emoji {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+.sn-tab-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+.sn-tab-badge {
+    position: absolute;
+    top: -2px;
+    right: -22px;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+}
+
+/* ============ MODAL (fullscreen / bottom-sheet) ============ */
+.sn-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    background: rgba(0, 0, 0, 0.45);
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+}
+.sn-modal.open { display: flex; }
+
+.sn-modal-panel {
+    width: 100%;
+    max-width: 720px;
+    max-height: 92vh;
+    background: var(--sn-bg-soft);
+    border-radius: 18px 18px 0 0;
+    box-shadow: var(--sn-shadow-modal);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sn-modal.open .sn-modal-panel { transform: translateY(0); }
+
+@media (min-width: 720px) {
+    .sn-modal { align-items: center; }
+    .sn-modal-panel {
+        border-radius: 18px;
+        max-height: 86vh;
+    }
+}
+
+/* Sticky top: tabs + close */
+.sn-modal-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--sn-bg-soft);
+    padding: 18px 18px 8px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+.sn-modal-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+}
+.sn-modal-close {
+    background: #fff;
+    border: 1px solid var(--sn-border);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--sn-text);
+    transition: background 0.15s ease;
+    justify-self: end;
+}
+.sn-modal-close:hover { background: #f3f4f6; }
+
+/* Body — verticale stack van Wie / Wat / Waar / Wanneer */
+.sn-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Card — basis voor elke sectie (collapsed of expanded) */
+.sn-card {
+    background: #fff;
+    border-radius: var(--sn-radius-card);
+    box-shadow: var(--sn-shadow-card);
+    overflow: hidden;
+}
+.sn-card.collapsed {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 18px 22px;
+    cursor: pointer;
+    gap: 12px;
+}
+.sn-card.collapsed:hover { background: #fafafa; }
+.sn-card.collapsed .sn-card-label {
+    color: var(--sn-text-soft);
+    font-size: 0.95rem;
+}
+.sn-card.collapsed .sn-card-value {
+    color: var(--sn-text);
+    font-weight: 600;
+    text-align: right;
+}
+.sn-card.collapsed .sn-card-value[data-empty="true"] {
+    color: var(--sn-text-soft);
+    font-weight: 400;
+}
+
+.sn-card.expanded { padding: 22px; }
+.sn-card-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--sn-text);
+    margin: 0 0 14px;
+    letter-spacing: -0.01em;
+}
+
+/* Chip-grid (Wie + Wat) */
+.sn-chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.sn-chip {
+    background: #fff;
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius-pill);
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--sn-text);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    font-family: inherit;
+}
+.sn-chip:hover { border-color: #999; }
+.sn-chip.active {
+    background: var(--sn-text);
+    border-color: var(--sn-text);
+    color: #fff;
+}
+
+/* Waar sectie */
+.sn-where-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.sn-where-input {
+    flex: 1;
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius-pill);
+    padding: 14px 18px 14px 46px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--sn-text);
+    outline: none;
+    background: #fff;
+}
+.sn-where-input:focus { border-color: var(--sn-text); }
+.sn-where-input-icon {
+    position: absolute;
+    left: 18px;
+    width: 16px;
+    height: 16px;
+    color: var(--sn-text);
+    pointer-events: none;
+}
+.sn-where-input-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 6px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--sn-text);
+}
+
+.sn-where-suggest-label {
+    font-size: 0.95rem;
+    color: var(--sn-text);
+    margin: 18px 0 10px;
+}
+.sn-where-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.sn-where-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 4px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.15s ease;
+}
+.sn-where-item:hover { background: #f3f4f6; }
+.sn-where-item.active { background: #eef2ff; }
+.sn-where-item-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+.sn-where-item-text {
+    display: flex;
+    flex-direction: column;
+}
+.sn-where-item-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sn-text);
+}
+.sn-where-item-sub {
+    font-size: 0.9rem;
+    color: var(--sn-text-soft);
+}
+
+.sn-where-expand {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin: 8px auto 0;
+    display: flex;
+    color: var(--sn-text-soft);
+    font-size: 1.2rem;
+    align-items: center;
+    justify-content: center;
+}
+.sn-where-expand:hover { color: var(--sn-text); }
+
+/* Wanneer */
+.sn-when-input {
+    width: 100%;
+    border: 1px solid var(--sn-border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--sn-text);
+    background: #fff;
+    outline: none;
+}
+.sn-when-input:focus { border-color: var(--sn-text); }
+.sn-when-helper {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--sn-text-soft);
+}
+
+/* Sticky footer met CTA */
+.sn-modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    border-top: 1px solid var(--sn-border-soft);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.sn-clear {
+    background: none;
+    border: none;
+    color: var(--sn-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 6px;
+    text-decoration: underline;
+    font-family: inherit;
+}
+.sn-cta {
+    background: var(--sn-accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 22px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+.sn-cta:hover { background: var(--sn-accent-dark); }
+.sn-cta:active { transform: scale(0.98); }
+.sn-cta-icon {
+    width: 16px;
+    height: 16px;
+}
+
+body.sn-no-scroll { overflow: hidden; }
