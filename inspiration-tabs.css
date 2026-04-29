@@ -1,0 +1,126 @@
+/* ============================================================
+   inspiration-tabs.css — geïsoleerde styles voor het nieuwe
+   "Inspiratie voor toekomstige uitstapjes" blok op de homepage.
+   Alle selectors leven onder .it-* zodat er geen overlap is met
+   site.css of andere componenten.
+   ============================================================ */
+
+.it-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 24px 24px;
+}
+
+.it-title {
+    font-size: clamp(1.4rem, 3.2vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text, #222);
+    margin: 0 0 18px;
+}
+
+/* ---------- Tab-balk ---------- */
+.it-tabs {
+    position: relative;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    margin-bottom: 18px;
+}
+.it-tabs-track {
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+.it-tabs-track::-webkit-scrollbar { display: none; }
+
+.it-tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 2px 14px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--secondary, #6b7280);
+    position: relative;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    transition: color 0.15s ease;
+}
+.it-tab:hover { color: var(--text, #222); }
+.it-tab.active {
+    color: var(--text, #222);
+    font-weight: 700;
+}
+.it-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--text, #222);
+    border-radius: 2px;
+}
+
+/* Mobiele scroll-hint chevron rechts */
+.it-tabs::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 1px;
+    width: 36px;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, #fff 65%);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.it-tabs.has-overflow::after { opacity: 1; }
+
+/* ---------- Items grid ---------- */
+.it-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 32px;
+    row-gap: 18px;
+    padding: 4px 0 16px;
+}
+@media (min-width: 600px) {
+    .it-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+    .it-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        column-gap: 40px;
+    }
+}
+
+.it-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 0;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s ease;
+    min-width: 0;
+}
+.it-item:hover { opacity: 0.7; }
+.it-item-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text, #222);
+    line-height: 1.3;
+    word-break: break-word;
+}
+.it-item-sub {
+    font-size: 0.92rem;
+    color: var(--secondary, #6b7280);
+    line-height: 1.3;
+}

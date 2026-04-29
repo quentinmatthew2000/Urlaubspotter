@@ -6,6 +6,7 @@
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
     <link rel="stylesheet" href="site.css?v=14">
     <link rel="stylesheet" href="search-navigation.css?v=4">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=1">
 </head>
 <body>
 
@@ -13,6 +14,9 @@
 
 <!-- Nieuwe homepage zoeknavigatie (collapsed bar + Wie/Wat/Waar/Wanneer modal) -->
 <div id="hero-searchbar"></div>
+
+<!-- Inspiratie-tabs (Populair / Reisgezelschap / Vakantietype / Bestemmingen) -->
+<div id="inspiration-tabs"></div>
 
 <!-- 1. WIE — Kies je reisgezelschap -->
 <section class="section">
@@ -311,9 +315,11 @@
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=14"></script>
 <script src="search-navigation.js?v=4"></script>
+<script src="inspiration-tabs.js?v=1"></script>
 <script>
     renderHeader('home');
     renderSearchNavigation('hero-searchbar');
+    renderInspirationTabs('inspiration-tabs');
 
     renderCategoryTiles('home-who-tiles', DATA.who(), {
         linkBuilder: (v) => `Niveau2-Wie.html?who=${v}`,
