@@ -6,7 +6,7 @@
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
     <link rel="stylesheet" href="site.css?v=14">
     <link rel="stylesheet" href="search-navigation.css?v=4">
-    <link rel="stylesheet" href="inspiration-tabs.css?v=2">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
 <body>
 
@@ -15,20 +15,11 @@
 <!-- Nieuwe homepage zoeknavigatie (collapsed bar + Wie/Wat/Waar/Wanneer modal) -->
 <div id="hero-searchbar"></div>
 
+<!-- KEUZEHULP CTA — verplaatst naar boven Inspiratie voor jou. -->
+<section class="section" id="keuzehulp-block"></section>
+
 <!-- Inspiratie-tabs (Populair / Reisgezelschap / Vakantietype / Bestemmingen) -->
 <div id="inspiration-tabs"></div>
-
-<!-- 1. WIE — Kies je reisgezelschap -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Voor wie ga je?</span>
-            <h2>Kies je reisgezelschap</h2>
-        </div>
-        <a class="link" href="Niveau2-Wie.html">Alle gezelschappen →</a>
-    </div>
-    <div class="cat-grid small" id="home-who-tiles"></div>
-</section>
 
 <!-- 2. POPULAIRE COMBINATIES -->
 <div class="section-bg-alt-wrap">
@@ -65,20 +56,6 @@
     <div class="blog-grid" id="blog-preview" data-rail="260"></div>
 </section>
 
-<!-- 4. WAT voor vakantie -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Wat voor vakantie?</span>
-            <h2>Wat voor vakantie zoek je?</h2>
-        </div>
-        <a class="link" href="Niveau2-Wat.html">Alle types →</a>
-    </div>
-    <div class="cat-grid small" id="home-what-tiles"></div>
-</section>
-</div>
-
 <!-- 5. POPULAIRE ACCOMMODATIES (sleepbaar) -->
 <section class="section">
     <div class="section-head">
@@ -90,23 +67,6 @@
     </div>
     <div class="listing-grid" id="popular-listing" data-rail="280"></div>
 </section>
-
-<!-- 6. WAAR wil je naartoe -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Waar wil je naartoe?</span>
-            <h2>Kies een bestemming</h2>
-        </div>
-        <a class="link" href="Niveau2-Waar.html">Alle bestemmingen →</a>
-    </div>
-    <div class="cat-grid small" id="home-where-tiles"></div>
-</section>
-</div>
-
-<!-- 7. KEUZEHULP -->
-<section class="section" id="keuzehulp-block"></section>
 
 <!-- 8. AANBIEDINGEN (sleepbaar) -->
 <div class="section-bg-alt-wrap">
@@ -302,6 +262,43 @@
 </section>
 </div>
 
+<!-- Verplaatste blokken (Wie / Wat / Waar) — onderaan de homepage,
+     direct boven de nieuwsbrief. Inhoud en design ongewijzigd. -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Voor wie ga je?</span>
+            <h2>Kies je reisgezelschap</h2>
+        </div>
+        <a class="link" href="Niveau2-Wie.html">Alle gezelschappen →</a>
+    </div>
+    <div class="cat-grid small" id="home-who-tiles"></div>
+</section>
+
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Wat voor vakantie?</span>
+            <h2>Wat voor vakantie zoek je?</h2>
+        </div>
+        <a class="link" href="Niveau2-Wat.html">Alle types →</a>
+    </div>
+    <div class="cat-grid small" id="home-what-tiles"></div>
+</section>
+</div>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Waar wil je naartoe?</span>
+            <h2>Kies een bestemming</h2>
+        </div>
+        <a class="link" href="Niveau2-Waar.html">Alle bestemmingen →</a>
+    </div>
+    <div class="cat-grid small" id="home-where-tiles"></div>
+</section>
+
 <!-- NIEUWSBRIEF + SOCIAL -->
 <section class="section">
     <div class="news-social" id="news-social"></div>
@@ -315,7 +312,7 @@
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=14"></script>
 <script src="search-navigation.js?v=4"></script>
-<script src="inspiration-tabs.js?v=2"></script>
+<script src="inspiration-tabs.js?v=3"></script>
 <script>
     renderHeader('home');
     renderSearchNavigation('hero-searchbar');

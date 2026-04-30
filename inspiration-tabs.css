@@ -105,15 +105,15 @@
     grid-template-columns: auto 1fr;
     align-items: center;
     column-gap: 12px;
-    padding: 12px 14px;
+    padding: 10px 14px;
     background: #fff;
     border: 1px solid var(--border, #e5e7eb);
-    border-radius: 16px;
+    border-radius: 14px;
     text-decoration: none;
     color: inherit;
     transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
     min-width: 0;
-    min-height: 64px;
+    min-height: 52px;
 }
 .it-item:hover {
     border-color: var(--primary, #0070f3);
@@ -130,22 +130,12 @@
     width: 28px;
     text-align: center;
 }
-.it-item-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-}
 .it-item-title {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--text, #222);
     line-height: 1.25;
     word-break: break-word;
+    min-width: 0;
 }
 .it-item:hover .it-item-title { color: var(--primary, #0070f3); }
-.it-item-sub {
-    font-size: 0.82rem;
-    color: var(--secondary, #6b7280);
-    line-height: 1.25;
-}

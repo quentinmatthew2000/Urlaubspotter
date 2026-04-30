@@ -779,7 +779,7 @@ function renderKeuzehulpCTA(containerId) {
     el.innerHTML = `
         <div class="keuzehulp-cta">
             <div>
-                <h3>Niet zeker wat je zoekt?</h3>
+                <h3>De ultieme zoektool</h3>
                 <p>Onze Keuzehulp stelt je 7 slimme vragen en vindt precies de juiste vakantie voor jou.</p>
                 <div class="benefits">
                     <span>⚡ Snel</span>

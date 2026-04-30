@@ -108,13 +108,15 @@
 
         function gridHTML() {
             const tab = TABS.find(t => t.id === activeTab) || TABS[0];
+            // Sublabels (Populaire combinatie / Reisgezelschap / etc.)
+            // worden niet meer gerenderd — pills tonen alleen de titel.
+            // De `sub`-velden in TABS blijven staan zodat ze later weer
+            // ingeschakeld kunnen worden zonder de data opnieuw te
+            // moeten typen.
             return tab.items.map(it => `
                 <a class="it-item" href="${it.href}">
                     <span class="it-item-icon" aria-hidden="true">${it.icon || ""}</span>
-                    <span class="it-item-text">
-                        <span class="it-item-title">${escapeHTML(it.title)}</span>
-                        <span class="it-item-sub">${escapeHTML(it.sub)}</span>
-                    </span>
+                    <span class="it-item-title">${escapeHTML(it.title)}</span>
                 </a>
             `).join("");
         }
