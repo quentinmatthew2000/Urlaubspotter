@@ -98,10 +98,33 @@
         { value: "valencia",   title: "Valencia, Spanje",            sub: "Voor de verbluffende architectuur",                         icon: "🏟️", land: "spanje" },
     ];
 
+    // Wat-key → bar-tab-categorie. Subtypes mappen ook (wellness valt
+    // onder hotels, glamping onder campings) zodat de underline op de
+    // juiste tab landt op pagina's die naar een refinement diepen.
+    const WHAT_TO_CATEGORY = {
+        hotel: "hotels", wellness: "hotels",
+        camping: "campings", glamping: "campings",
+        "holiday-park": "vakantieparken",
+    };
+
+    function detectInitialCategory() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const what = params.get("what");
+            if (what && WHAT_TO_CATEGORY[what]) return WHAT_TO_CATEGORY[what];
+            // Pad-gebaseerde detectie voor de Level 1 landings.
+            const path = (window.location.pathname || "").toLowerCase();
+            if (path.endsWith("/hotels.html"))         return "hotels";
+            if (path.endsWith("/campings.html"))       return "campings";
+            if (path.endsWith("/vakantieparken.html")) return "vakantieparken";
+        } catch (_) { /* fall through */ }
+        return "hotels";
+    }
+
     // -------- State --------
     function createState() {
         return {
-            category: "hotels",
+            category: detectInitialCategory(),
             whoSelection: [],
             whatSelection: [],
             whereQuery: "",

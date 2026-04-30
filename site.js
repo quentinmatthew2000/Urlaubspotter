@@ -493,7 +493,7 @@ function autoMountSearchNavigation() {
     if (!document.querySelector('link[href*="search-navigation.css"]')) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = 'search-navigation.css?v=5';
+        link.href = 'search-navigation.css?v=6';
         document.head.appendChild(link);
     }
 
@@ -517,7 +517,7 @@ function autoMountSearchNavigation() {
         callRender();
     } else if (!document.querySelector('script[src*="search-navigation.js"]')) {
         const s = document.createElement('script');
-        s.src = 'search-navigation.js?v=5';
+        s.src = 'search-navigation.js?v=6';
         s.async = false;
         s.onload = callRender;
         document.head.appendChild(s);

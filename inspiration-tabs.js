@@ -89,35 +89,40 @@
         "holiday-park":  bestemmingenForWat("holiday-park", "een vakantiepark"),
     };
 
-    // Populair-tab in WAT-context: 6 logische 3-dim combinaties (Wie +
-    // Wat + Waar) per WAT-type, ieder routerend naar Niveau 4 met de
-    // drie filters al gezet. Where=zeeland staat als proxy voor
-    // "Nederland" (geen `netherlands` accommodatie-data, maar wel het
-    // populairste NL-vakantiegebied).
+    // Populair-tab in WAT-context: 2-variabele combinaties bovenop de
+    // pagina-context. Iedere item combineert twee van de drie:
+    //   • Reisgezelschap (WIE)
+    //   • Vakantietype refinement (WAT-sub)
+    //   • Bestemming (WAAR)
+    // Drie-variabele combinaties zijn bewust uitgesloten — de WAT van
+    // de pagina is een gegeven, niet een keuze. Routes:
+    //   WAT-ref + WIE          → Niveau3-WieWat.html?who=&what= (of &sub=)
+    //   WAT-ref + WAAR         → Niveau3-WaarWat.html?what=&where=&sub=
+    //   WIE + WAAR (page WAT)  → Niveau4-WieWatWaar.html?who=&what=&where=
     const POPULAIR_BY_WAT = {
         hotel: [
-            { icon: "💑",     title: "Koppels + Wellness hotel + Italië",         href: LVL4("couples",        "wellness", "italie") },
-            { icon: "👴",     title: "Senioren + Hotel + Spanje",                 href: LVL4("seniors",        "hotel",    "spanje") },
-            { icon: "👫",     title: "Vrienden + Boutique hotel + Frankrijk",     href: LVL4("friends",        "hotel",    "frankrijk", "sub=boutique") },
-            { icon: "👨‍👩‍👧", title: "Gezin + All-inclusive hotel + Kroatië",    href: LVL4("families-kids",  "hotel",    "kroatie",   "sub=all-inclusive") },
-            { icon: "🥂",     title: "Koppels + Adult Only hotel + Italië",       href: LVL4("couples",        "hotel",    "italie",    "sub=adult-only") },
-            { icon: "🎨",     title: "Alleen reizend + Design hotel + Nederland", href: LVL4("solo",           "hotel",    "zeeland",   "sub=design") },
+            { icon: "💆",     title: "Wellness hotels voor koppels",         href: "Niveau3-WieWat.html?who=couples&what=wellness" },
+            { icon: "🛎️",     title: "Boutique hotels in Italië",            href: "Niveau3-WaarWat.html?what=hotel&where=italie&sub=boutique" },
+            { icon: "🏙️",     title: "Hotels in het centrum met vrienden",   href: "Niveau3-WieWat.html?who=friends&what=hotel&sub=city" },
+            { icon: "🍽️",     title: "All-inclusive hotels in Spanje",       href: "Niveau3-WaarWat.html?what=hotel&where=spanje&sub=all-inclusive" },
+            { icon: "🥂",     title: "Adult Only hotels voor koppels",       href: "Niveau3-WieWat.html?who=couples&what=hotel&sub=adult-only" },
+            { icon: "👴",     title: "Hotels in Frankrijk voor senioren",    href: LVL4("seniors", "hotel", "frankrijk") },
         ],
         camping: [
-            { icon: "👨‍👩‍👧", title: "Gezin + Camping + Frankrijk",               href: LVL4("families-kids",   "camping",  "frankrijk") },
-            { icon: "👫",     title: "Vrienden + Camping + Italië",                href: LVL4("friends",         "camping",  "italie") },
-            { icon: "💑",     title: "Koppels + Glamping + Kroatië",               href: LVL4("couples",         "glamping", "kroatie") },
-            { icon: "👶",     title: "Gezin met baby's + Camping + Nederland",     href: LVL4("families-babies", "camping",  "zeeland") },
-            { icon: "🐕",     title: "Met huisdier + Camping + Duitsland",         href: LVL4("pets",            "camping",  "duitsland") },
-            { icon: "👴",     title: "Senioren + Camping + Portugal",              href: LVL4("seniors",         "camping",  "portugal") },
+            { icon: "✨",     title: "Glamping met koppels",                       href: "Niveau3-WieWat.html?who=couples&what=glamping" },
+            { icon: "🍝",     title: "Camping in Italië met kinderen",             href: LVL4("families-kids", "camping", "italie") },
+            { icon: "🐕",     title: "Hondvriendelijke campings in Frankrijk",     href: "Niveau3-WaarWat.html?what=camping&where=frankrijk&sub=honden" },
+            { icon: "🌲",     title: "Camping in de natuur met vrienden",          href: "Niveau3-WieWat.html?who=friends&what=camping&sub=natuur" },
+            { icon: "🏖️",     title: "Camping aan zee voor gezinnen",              href: "Niveau3-WieWat.html?who=families-kids&what=camping&sub=zee" },
+            { icon: "🏊",     title: "Camping met waterpark voor gezinnen",        href: "Niveau3-WieWat.html?who=families-kids&what=camping&sub=waterpark" },
         ],
         "holiday-park": [
-            { icon: "👨‍👩‍👧", title: "Gezin + Vakantiepark + Nederland",          href: LVL4("families-kids",   "holiday-park", "zeeland") },
-            { icon: "👨‍👩‍👧", title: "Gezin + Vakantiepark + Duitsland",          href: LVL4("families-kids",   "holiday-park", "duitsland") },
-            { icon: "👴",     title: "Senioren + Vakantiepark + België",            href: LVL4("seniors",         "holiday-park", "belgie") },
-            { icon: "👶",     title: "Baby's + Vakantiepark + Frankrijk",           href: LVL4("families-babies", "holiday-park", "frankrijk") },
-            { icon: "🧑",     title: "Tieners + Vakantiepark + Nederland",          href: LVL4("families-teens",  "holiday-park", "zeeland") },
-            { icon: "🐕",     title: "Met huisdier + Vakantiepark + België",        href: LVL4("pets",            "holiday-park", "belgie") },
+            { icon: "🏊",     title: "Vakantieparken met zwemparadijs voor gezinnen",  href: "Niveau3-WieWat.html?who=families-kids&what=holiday-park&sub=zwemparadijs" },
+            { icon: "🇳🇱",     title: "Vakantieparken in Nederland met kinderen",       href: LVL4("families-kids", "holiday-park", "zeeland") },
+            { icon: "✨",     title: "Luxe vakantieparken voor koppels",                href: "Niveau3-WieWat.html?who=couples&what=holiday-park&sub=luxe" },
+            { icon: "🎡",     title: "Vakantieparken met attractiepark voor tieners",   href: "Niveau3-WieWat.html?who=families-teens&what=holiday-park&sub=attractiepark" },
+            { icon: "👶",     title: "Kindvriendelijke vakantieparken in Duitsland",    href: "Niveau3-WaarWat.html?what=holiday-park&where=duitsland&sub=kids" },
+            { icon: "🌲",     title: "Vakantieparken in de natuur voor senioren",       href: "Niveau3-WieWat.html?who=seniors&what=holiday-park&sub=natuur" },
         ],
     };
 
