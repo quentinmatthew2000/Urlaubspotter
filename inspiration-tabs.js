@@ -23,6 +23,12 @@
     const NIVWAAR     = (where)     => `Niveau2-Waar.html?where=${where}`;
     const NIVWAAR_ALL               = `Niveau2-Waar.html`;
 
+    // Niveau 4 helper voor 3-dimensionale combinaties (Wie + Wat + Waar)
+    // — gebruikt door de Populair-tab in WAT-context.
+    const LVL4 = (who, what, where, extra) =>
+        `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${where}` +
+        (extra ? `&${extra}` : "");
+
     // Vakantietype-tab is context-aware: op een Niveau 2 — Wat pagina
     // tonen we hier alleen sub-types van het huidige WAT-type, zodat
     // we de gebruiker niet "kies een vakantietype" laten kiezen
@@ -52,6 +58,66 @@
             { icon: "✨",      title: "Luxe vakantieparken",              href: LVL3_WAT_SUB("holiday-park", "luxe") },
             { icon: "👨‍👩‍👧", title: "Kindvriendelijke vakantieparken",    href: LVL3_WAT_SUB("holiday-park", "kids") },
             { icon: "🌲",      title: "Vakantieparken in de natuur",      href: LVL3_WAT_SUB("holiday-park", "natuur") },
+        ],
+    };
+
+    // Bestemmingen-tab in WAT-context: alle items tonen bestemmingen
+    // gecombineerd met het huidige WAT-type. Continenten (Europa/Azië)
+    // hebben geen eigen Niveau 3 pagina en vallen terug op de
+    // Niveau 2 — Waar overzicht; concrete landen routen naar
+    // Niveau3-WaarWat.html?what=&where=. "bij de bergen" mapt op
+    // oostenrijk omdat dat de bergachtige bestemming in de dataset is.
+    function bestemmingenForWat(what, articleLabel) {
+        // articleLabel = bv. "een hotel" / "de camping" / "een vakantiepark"
+        const N3 = (where) => `Niveau3-WaarWat.html?what=${what}&where=${where}`;
+        const N2 = `Niveau2-Waar.html`;
+        return [
+            { icon: "🌍",  title: `Naar ${articleLabel} in Europa`,     href: N2 },
+            { icon: "🌏",  title: `Naar ${articleLabel} in Azië`,       href: N2 },
+            { icon: "🍺",  title: `Naar ${articleLabel} in Duitsland`,  href: N3("duitsland") },
+            { icon: "🇳🇱",  title: `Naar ${articleLabel} in Nederland`,  href: N3("netherlands") },
+            { icon: "⛰️",  title: `Naar ${articleLabel} bij de bergen`, href: N3("oostenrijk") },
+            { icon: "🗼",  title: `Naar ${articleLabel} in Frankrijk`,  href: N3("frankrijk") },
+            { icon: "⛵",  title: `Naar ${articleLabel} in Kroatië`,    href: N3("kroatie") },
+            { icon: "🍝",  title: `Naar ${articleLabel} in Italië`,     href: N3("italie") },
+        ];
+    }
+
+    const BESTEMMINGEN_BY_WAT = {
+        hotel:           bestemmingenForWat("hotel",        "een hotel"),
+        camping:         bestemmingenForWat("camping",      "de camping"),
+        "holiday-park":  bestemmingenForWat("holiday-park", "een vakantiepark"),
+    };
+
+    // Populair-tab in WAT-context: 6 logische 3-dim combinaties (Wie +
+    // Wat + Waar) per WAT-type, ieder routerend naar Niveau 4 met de
+    // drie filters al gezet. Where=zeeland staat als proxy voor
+    // "Nederland" (geen `netherlands` accommodatie-data, maar wel het
+    // populairste NL-vakantiegebied).
+    const POPULAIR_BY_WAT = {
+        hotel: [
+            { icon: "💑",     title: "Koppels + Wellness hotel + Italië",         href: LVL4("couples",        "wellness", "italie") },
+            { icon: "👴",     title: "Senioren + Hotel + Spanje",                 href: LVL4("seniors",        "hotel",    "spanje") },
+            { icon: "👫",     title: "Vrienden + Boutique hotel + Frankrijk",     href: LVL4("friends",        "hotel",    "frankrijk", "sub=boutique") },
+            { icon: "👨‍👩‍👧", title: "Gezin + All-inclusive hotel + Kroatië",    href: LVL4("families-kids",  "hotel",    "kroatie",   "sub=all-inclusive") },
+            { icon: "🥂",     title: "Koppels + Adult Only hotel + Italië",       href: LVL4("couples",        "hotel",    "italie",    "sub=adult-only") },
+            { icon: "🎨",     title: "Alleen reizend + Design hotel + Nederland", href: LVL4("solo",           "hotel",    "zeeland",   "sub=design") },
+        ],
+        camping: [
+            { icon: "👨‍👩‍👧", title: "Gezin + Camping + Frankrijk",               href: LVL4("families-kids",   "camping",  "frankrijk") },
+            { icon: "👫",     title: "Vrienden + Camping + Italië",                href: LVL4("friends",         "camping",  "italie") },
+            { icon: "💑",     title: "Koppels + Glamping + Kroatië",               href: LVL4("couples",         "glamping", "kroatie") },
+            { icon: "👶",     title: "Gezin met baby's + Camping + Nederland",     href: LVL4("families-babies", "camping",  "zeeland") },
+            { icon: "🐕",     title: "Met huisdier + Camping + Duitsland",         href: LVL4("pets",            "camping",  "duitsland") },
+            { icon: "👴",     title: "Senioren + Camping + Portugal",              href: LVL4("seniors",         "camping",  "portugal") },
+        ],
+        "holiday-park": [
+            { icon: "👨‍👩‍👧", title: "Gezin + Vakantiepark + Nederland",          href: LVL4("families-kids",   "holiday-park", "zeeland") },
+            { icon: "👨‍👩‍👧", title: "Gezin + Vakantiepark + Duitsland",          href: LVL4("families-kids",   "holiday-park", "duitsland") },
+            { icon: "👴",     title: "Senioren + Vakantiepark + België",            href: LVL4("seniors",         "holiday-park", "belgie") },
+            { icon: "👶",     title: "Baby's + Vakantiepark + Frankrijk",           href: LVL4("families-babies", "holiday-park", "frankrijk") },
+            { icon: "🧑",     title: "Tieners + Vakantiepark + Nederland",          href: LVL4("families-teens",  "holiday-park", "zeeland") },
+            { icon: "🐕",     title: "Met huisdier + Vakantiepark + België",        href: LVL4("pets",            "holiday-park", "belgie") },
         ],
     };
 
@@ -148,16 +214,35 @@
             `).join("");
         }
 
-        function gridHTML() {
+        function itemsForCurrentTab() {
             const tab = TABS.find(t => t.id === activeTab) || TABS[0];
-            // In WAT-context vervangen we de Vakantietype-items door
-            // de refinement-set voor het huidige WAT-type. Andere tabs
-            // blijven hun standaard-items tonen.
-            const items = (activeTab === "vakantietype" && contextWhat)
-                ? WHAT_REFINEMENTS[contextWhat]
-                : tab.items;
-            // Sublabels (Populaire combinatie / Reisgezelschap / etc.)
-            // worden niet meer gerenderd — pills tonen alleen de titel.
+            if (!contextWhat) return tab.items;
+
+            // Op een Niveau 2 — Wat pagina swappen we drie van de vier
+            // tabs naar context-bewuste lijsten:
+            //   • populair      → Wie+Wat+Waar combinaties uit POPULAIR_BY_WAT
+            //   • vakantietype  → sub-types uit WHAT_REFINEMENTS
+            //   • bestemmingen  → "<artikel> <wat> in <land>" uit BESTEMMINGEN_BY_WAT
+            // De reisgezelschap-tab houdt zijn labels maar de href wordt
+            // herschreven: NIVWIE(who) → LVL3_WIEWAT(who, contextWhat),
+            // zodat klikken op "Met jonge kinderen op vakantie" vanaf
+            // Kamperen leidt naar "Camping voor gezinnen met jonge
+            // kinderen" (Niveau 3 Wie+Wat).
+            if (activeTab === "populair"     && POPULAIR_BY_WAT[contextWhat])     return POPULAIR_BY_WAT[contextWhat];
+            if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat])    return WHAT_REFINEMENTS[contextWhat];
+            if (activeTab === "bestemmingen" && BESTEMMINGEN_BY_WAT[contextWhat]) return BESTEMMINGEN_BY_WAT[contextWhat];
+            if (activeTab === "reisgezelschap") {
+                return tab.items.map(it => {
+                    const m = it.href.match(/who=([^&]+)/);
+                    return m ? { ...it, href: LVL3_WIEWAT(m[1], contextWhat) } : it;
+                });
+            }
+            return tab.items;
+        }
+
+        function gridHTML() {
+            const items = itemsForCurrentTab();
+            // Sublabels worden niet gerenderd — pills tonen alleen titel + icoon.
             return items.map(it => `
                 <a class="it-item" href="${it.href}">
                     <span class="it-item-icon" aria-hidden="true">${it.icon || ""}</span>

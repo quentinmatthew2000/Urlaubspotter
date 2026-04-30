@@ -24,10 +24,6 @@
     <div class="chips" id="active-filters" style="margin-top:16px"></div>
 </section>
 
-<!-- Inspiratie voor jou — context-aware refinements per WAT-type
-     (vakantietype-tab toont sub-types i.p.v. generieke WAT-opties). -->
-<div id="inspiration-tabs"></div>
-
 <!-- WAT CAROUSEL — alleen zichtbaar als GEEN vakantietype gekozen is -->
 <div class="section-bg-alt-wrap" id="what-section">
 <section class="section">
@@ -59,6 +55,13 @@
     </div>
     <div class="listing-grid" id="matches-listing" data-rail="280"></div>
 </section>
+
+<!-- Inspiratie voor jou — context-aware refinements per WAT-type.
+     Geplaatst onder het "8 geschikte accommodaties" blok zodat de
+     gebruiker eerst een match-overzicht ziet en daarna kan
+     verdiepen via Populair / Reisgezelschap / Vakantietype /
+     Bestemmingen. -->
+<div id="inspiration-tabs"></div>
 
 <!-- WIE (alleen bij preset) -->
 <section class="section preset-only" style="display:none">
@@ -171,7 +174,7 @@
 
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=15"></script>
-<script src="inspiration-tabs.js?v=5"></script>
+<script src="inspiration-tabs.js?v=6"></script>
 <script>
     renderHeader('wat');
 
