@@ -174,33 +174,84 @@
 
 <script src="site-data.js?v=5"></script>
 <script src="site.js?v=16"></script>
-<script src="inspiration-tabs.js?v=8"></script>
+<script src="inspiration-tabs.js?v=9"></script>
 <script>
     renderHeader('wat');
 
     const params = new URLSearchParams(location.search);
     const whatPre = params.get('what') || '';
+    const subPre  = params.get('sub') || '';
     const whatLabel = whatPre ? DATA.label('what', whatPre) : '';
 
+    // Sub-type labels per WAT — gebruikt door inspiration-tabs Vakantietype
+    // refinement links (?what=hotel&sub=boutique etc.). Voorkomt dat al die
+    // refinement-URLs op één generiek Niveau 2 — Wat blok landen.
+    const SUB_LABELS = {
+        hotel: {
+            'boutique':      'Boutique Hotels',
+            'adult-only':    'Adult Only Hotels',
+            'all-inclusive': 'All-inclusive Hotels',
+            'design':        'Design Hotels',
+            'city':          'Hotels midden in het centrum',
+            'resort':        'Resorts',
+        },
+        camping: {
+            'waterpark':     'Camping met Aquapark',
+            'natuur':        'Camping in de natuur',
+            'kids':          'Kindercampings',
+            'honden':        'Hondvriendelijke campings',
+            'zee':           'Campings aan zee',
+        },
+        'holiday-park': {
+            'zwemparadijs':  'Vakantieparken met zwemparadijs',
+            'attractiepark': 'Vakantieparken met attractiepark',
+            'luxe':          'Luxe vakantieparken',
+            'kids':          'Kindvriendelijke vakantieparken',
+            'natuur':        'Vakantieparken in de natuur',
+            'themaparken':   'Themaparken',
+        },
+    };
+    const subLabel = (whatPre && subPre && SUB_LABELS[whatPre] && SUB_LABELS[whatPre][subPre])
+        ? SUB_LABELS[whatPre][subPre]
+        : '';
+
+    // Bij sub-context (refinement) tonen we de sub als laagste breadcrumb
+    // en als pagina-titel; de pagina blijft Niveau 2 (zelfde layout) maar
+    // geeft duidelijk de subcategorie aan.
     document.getElementById('bc').innerHTML = whatPre
-        ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
-           `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
-           `<span class="current">${whatLabel}</span>`].join('')
+        ? (subLabel
+            ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+               `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
+               `<a href="Niveau2-Wat.html?what=${whatPre}">${whatLabel}</a>`, `<span class="sep">›</span>`,
+               `<span class="current">${subLabel}</span>`].join('')
+            : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+               `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
+               `<span class="current">${whatLabel}</span>`].join(''))
         : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<span class="current">Wat voor vakantie?</span>`].join('');
 
     if (whatPre) {
-        document.getElementById('page-title').textContent = `${whatLabel}`;
-        document.getElementById('page-lead').textContent = `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
-        document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${whatLabel}`;
+        const headLabel = subLabel || whatLabel;
+        document.getElementById('page-title').textContent = headLabel;
+        document.getElementById('page-lead').textContent = subLabel
+            ? `Bekijk de selectie ${subLabel.toLowerCase()}. Verfijn met reisgezelschap of bestemming.`
+            : `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
+        document.getElementById('eyebrow').textContent = subLabel
+            ? `Niveau 2 — Wat › ${whatLabel} › ${subLabel}`
+            : `Niveau 2 — Wat › ${whatLabel}`;
         // Verberg de algemene "Alle vakantietypes" carousel als het type al gekozen is
         document.getElementById('what-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
         document.getElementById('active-filters').innerHTML = [
             `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${whatLabel}</span>`,
-            `<a class="chip" href="Niveau2-Wat.html">✕ Andere keuze</a>`
-        ].join('');
+            subLabel
+                ? `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel}</span>`
+                : '',
+            // Bij sub-context naar de bovenliggende WAT pagina; anders naar
+            // het algemene Niveau 2 — Wat overzicht.
+            `<a class="chip" href="${subLabel ? `Niveau2-Wat.html?what=${whatPre}` : 'Niveau2-Wat.html'}">✕ Andere keuze</a>`
+        ].filter(Boolean).join('');
 
         // Geschikte accommodaties (filter op what)
         const matches = DATA.filter({ what: whatPre });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vakantieparken · Urlaubspotter</title>
+    <title>Vakantie in Azië · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
     <link rel="stylesheet" href="search-navigation.css?v=7">
 </head>
@@ -35,16 +35,17 @@
 <script src="landing.js?v=3"></script>
 <script src="search-navigation.js?v=7"></script>
 <script>
-    renderHeader('wat');
+    renderHeader('waar');
     renderFooter();
     renderSearchNavigation('hero-searchbar');
     renderLandingPage({
-        kind: 'type',
-        value: 'holiday-park',
-        eyebrow: 'Niveau 1 — Vakantieparken',
-        title: 'Vakantieparken',
-        lead: 'Met attractiepark, zwemparadijs of themaparken — vakantieparken voor het hele gezin.',
-        breadcrumb: 'Vakantieparken'
+        kind: 'continent',
+        value: 'azie',
+        countries: [],   // nog geen Aziatische accommodaties in de dataset
+        eyebrow: 'Niveau 1 — Azië',
+        title: 'Vakantie in Azië',
+        lead: 'Van Bali tot Bangkok — Aziatische bestemmingen volgen binnenkort.',
+        breadcrumb: 'Azië'
     });
     document.querySelectorAll('[data-rail]').forEach(el => {
         const min = parseInt(el.dataset.rail, 10) || 300;

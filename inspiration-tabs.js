@@ -17,7 +17,11 @@
     // Wie+Wat combinaties (Tab "Populair") landen op de Niveau 3
     // pagina (Wie+Wat); single-dimensie items op Niveau 2.
     const LVL3_WIEWAT = (who, what) => `Niveau3-WieWat.html?who=${who}&what=${what}`;
-    const LVL3_WAT_SUB = (what, sub) => `Niveau3-WieWat.html?what=${what}&sub=${sub}`;
+    // WAT refinements (boutique / adult-only / kindercampings / etc.)
+    // blijven binnen Niveau 2 — het zijn sub-categorieën van het
+    // huidige WAT-type, niet WIE-combinaties. De pagina herkent `sub`
+    // en past titel/eyebrow aan (zie Niveau2-Wat.html).
+    const NIVWAT_SUB  = (what, sub) => `Niveau2-Wat.html?what=${what}&sub=${sub}`;
     const NIVWIE      = (who)       => `Niveau2-Wie.html?who=${who}`;
     const NIVWAT      = (what)      => `Niveau2-Wat.html?what=${what}`;
     const NIVWAAR     = (where)     => `Niveau2-Waar.html?where=${where}`;
@@ -30,50 +34,51 @@
         (extra ? `&${extra}` : "");
 
     // Vakantietype-tab is context-aware: op een Niveau 2 — Wat pagina
-    // tonen we hier alleen sub-types van het huidige WAT-type, zodat
-    // we de gebruiker niet "kies een vakantietype" laten kiezen
-    // terwijl die al gekozen is. Items linken door naar Niveau 3 met
-    // ?what=&sub= zodat het URL-intent voor SEO behouden blijft.
+    // tonen we hier alleen sub-types van het huidige WAT-type. Iedere
+    // refinement linkt naar zijn EIGEN Niveau 2 pagina met ?sub=
+    // (Niveau2-Wat.html herkent dat en past titel/eyebrow aan).
+    // Wellness en Glamping hebben hun eigen what-key in SITE_DATA en
+    // gebruiken daarom de directe `?what=...` route.
     const WHAT_REFINEMENTS = {
         hotel: [
-            { icon: "🛎️",  title: "Boutique hotels",              href: LVL3_WAT_SUB("hotel", "boutique") },
-            { icon: "🥂",  title: "Adult Only hotels",            href: LVL3_WAT_SUB("hotel", "adult-only") },
+            { icon: "🛎️",  title: "Boutique hotels",              href: NIVWAT_SUB("hotel", "boutique") },
+            { icon: "🥂",  title: "Adult Only hotels",            href: NIVWAT_SUB("hotel", "adult-only") },
             { icon: "💆",  title: "Wellness hotels",              href: NIVWAT("wellness") },
-            { icon: "🍽️",  title: "All-inclusive hotels",         href: LVL3_WAT_SUB("hotel", "all-inclusive") },
-            { icon: "🎨",  title: "Design hotels",                href: LVL3_WAT_SUB("hotel", "design") },
-            { icon: "🏙️",  title: "Hotels midden in het centrum", href: LVL3_WAT_SUB("hotel", "city") },
-            { icon: "🌴",  title: "Resorts",                      href: LVL3_WAT_SUB("hotel", "resort") },
+            { icon: "🍽️",  title: "All-inclusive hotels",         href: NIVWAT_SUB("hotel", "all-inclusive") },
+            { icon: "🎨",  title: "Design hotels",                href: NIVWAT_SUB("hotel", "design") },
+            { icon: "🏙️",  title: "Hotels midden in het centrum", href: NIVWAT_SUB("hotel", "city") },
+            { icon: "🌴",  title: "Resorts",                      href: NIVWAT_SUB("hotel", "resort") },
         ],
         camping: [
             { icon: "✨",  title: "Glamping",                     href: NIVWAT("glamping") },
-            { icon: "🏊",  title: "Camping met waterpark",        href: LVL3_WAT_SUB("camping", "waterpark") },
-            { icon: "🌲",  title: "Camping in de natuur",         href: LVL3_WAT_SUB("camping", "natuur") },
-            { icon: "🎠",  title: "Kindercampings",               href: LVL3_WAT_SUB("camping", "kids") },
-            { icon: "🐕",  title: "Hondvriendelijke campings",    href: LVL3_WAT_SUB("camping", "honden") },
-            { icon: "🏖️", title: "Campings aan zee",              href: LVL3_WAT_SUB("camping", "zee") },
+            { icon: "🏊",  title: "Camping met waterpark",        href: NIVWAT_SUB("camping", "waterpark") },
+            { icon: "🌲",  title: "Camping in de natuur",         href: NIVWAT_SUB("camping", "natuur") },
+            { icon: "🎠",  title: "Kindercampings",               href: NIVWAT_SUB("camping", "kids") },
+            { icon: "🐕",  title: "Hondvriendelijke campings",    href: NIVWAT_SUB("camping", "honden") },
+            { icon: "🏖️", title: "Campings aan zee",              href: NIVWAT_SUB("camping", "zee") },
         ],
         "holiday-park": [
-            { icon: "🏊",      title: "Vakantieparken met zwemparadijs",  href: LVL3_WAT_SUB("holiday-park", "zwemparadijs") },
-            { icon: "🎡",      title: "Vakantieparken met attractiepark", href: LVL3_WAT_SUB("holiday-park", "attractiepark") },
-            { icon: "✨",      title: "Luxe vakantieparken",              href: LVL3_WAT_SUB("holiday-park", "luxe") },
-            { icon: "👨‍👩‍👧", title: "Kindvriendelijke vakantieparken",    href: LVL3_WAT_SUB("holiday-park", "kids") },
-            { icon: "🌲",      title: "Vakantieparken in de natuur",      href: LVL3_WAT_SUB("holiday-park", "natuur") },
+            { icon: "🏊",      title: "Vakantieparken met zwemparadijs",  href: NIVWAT_SUB("holiday-park", "zwemparadijs") },
+            { icon: "🎡",      title: "Vakantieparken met attractiepark", href: NIVWAT_SUB("holiday-park", "attractiepark") },
+            { icon: "✨",      title: "Luxe vakantieparken",              href: NIVWAT_SUB("holiday-park", "luxe") },
+            { icon: "👨‍👩‍👧", title: "Kindvriendelijke vakantieparken",    href: NIVWAT_SUB("holiday-park", "kids") },
+            { icon: "🌲",      title: "Vakantieparken in de natuur",      href: NIVWAT_SUB("holiday-park", "natuur") },
         ],
     };
 
-    // Bestemmingen-tab in WAT-context: alle items tonen bestemmingen
-    // gecombineerd met het huidige WAT-type. Continenten (Europa/Azië)
-    // hebben geen eigen Niveau 3 pagina en vallen terug op de
-    // Niveau 2 — Waar overzicht; concrete landen routen naar
-    // Niveau3-WaarWat.html?what=&where=. "bij de bergen" mapt op
-    // oostenrijk omdat dat de bergachtige bestemming in de dataset is.
+    // Bestemmingen-tab in WAT-context: iedere item heeft zijn EIGEN
+    // landing — geen generieke "Waar wil je heen?" fallback.
+    //   • Concrete landen → Niveau3-WaarWat.html?what=&where=
+    //   • "bij de bergen" → Niveau3-WaarWat met where=oostenrijk
+    //     (de bergachtige bestemming in de dataset)
+    //   • Continenten → eigen continent-landing (europa.html / azie.html)
+    //     met ?what= zodat de pagina kan filteren op het huidige type.
     function bestemmingenForWat(what, articleLabel) {
-        // articleLabel = bv. "een hotel" / "de camping" / "een vakantiepark"
         const N3 = (where) => `Niveau3-WaarWat.html?what=${what}&where=${where}`;
-        const N2 = `Niveau2-Waar.html`;
+        const CONT = (slug) => `${slug}.html?what=${what}`;
         return [
-            { icon: "🌍",  title: `Naar ${articleLabel} in Europa`,     href: N2 },
-            { icon: "🌏",  title: `Naar ${articleLabel} in Azië`,       href: N2 },
+            { icon: "🌍",  title: `Naar ${articleLabel} in Europa`,     href: CONT("europa") },
+            { icon: "🌏",  title: `Naar ${articleLabel} in Azië`,       href: CONT("azie") },
             { icon: "🍺",  title: `Naar ${articleLabel} in Duitsland`,  href: N3("duitsland") },
             { icon: "🇳🇱",  title: `Naar ${articleLabel} in Nederland`,  href: N3("netherlands") },
             { icon: "⛰️",  title: `Naar ${articleLabel} bij de bergen`, href: N3("oostenrijk") },

@@ -61,6 +61,21 @@
             } else {
                 list = list.filter(a => a.where === config.value);
             }
+        } else if (config.kind === 'continent') {
+            // Filter op set van landen die bij dit continent horen.
+            // config.countries = ['belgie','frankrijk',...]; lege set is OK
+            // (continent zonder data → empty state).
+            const set = new Set(config.countries || []);
+            list = list.filter(a => set.has(a.where));
+        }
+
+        // Optionele extra what-carryover uit de URL (?what=hotel etc.) zodat
+        // "Naar de camping in Europa" filtert op continent Europa én wat=camping.
+        const qpWhat = (typeof URLSearchParams === 'function')
+            ? new URLSearchParams(location.search).get('what')
+            : null;
+        if (qpWhat && config.kind !== 'type') {
+            list = list.filter(a => a.what.includes(qpWhat));
         }
 
         if (countEl) countEl.textContent = list.length;
