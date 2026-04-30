@@ -288,12 +288,18 @@ body.sn-no-scroll .site-header {
     gap: 12px;
 }
 
-/* Card — basis voor elke sectie (collapsed of expanded) */
+/* Card — basis voor elke sectie (collapsed of expanded). flex-shrink:0
+   is essentieel: zonder dit krimpen de cards in de flex-column body en
+   wordt de chip-grid afgeknipt zonder dat de body daadwerkelijk
+   overflowt (en dus zonder dat de scroll aanslaat). overflow:visible
+   zodat lange chip-grids gewoon naar buiten lopen en de body's
+   overflow-y:auto het scrollen oppakt. */
 .sn-card {
     background: #fff;
     border-radius: var(--sn-radius-card);
     box-shadow: var(--sn-shadow-card);
-    overflow: hidden;
+    overflow: visible;
+    flex: 0 0 auto;
 }
 .sn-card.collapsed {
     display: grid;

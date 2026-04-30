@@ -512,6 +512,11 @@
                         state.whatSelection = [];
                     }
                     renderModalBody();
+                    // Reset scroll naar top zodat de gebruiker bij een tab-
+                    // wissel direct de eerste sectie ziet i.p.v. mid-scroll
+                    // te blijven hangen op de vorige tab.
+                    const body = modalEl.querySelector("[data-sn-body]");
+                    if (body) body.scrollTo({ top: 0, behavior: "smooth" });
                     return;
                 }
 
