@@ -18,10 +18,14 @@
     // ---- CATEGORIEEN ---------------------------------------------------
     // De bar-tabs op de homepage navigeren direct naar de Level 1 landing
     // van die categorie. In de modal wisselen ze de "Wat?"-opties.
+    // Bar-tabs landen rechtstreeks op de Niveau 2 — Wat pagina met de
+    // bijbehorende `what`-filter al actief. Daar staat de WIE-keuze
+    // open en is WAAR beschikbaar — gebruikers landen dus direct in
+    // de juiste gefilterde context.
     const CATEGORIES = [
-        { value: "hotels",         label: "Resorts & Hotels", emoji: "🏨", href: "hotels.html" },
-        { value: "campings",       label: "Campings",         emoji: "🏕️", href: "campings.html" },
-        { value: "vakantieparken", label: "Vakantieparken",   emoji: "🏡", href: "vakantieparken.html" },
+        { value: "hotels",         label: "Resorts & Hotels", emoji: "🏨", href: "Niveau2-Wat.html?what=hotel" },
+        { value: "campings",       label: "Campings",         emoji: "🏕️", href: "Niveau2-Wat.html?what=camping" },
+        { value: "vakantieparken", label: "Vakantieparken",   emoji: "🏡", href: "Niveau2-Wat.html?what=holiday-park" },
     ];
 
     // Categorie-tab → primaire `type`-waarde voor het filter op

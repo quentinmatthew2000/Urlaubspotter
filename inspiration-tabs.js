@@ -13,14 +13,14 @@
 (function () {
     "use strict";
 
-    // Routing-helpers — alle URL's hieronder bestaan al in de site
-    // (zie alle-vakanties.html, Niveau2-Wie/Wat/Waar.html en de nieuwe
-    // Level 1 landings hotels/campings/vakantieparken).
-    const COMBO   = (who, what) => `alle-vakanties.html?who=${who}&what=${what}`;
-    const NIVWIE  = (who)       => `Niveau2-Wie.html?who=${who}`;
-    const NIVWAT  = (what)      => `Niveau2-Wat.html?what=${what}`;
-    const NIVWAAR = (where)     => `Niveau2-Waar.html?where=${where}`;
-    const NIVWAAR_ALL           = `Niveau2-Waar.html`;
+    // Routing-helpers — alle URL's hieronder bestaan al in de site.
+    // Wie+Wat combinaties (Tab "Populair") landen op de Niveau 3
+    // pagina (Wie+Wat); single-dimensie items op Niveau 2.
+    const LVL3_WIEWAT = (who, what) => `Niveau3-WieWat.html?who=${who}&what=${what}`;
+    const NIVWIE      = (who)       => `Niveau2-Wie.html?who=${who}`;
+    const NIVWAT      = (what)      => `Niveau2-Wat.html?what=${what}`;
+    const NIVWAAR     = (where)     => `Niveau2-Waar.html?where=${where}`;
+    const NIVWAAR_ALL               = `Niveau2-Waar.html`;
 
     // Iedere item krijgt een emoji-icon links zodat de pills visueel
     // aansluiten op het bestaande "Populaire combinaties" blok.
@@ -29,14 +29,14 @@
             id: "populair",
             label: "Populair",
             items: [
-                { icon: "👨‍👩‍👧", title: "Gezin + Camping",                    sub: "Populaire combinatie", href: COMBO("families-kids", "camping") },
-                { icon: "👫",     title: "Vrienden + Weekendje weg",            sub: "Populaire combinatie", href: COMBO("friends",        "city-trip") },
-                { icon: "💑",     title: "Koppels + Wellness",                  sub: "Populaire combinatie", href: COMBO("couples",        "wellness") },
-                { icon: "👴",     title: "Senioren + Hotel",                    sub: "Populaire combinatie", href: COMBO("seniors",        "hotel") },
-                { icon: "🐕",     title: "Huisdier + Camping",                  sub: "Populaire combinatie", href: COMBO("pets",           "camping") },
-                { icon: "🌊",     title: "Gezinnen met tieners + Aquapark",     sub: "Populaire combinatie", href: COMBO("families-teens", "camping") },
-                { icon: "⛷️",     title: "Familie + Wintersport",               sub: "Populaire combinatie", href: COMBO("families-kids",  "winter") },
-                { icon: "🧗",     title: "Alleen reizend + Actief / Avontuur",  sub: "Populaire combinatie", href: COMBO("solo",           "adventure-trip") },
+                { icon: "👨‍👩‍👧", title: "Gezin + Camping",                    sub: "Populaire combinatie", href: LVL3_WIEWAT("families-kids", "camping") },
+                { icon: "👫",     title: "Vrienden + Weekendje weg",            sub: "Populaire combinatie", href: LVL3_WIEWAT("friends",        "city-trip") },
+                { icon: "💑",     title: "Koppels + Wellness",                  sub: "Populaire combinatie", href: LVL3_WIEWAT("couples",        "wellness") },
+                { icon: "👴",     title: "Senioren + Hotel",                    sub: "Populaire combinatie", href: LVL3_WIEWAT("seniors",        "hotel") },
+                { icon: "🐕",     title: "Huisdier + Camping",                  sub: "Populaire combinatie", href: LVL3_WIEWAT("pets",           "camping") },
+                { icon: "🌊",     title: "Gezinnen met tieners + Aquapark",     sub: "Populaire combinatie", href: LVL3_WIEWAT("families-teens", "camping") },
+                { icon: "⛷️",     title: "Familie + Wintersport",               sub: "Populaire combinatie", href: LVL3_WIEWAT("families-kids",  "winter") },
+                { icon: "🧗",     title: "Alleen reizend + Actief / Avontuur",  sub: "Populaire combinatie", href: LVL3_WIEWAT("solo",           "adventure-trip") },
             ],
         },
         {

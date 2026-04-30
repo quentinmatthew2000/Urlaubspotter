@@ -29,6 +29,15 @@
     align-items: center;
     gap: 12px;
 }
+@media (min-width: 720px) {
+    /* Op tablet/desktop schalen we de hele zoek-component zodat hij
+       visueel als primair interactie-blok aanvoelt en aansluit bij de
+       bredere content-secties (max-width 1280px). */
+    .sn-bar-wrap { padding: 28px 24px 14px; gap: 18px; }
+}
+@media (min-width: 1024px) {
+    .sn-bar-wrap { padding: 36px 24px 18px; gap: 22px; }
+}
 
 .sn-bar {
     width: 100%;
@@ -46,6 +55,15 @@
 }
 .sn-bar:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); }
 .sn-bar:active { transform: scale(0.995); }
+@media (min-width: 720px) {
+    .sn-bar       { max-width: 760px; padding: 18px 28px; gap: 14px; }
+    .sn-bar-icon  { width: 20px; height: 20px; }
+    .sn-bar-text  { font-size: 1.05rem; }
+}
+@media (min-width: 1024px) {
+    .sn-bar       { max-width: 880px; padding: 22px 32px; }
+    .sn-bar-text  { font-size: 1.1rem; }
+}
 
 .sn-bar-icon {
     width: 18px;
@@ -72,6 +90,13 @@
 }
 @media (min-width: 520px) {
     .sn-tabs { gap: 28px; }
+}
+@media (min-width: 720px) {
+    /* Tabs schalen mee met de bredere bar; meer ruimte tussen tabs. */
+    .sn-tabs { gap: 40px; max-width: 760px; }
+}
+@media (min-width: 1024px) {
+    .sn-tabs { gap: 56px; max-width: 880px; }
 }
 .sn-tab {
     background: none;
@@ -115,6 +140,11 @@
     .sn-tab-label { font-size: 0.82rem; }
     .sn-tab-emoji { font-size: 1.6rem; }
 }
+@media (min-width: 720px) {
+    .sn-tab       { padding: 8px 8px 12px; }
+    .sn-tab-label { font-size: 0.95rem; }
+    .sn-tab-emoji { font-size: 1.85rem; }
+}
 .sn-tab-badge {
     position: absolute;
     top: -2px;
@@ -132,7 +162,13 @@
    tablet+) ============ */
 .sn-modal {
     position: fixed;
-    inset: 0;
+    /* Modal start ONDER de site-header zodat logo / menu / favorieten /
+       zoek-icoon altijd bereikbaar blijven tijdens de search-flow.
+       --header-h komt uit site.css (default 64px). */
+    top: var(--header-h, 64px);
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 9999;
     display: none;
     /* Stevigere dim op tablet/desktop zodat de homepage achter de modal
@@ -142,6 +178,19 @@
     align-items: stretch;          /* mobile default: panel vult scherm */
     justify-content: center;
     overflow: hidden;
+}
+
+/* Tijdens openstaande modal: header dwingen op fixed + boven de modal
+   z-index zodat de gebruiker logo/menu/icoon-knoppen kan blijven
+   gebruiken. position:fixed werkt ondanks `body { position: fixed }`
+   uit de scroll-lock truc, omdat fixed-elementen het viewport als
+   containing-block behouden. */
+body.sn-no-scroll .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
 }
 .sn-modal.open { display: flex; }
 
