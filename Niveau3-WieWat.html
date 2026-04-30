@@ -147,18 +147,30 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=5"></script>
+<script src="site-data.js?v=6"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
     const what = params.get('what') || '';
+    const sub = params.get('sub') || '';
 
     renderHeader('');
 
     // Breadcrumb + title
     const whoLabel = who ? DATA.label('who', who) : null;
     const whatLabel = what ? DATA.label('what', what) : null;
+    // Sub-type label (bv. "Wellness Hotels", "Glamping") wordt
+    // toegevoegd aan titels en chips zodat de WAT-context behouden
+    // blijft i.p.v. te degenereren tot het generieke WAT.
+    const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
+    // Display-WAT: bij sub overschrijven we het label zodat de
+    // pagina "Wellness Hotels voor koppels" toont i.p.v.
+    // "Hotel voor koppels".
+    const displayWatLabel = subLabel || whatLabel;
+    const crumbCurrent = subLabel
+        ? `${whoLabel || 'Iedereen'} · ${whatLabel} · ${subLabel}`
+        : `${whoLabel || 'Iedereen'} · ${whatLabel || 'Alle types'}`;
     const crumb = [
         `<a href="Homepagina.html">Home</a>`,
         `<span class="sep">›</span>`,
@@ -166,34 +178,40 @@
         `<span class="sep">›</span>`,
         `<a href="Niveau2-Wat.html">Wat</a>`,
         `<span class="sep">›</span>`,
-        `<span class="current">${whoLabel || 'Iedereen'} · ${whatLabel || 'Alle types'}</span>`
+        `<span class="current">${crumbCurrent}</span>`
     ];
     document.getElementById('bc').innerHTML = crumb.join('');
 
-    if (whoLabel && whatLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} voor ${whoLabel}`;
-        document.getElementById('page-lead').textContent = `Je zocht op ${whoLabel.toLowerCase()} + ${whatLabel.toLowerCase()}. Kies nu een bestemming of bekijk het aanbod.`;
+    if (whoLabel && displayWatLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel}`;
+        document.getElementById('page-lead').textContent = `Je zocht op ${whoLabel.toLowerCase()} + ${displayWatLabel.toLowerCase()}. Kies nu een bestemming of bekijk het aanbod.`;
     } else if (whoLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel || 'Vakantie'} voor ${whoLabel}`;
-    } else if (whatLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} voor elk gezelschap`;
+        document.getElementById('page-title').textContent = `${displayWatLabel || 'Vakantie'} voor ${whoLabel}`;
+    } else if (displayWatLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} voor elk gezelschap`;
     }
 
-    // Active filters
+    // Active filters — toont sub als aparte chip zodat de gebruiker
+    // ziet dat de WAT-parent EN het sub-type beide actief zijn.
     const chips = [];
     if (whoLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel} ✕</span>`);
     if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel} ✕</span>`);
+    if (subLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel} ✕</span>`);
     chips.push(`<a class="chip" href="Niveau2-Wie.html">+ Verander gezelschap</a>`);
     chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
-    // Derde dimensie: WAAR — op LAND-niveau ipv provincies
+    // Derde dimensie: WAAR — op LAND-niveau ipv provincies. Sub-type
+    // gaat als & sub= mee zodat de gebruiker bijvoorbeeld vanaf
+    // "Wellness Hotels voor koppels" doorklikt naar "Wellness Hotels
+    // voor koppels in Italië" zonder z'n sub-context te verliezen.
+    const subParam = sub ? `&sub=${sub}` : '';
     renderCategoryTiles('where-tiles', DATA.countries(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}`,
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}${subParam}`,
         gradient: SITE_DATA.gradients.where
     });
     renderCategoryTiles('regions-tiles', DATA.whereNL(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}`,
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}${subParam}`,
         gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
     });
 

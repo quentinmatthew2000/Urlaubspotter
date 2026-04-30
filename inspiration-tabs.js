@@ -43,14 +43,18 @@
         hotel: [
             { icon: "🛎️",  title: "Boutique hotels",              href: NIVWAT_SUB("hotel", "boutique") },
             { icon: "🥂",  title: "Adult Only hotels",            href: NIVWAT_SUB("hotel", "adult-only") },
-            { icon: "💆",  title: "Wellness hotels",              href: NIVWAT("wellness") },
+            // Wellness/Glamping zijn ook eigen what-keys in SITE_DATA.
+            // We linken bewust met what=hotel&sub=wellness zodat de Hotel-
+            // parent context behouden blijft (i.p.v. ?what=wellness wat
+            // de WAT generaliseert naar "Wellness voor koppels").
+            { icon: "💆",  title: "Wellness hotels",              href: NIVWAT_SUB("hotel", "wellness") },
             { icon: "🍽️",  title: "All-inclusive hotels",         href: NIVWAT_SUB("hotel", "all-inclusive") },
             { icon: "🎨",  title: "Design hotels",                href: NIVWAT_SUB("hotel", "design") },
             { icon: "🏙️",  title: "Hotels midden in het centrum", href: NIVWAT_SUB("hotel", "city") },
             { icon: "🌴",  title: "Resorts",                      href: NIVWAT_SUB("hotel", "resort") },
         ],
         camping: [
-            { icon: "✨",  title: "Glamping",                     href: NIVWAT("glamping") },
+            { icon: "✨",  title: "Glamping",                     href: NIVWAT_SUB("camping", "glamping") },
             { icon: "🏊",  title: "Camping met waterpark",        href: NIVWAT_SUB("camping", "waterpark") },
             { icon: "🌲",  title: "Camping in de natuur",         href: NIVWAT_SUB("camping", "natuur") },
             { icon: "🎠",  title: "Kindercampings",               href: NIVWAT_SUB("camping", "kids") },
@@ -131,7 +135,10 @@
     //   WIE + WAAR (page WAT)  → Niveau4-WieWatWaar.html?who=&what=&where=
     const POPULAIR_BY_WAT = {
         hotel: [
-            { icon: "💆",     title: "Wellness hotels voor koppels",          href: "Niveau3-WieWat.html?who=couples&what=wellness" },
+            // WAT-parent (hotel) blijft staan; wellness komt als sub mee
+            // zodat de pagina "Wellness hotels voor koppels" rendert
+            // i.p.v. te degenereren tot "Wellness voor koppels".
+            { icon: "💆",     title: "Wellness hotels voor koppels",          href: "Niveau3-WieWat.html?who=couples&what=hotel&sub=wellness" },
             { icon: "🍝",     title: "Hotel in Italië met kinderen",          href: LVL4("families-kids", "hotel", "italie") },
             { icon: "🛎️",     title: "Boutique hotels in Frankrijk",          href: "Niveau3-WaarWat.html?what=hotel&where=frankrijk&sub=boutique" },
             { icon: "🍽️",     title: "All-inclusive hotels in Spanje",        href: "Niveau3-WaarWat.html?what=hotel&where=spanje&sub=all-inclusive" },
@@ -142,13 +149,16 @@
             { icon: "🌴",     title: "Resorts voor families",                 href: "Niveau3-WieWat.html?who=families-kids&what=hotel&sub=resort" },
         ],
         camping: [
-            { icon: "✨",     title: "Glamping met koppels",                       href: "Niveau3-WieWat.html?who=couples&what=glamping" },
+            // Camping-parent behouden; glamping komt als sub mee zodat
+            // de pagina "Glamping voor koppels (op camping)" toont
+            // i.p.v. te degenereren tot een Glamping-only resultaat.
+            { icon: "✨",     title: "Glamping met koppels",                       href: "Niveau3-WieWat.html?who=couples&what=camping&sub=glamping" },
             { icon: "🍝",     title: "Camping in Italië met kinderen",             href: LVL4("families-kids", "camping", "italie") },
             { icon: "🐕",     title: "Hondvriendelijke campings in Frankrijk",     href: "Niveau3-WaarWat.html?what=camping&where=frankrijk&sub=honden" },
             { icon: "🌲",     title: "Camping in de natuur met vrienden",          href: "Niveau3-WieWat.html?who=friends&what=camping&sub=natuur" },
             { icon: "🎠",     title: "Kindercamping in Nederland",                 href: "Niveau3-WaarWat.html?what=camping&where=zeeland&sub=kids" },
             { icon: "🏖️",     title: "Camping aan zee met gezinnen",               href: "Niveau3-WieWat.html?who=families-kids&what=camping&sub=zee" },
-            { icon: "⛵",     title: "Glamping in Kroatië",                        href: "Niveau3-WaarWat.html?what=glamping&where=kroatie" },
+            { icon: "⛵",     title: "Glamping in Kroatië",                        href: "Niveau3-WaarWat.html?what=camping&where=kroatie&sub=glamping" },
             { icon: "🏊",     title: "Camping met waterpark voor tieners",         href: "Niveau3-WieWat.html?who=families-teens&what=camping&sub=waterpark" },
             { icon: "🍺",     title: "Camping in Duitsland met familie",           href: LVL4("families-kids", "camping", "duitsland") },
         ],

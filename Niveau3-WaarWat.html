@@ -120,37 +120,53 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=5"></script>
+<script src="site-data.js?v=6"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const what = params.get('what') || '';
     const where = params.get('where') || '';
+    const sub = params.get('sub') || '';
 
     renderHeader('');
 
     const whatLabel = what ? DATA.label('what', what) : null;
     const whereLabel = where ? DATA.label('where', where) : null;
+    // Sub-label (Boutique Hotels / Glamping / etc.) overschrijft het
+    // generieke WAT-label in titels en breadcrumbs zodat de
+    // gebruiker "Boutique Hotels in Italië" leest i.p.v.
+    // "Hotel in Italië".
+    const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
+    const displayWatLabel = subLabel || whatLabel;
+
+    const crumbCurrent = subLabel
+        ? `${whereLabel || 'Alle bestemmingen'} · ${whatLabel} · ${subLabel}`
+        : `${whereLabel || 'Alle bestemmingen'} · ${whatLabel || 'Alle types'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wat.html">Wat</a>`, `<span class="sep">›</span>`,
-        `<span class="current">${whereLabel || 'Alle bestemmingen'} · ${whatLabel || 'Alle types'}</span>`
+        `<span class="current">${crumbCurrent}</span>`
     ].join('');
 
-    if (whatLabel && whereLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} in ${whereLabel}`;
+    if (displayWatLabel && whereLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} in ${whereLabel}`;
     }
 
     const chips = [];
     if (whereLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
     if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel}</span>`);
+    if (subLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel}</span>`);
     chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
     chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
+    // Sub-context propageren naar Niveau 4 doorklikken zodat
+    // "Boutique Hotels in Italië" + Wie-keuze niet ineens degenereert
+    // tot "Hotel in Italië voor X".
+    const subParam = sub ? `&sub=${sub}` : '';
     renderCategoryTiles('who-tiles', DATA.who(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&where=${where}`,
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&where=${where}${subParam}`,
         gradient: SITE_DATA.gradients.who
     });
 

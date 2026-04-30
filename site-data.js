@@ -60,6 +60,36 @@ const SITE_DATA = {
             'portugal': 'Portugal',
             'kroatie': 'Kroatië'
         },
+        // Sub-type labels per WAT-key — sturen Niveau 2/3/4 paginas
+        // aan om bij ?sub= een specifieke ondertitel/breadcrumb te tonen.
+        // Houdt in sync met inspiration-tabs WHAT_REFINEMENTS.
+        subLabels: {
+            'hotel': {
+                'boutique':      'Boutique Hotels',
+                'adult-only':    'Adult Only Hotels',
+                'wellness':      'Wellness Hotels',
+                'all-inclusive': 'All-inclusive Hotels',
+                'design':        'Design Hotels',
+                'city':          'Hotels midden in het centrum',
+                'resort':        'Resorts',
+            },
+            'camping': {
+                'glamping':      'Glamping',
+                'waterpark':     'Camping met Aquapark',
+                'natuur':        'Camping in de natuur',
+                'kids':          'Kindercampings',
+                'honden':        'Hondvriendelijke campings',
+                'zee':           'Campings aan zee',
+            },
+            'holiday-park': {
+                'zwemparadijs':  'Vakantieparken met zwemparadijs',
+                'attractiepark': 'Vakantieparken met attractiepark',
+                'luxe':          'Luxe vakantieparken',
+                'kids':          'Kindvriendelijke vakantieparken',
+                'natuur':        'Vakantieparken in de natuur',
+                'themaparken':   'Themaparken',
+            },
+        },
         // Camping-subtypes (Niveau 3 verdieping bij what=camping)
         campingTypes: {
             'camping-glamping': 'Glamping',
@@ -392,6 +422,14 @@ const DATA = {
         return SITE_DATA.labels[dim]?.[key] || key;
     },
     icon(key) { return SITE_DATA.icons[key] || '📌'; },
+    // Sub-type labels per WAT — gebruikt door Niveau 2/3/4 paginas om
+    // de WAT-context te behouden i.p.v. te degenereren naar een
+    // generieke titel. Resolve `?what=hotel&sub=wellness` als
+    // "Wellness Hotels" zodat URLs altijd hun volle filter-intentie
+    // tonen.
+    subLabel(what, sub) {
+        return (SITE_DATA.subLabels?.[what]?.[sub]) || '';
+    },
     filter({ who, what, where } = {}) {
         return SITE_DATA.accommodations.filter(a => {
             if (who && !a.who.includes(who)) return false;

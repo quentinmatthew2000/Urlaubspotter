@@ -104,13 +104,14 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=5"></script>
+<script src="site-data.js?v=6"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
     const what = params.get('what') || '';
     const where = params.get('where') || '';
+    const sub = params.get('sub') || '';
 
     renderHeader('');
     renderSearchbar('top-searchbar', { compact: true, preset: { who, what, where } });
@@ -118,17 +119,26 @@
     const whoLabel = who ? DATA.label('who', who) : '';
     const whatLabel = what ? DATA.label('what', what) : '';
     const whereLabel = where ? DATA.label('where', where) : '';
+    // Sub-label voor refinements (Wellness Hotels / Glamping / etc.).
+    // Overschrijft het generieke WAT-label in titels en breadcrumb
+    // zodat "Wellness Hotels voor koppels in Italië" gerendered wordt
+    // i.p.v. te degenereren tot "Hotel voor koppels in Italië".
+    const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
+    const displayWatLabel = subLabel || whatLabel;
 
+    const crumbCurrent = subLabel
+        ? `${whoLabel || '—'} · ${whatLabel} · ${subLabel} · ${whereLabel || '—'}`
+        : `${whoLabel || '—'} · ${whatLabel || '—'} · ${whereLabel || '—'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wie.html">Wie</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wat.html">Wat</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
-        `<span class="current">${whoLabel || '—'} · ${whatLabel || '—'} · ${whereLabel || '—'}</span>`
+        `<span class="current">${crumbCurrent}</span>`
     ].join('');
 
-    if (whoLabel && whatLabel && whereLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} voor ${whoLabel} in ${whereLabel}`;
+    if (whoLabel && displayWatLabel && whereLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel} in ${whereLabel}`;
         document.getElementById('page-lead').textContent = `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
     }
 
@@ -137,9 +147,13 @@
         if (!val) return;
         activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(val)} ${lbl}</span>`);
     });
-    activeChips.push(`<a class="chip" href="Niveau3-WieWat.html?who=${who}&what=${what}">+ Wijzig bestemming</a>`);
+    if (subLabel) activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel}</span>`);
+    // Sub blijft staan in de "wijzig X" deeplinks zodat de gebruiker
+    // niet z'n refinement verliest bij het wisselen van een dimensie.
+    const subParam = sub ? `&sub=${sub}` : '';
+    activeChips.push(`<a class="chip" href="Niveau3-WieWat.html?who=${who}&what=${what}${subParam}">+ Wijzig bestemming</a>`);
     activeChips.push(`<a class="chip" href="Niveau3-WieWaar.html?who=${who}&where=${where}">+ Wijzig type</a>`);
-    activeChips.push(`<a class="chip" href="Niveau3-WaarWat.html?where=${where}&what=${what}">+ Wijzig gezelschap</a>`);
+    activeChips.push(`<a class="chip" href="Niveau3-WaarWat.html?where=${where}&what=${what}${subParam}">+ Wijzig gezelschap</a>`);
     document.getElementById('active-filters').innerHTML = activeChips.join('');
 
     document.getElementById('to-nav').href = `Navigatie.html?${new URLSearchParams({who, what, where}).toString()}`;

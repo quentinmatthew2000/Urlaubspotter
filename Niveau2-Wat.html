@@ -172,9 +172,9 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=5"></script>
+<script src="site-data.js?v=6"></script>
 <script src="site.js?v=16"></script>
-<script src="inspiration-tabs.js?v=9"></script>
+<script src="inspiration-tabs.js?v=10"></script>
 <script>
     renderHeader('wat');
 
@@ -183,37 +183,10 @@
     const subPre  = params.get('sub') || '';
     const whatLabel = whatPre ? DATA.label('what', whatPre) : '';
 
-    // Sub-type labels per WAT — gebruikt door inspiration-tabs Vakantietype
-    // refinement links (?what=hotel&sub=boutique etc.). Voorkomt dat al die
-    // refinement-URLs op één generiek Niveau 2 — Wat blok landen.
-    const SUB_LABELS = {
-        hotel: {
-            'boutique':      'Boutique Hotels',
-            'adult-only':    'Adult Only Hotels',
-            'all-inclusive': 'All-inclusive Hotels',
-            'design':        'Design Hotels',
-            'city':          'Hotels midden in het centrum',
-            'resort':        'Resorts',
-        },
-        camping: {
-            'waterpark':     'Camping met Aquapark',
-            'natuur':        'Camping in de natuur',
-            'kids':          'Kindercampings',
-            'honden':        'Hondvriendelijke campings',
-            'zee':           'Campings aan zee',
-        },
-        'holiday-park': {
-            'zwemparadijs':  'Vakantieparken met zwemparadijs',
-            'attractiepark': 'Vakantieparken met attractiepark',
-            'luxe':          'Luxe vakantieparken',
-            'kids':          'Kindvriendelijke vakantieparken',
-            'natuur':        'Vakantieparken in de natuur',
-            'themaparken':   'Themaparken',
-        },
-    };
-    const subLabel = (whatPre && subPre && SUB_LABELS[whatPre] && SUB_LABELS[whatPre][subPre])
-        ? SUB_LABELS[whatPre][subPre]
-        : '';
+    // Sub-type label resolution gedelegeerd naar SITE_DATA.subLabels via
+    // DATA.subLabel(what, sub) zodat alle paginas (Niveau 2/3/4) dezelfde
+    // labels delen en de WAT-context behouden blijft.
+    const subLabel = (whatPre && subPre) ? DATA.subLabel(whatPre, subPre) : '';
 
     // Bij sub-context (refinement) tonen we de sub als laagste breadcrumb
     // en als pagina-titel; de pagina blijft Niveau 2 (zelfde layout) maar
