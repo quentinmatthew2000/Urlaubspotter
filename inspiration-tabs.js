@@ -17,10 +17,43 @@
     // Wie+Wat combinaties (Tab "Populair") landen op de Niveau 3
     // pagina (Wie+Wat); single-dimensie items op Niveau 2.
     const LVL3_WIEWAT = (who, what) => `Niveau3-WieWat.html?who=${who}&what=${what}`;
+    const LVL3_WAT_SUB = (what, sub) => `Niveau3-WieWat.html?what=${what}&sub=${sub}`;
     const NIVWIE      = (who)       => `Niveau2-Wie.html?who=${who}`;
     const NIVWAT      = (what)      => `Niveau2-Wat.html?what=${what}`;
     const NIVWAAR     = (where)     => `Niveau2-Waar.html?where=${where}`;
     const NIVWAAR_ALL               = `Niveau2-Waar.html`;
+
+    // Vakantietype-tab is context-aware: op een Niveau 2 — Wat pagina
+    // tonen we hier alleen sub-types van het huidige WAT-type, zodat
+    // we de gebruiker niet "kies een vakantietype" laten kiezen
+    // terwijl die al gekozen is. Items linken door naar Niveau 3 met
+    // ?what=&sub= zodat het URL-intent voor SEO behouden blijft.
+    const WHAT_REFINEMENTS = {
+        hotel: [
+            { icon: "🛎️",  title: "Boutique hotels",              href: LVL3_WAT_SUB("hotel", "boutique") },
+            { icon: "🥂",  title: "Adult Only hotels",            href: LVL3_WAT_SUB("hotel", "adult-only") },
+            { icon: "💆",  title: "Wellness hotels",              href: NIVWAT("wellness") },
+            { icon: "🍽️",  title: "All-inclusive hotels",         href: LVL3_WAT_SUB("hotel", "all-inclusive") },
+            { icon: "🎨",  title: "Design hotels",                href: LVL3_WAT_SUB("hotel", "design") },
+            { icon: "🏙️",  title: "Hotels midden in het centrum", href: LVL3_WAT_SUB("hotel", "city") },
+            { icon: "🌴",  title: "Resorts",                      href: LVL3_WAT_SUB("hotel", "resort") },
+        ],
+        camping: [
+            { icon: "✨",  title: "Glamping",                     href: NIVWAT("glamping") },
+            { icon: "🏊",  title: "Camping met waterpark",        href: LVL3_WAT_SUB("camping", "waterpark") },
+            { icon: "🌲",  title: "Camping in de natuur",         href: LVL3_WAT_SUB("camping", "natuur") },
+            { icon: "🎠",  title: "Kindercampings",               href: LVL3_WAT_SUB("camping", "kids") },
+            { icon: "🐕",  title: "Hondvriendelijke campings",    href: LVL3_WAT_SUB("camping", "honden") },
+            { icon: "🏖️", title: "Campings aan zee",              href: LVL3_WAT_SUB("camping", "zee") },
+        ],
+        "holiday-park": [
+            { icon: "🏊",      title: "Vakantieparken met zwemparadijs",  href: LVL3_WAT_SUB("holiday-park", "zwemparadijs") },
+            { icon: "🎡",      title: "Vakantieparken met attractiepark", href: LVL3_WAT_SUB("holiday-park", "attractiepark") },
+            { icon: "✨",      title: "Luxe vakantieparken",              href: LVL3_WAT_SUB("holiday-park", "luxe") },
+            { icon: "👨‍👩‍👧", title: "Kindvriendelijke vakantieparken",    href: LVL3_WAT_SUB("holiday-park", "kids") },
+            { icon: "🌲",      title: "Vakantieparken in de natuur",      href: LVL3_WAT_SUB("holiday-park", "natuur") },
+        ],
+    };
 
     // Iedere item krijgt een emoji-icon links zodat de pills visueel
     // aansluiten op het bestaande "Populaire combinaties" blok.
@@ -90,9 +123,18 @@
         return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
-    function renderInspirationTabs(containerId) {
+    function renderInspirationTabs(containerId, options) {
         const container = document.getElementById(containerId);
         if (!container) return;
+
+        const opts = options || {};
+        // contextWhat = 'hotel' | 'camping' | 'holiday-park' | null. Wanneer
+        // gezet vervangen we de Vakantietype-tab door refinement-items
+        // specifiek voor dat WAT-type, zodat we de gebruiker niet
+        // dezelfde keuze opnieuw laten maken.
+        const contextWhat = opts.contextWhat && WHAT_REFINEMENTS[opts.contextWhat]
+            ? opts.contextWhat
+            : null;
 
         let activeTab = TABS[0].id;
 
@@ -108,12 +150,15 @@
 
         function gridHTML() {
             const tab = TABS.find(t => t.id === activeTab) || TABS[0];
+            // In WAT-context vervangen we de Vakantietype-items door
+            // de refinement-set voor het huidige WAT-type. Andere tabs
+            // blijven hun standaard-items tonen.
+            const items = (activeTab === "vakantietype" && contextWhat)
+                ? WHAT_REFINEMENTS[contextWhat]
+                : tab.items;
             // Sublabels (Populaire combinatie / Reisgezelschap / etc.)
             // worden niet meer gerenderd — pills tonen alleen de titel.
-            // De `sub`-velden in TABS blijven staan zodat ze later weer
-            // ingeschakeld kunnen worden zonder de data opnieuw te
-            // moeten typen.
-            return tab.items.map(it => `
+            return items.map(it => `
                 <a class="it-item" href="${it.href}">
                     <span class="it-item-icon" aria-hidden="true">${it.icon || ""}</span>
                     <span class="it-item-title">${escapeHTML(it.title)}</span>

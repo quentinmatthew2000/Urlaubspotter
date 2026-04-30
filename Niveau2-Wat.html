@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wat voor vakantie? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
 <body>
 
@@ -22,6 +23,10 @@
     </div>
     <div class="chips" id="active-filters" style="margin-top:16px"></div>
 </section>
+
+<!-- Inspiratie voor jou — context-aware refinements per WAT-type
+     (vakantietype-tab toont sub-types i.p.v. generieke WAT-opties). -->
+<div id="inspiration-tabs"></div>
 
 <!-- WAT CAROUSEL — alleen zichtbaar als GEEN vakantietype gekozen is -->
 <div class="section-bg-alt-wrap" id="what-section">
@@ -165,7 +170,8 @@
 </footer>
 
 <script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site.js?v=15"></script>
+<script src="inspiration-tabs.js?v=5"></script>
 <script>
     renderHeader('wat');
 
@@ -222,6 +228,13 @@
 
     renderBlogPreview('blog-preview', whatLabel || 'Vakantietype');
     renderKeuzehulpCTA('keuzehulp-block');
+    // Context-aware Inspiratie-tabs: alleen activeren wanneer een
+    // WAT-type bekend is dat refinements heeft (hotel/camping/holiday-park).
+    // Zonder context renderen we nog niet — homepage-style inspiratie
+    // hoort niet bij de generieke "Wat voor vakantie?" overzichtspagina.
+    if (whatPre && typeof renderInspirationTabs === 'function') {
+        renderInspirationTabs('inspiration-tabs', { contextWhat: whatPre });
+    }
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('what-carousel');

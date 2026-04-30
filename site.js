@@ -477,6 +477,61 @@ function renderHeader(activePage = '') {
     `;
     bindMobileNav(header);
     bindSiteSearch(header);
+    autoMountSearchNavigation();
+}
+
+// Zorgt dat de homepage zoek-component (Begin je zoektocht + Resorts &
+// Hotels / Campings / Vakantieparken) op iedere pagina onder de header
+// verschijnt. Wordt automatisch aangeroepen vanuit renderHeader, dus
+// elke pagina die renderHeader gebruikt krijgt deze gratis. Pages
+// kunnen opt-out met <body data-no-searchnav>.
+function autoMountSearchNavigation() {
+    if (document.body.hasAttribute('data-no-searchnav')) return;
+
+    // 1. Stylesheet laden als deze nog niet staat (homepages hebben hem
+    //    al, andere paginas niet).
+    if (!document.querySelector('link[href*="search-navigation.css"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'search-navigation.css?v=5';
+        document.head.appendChild(link);
+    }
+
+    // 2. Mount-div garanderen, direct na .site-header.
+    let mount = document.getElementById('hero-searchbar');
+    if (!mount) {
+        mount = document.createElement('div');
+        mount.id = 'hero-searchbar';
+        const headerEl = document.querySelector('.site-header');
+        if (headerEl) headerEl.insertAdjacentElement('afterend', mount);
+        else document.body.insertBefore(mount, document.body.firstChild);
+    }
+
+    // 3. Render aanroepen — laadt het script dynamisch als nodig.
+    const callRender = () => {
+        if (typeof window.renderSearchNavigation === 'function') {
+            window.renderSearchNavigation('hero-searchbar');
+        }
+    };
+    if (typeof window.renderSearchNavigation === 'function') {
+        callRender();
+    } else if (!document.querySelector('script[src*="search-navigation.js"]')) {
+        const s = document.createElement('script');
+        s.src = 'search-navigation.js?v=5';
+        s.async = false;
+        s.onload = callRender;
+        document.head.appendChild(s);
+    } else {
+        // Script staat al in DOM maar render-functie nog niet beschikbaar
+        // (parser-volgorde) — wacht tot DOM ready of polling op functie.
+        const wait = setInterval(() => {
+            if (typeof window.renderSearchNavigation === 'function') {
+                clearInterval(wait);
+                callRender();
+            }
+        }, 50);
+        setTimeout(() => clearInterval(wait), 5000);
+    }
 }
 
 // Hamburger + accordion (mobiel) — vanilla JS, geen library
