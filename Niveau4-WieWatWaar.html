@@ -104,7 +104,7 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=6"></script>
+<script src="site-data.js?v=7"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -158,8 +158,10 @@
 
     document.getElementById('to-nav').href = `Navigatie.html?${new URLSearchParams({who, what, where}).toString()}`;
 
-    // Filter + sorteer
-    let matches = DATA.filter({ who, what, where });
+    // Filter + sorteer — sub blijft staan zodat een triple-context
+    // pagina als "Wellness Hotels voor koppels in Italië" alleen
+    // matches toont die het sub-niveau respecteren.
+    let matches = DATA.filterWithSub({ who, what, where, sub });
 
     function sortListing() {
         const mode = document.getElementById('sort').value;

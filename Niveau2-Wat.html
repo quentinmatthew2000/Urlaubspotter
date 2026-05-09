@@ -172,7 +172,7 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=6"></script>
+<script src="site-data.js?v=7"></script>
 <script src="site.js?v=16"></script>
 <script src="inspiration-tabs.js?v=11"></script>
 <script>
@@ -226,8 +226,10 @@
             `<a class="chip" href="${subLabel ? `Niveau2-Wat.html?what=${whatPre}` : 'Niveau2-Wat.html'}">✕ Andere keuze</a>`
         ].filter(Boolean).join('');
 
-        // Geschikte accommodaties (filter op what)
-        const matches = DATA.filter({ what: whatPre });
+        // Geschikte accommodaties — bij sub-context (bijv.
+        // ?what=hotel&sub=wellness) filteren we ook op het sub-niveau
+        // zodat de listing matcht met de paginatitel.
+        const matches = DATA.filterWithSub({ what: whatPre, sub: subPre });
         document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
         document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${whatLabel.toLowerCase()}.`;
         document.getElementById('matches-all-link').href = `Navigatie.html?what=${whatPre}`;

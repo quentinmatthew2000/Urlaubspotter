@@ -430,13 +430,46 @@ const DATA = {
     subLabel(what, sub) {
         return (SITE_DATA.subLabels?.[what]?.[sub]) || '';
     },
-    filter({ who, what, where } = {}) {
+    filter({ who, what, where, sub } = {}) {
+        // Sub-niveau (bijv. wellness / boutique / glamping / waterpark)
+        // bewaart de subtype-context op Niveau 3/4 paginas zodat de
+        // listing daadwerkelijk overeenstemt met de paginatitel.
+        // Twee match-strategieen:
+        //   1. Sub IS een primary what-key (glamping, wellness, etc.)
+        //      → require die what op de accommodatie. Hard filter.
+        //   2. Sub is een descriptor (boutique, waterpark, design,
+        //      adult-only, ...) → soft match tegen tags + name.
+        //      Geen match? Val terug op WAT-only resultaat — beter
+        //      dan een lege pagina.
+        const subKey = sub ? String(sub).toLowerCase() : '';
+        const subIsWat = subKey && SITE_DATA.labels.what[subKey];
+        // Tag-haystack vooraf opbouwen per accommodatie zou efficienter
+        // zijn maar de dataset is klein; .toLowerCase per call is OK.
         return SITE_DATA.accommodations.filter(a => {
             if (who && !a.who.includes(who)) return false;
             if (what && !a.what.includes(what)) return false;
             if (where && a.where !== where) return false;
+            if (subIsWat && !a.what.includes(subKey)) return false;
             return true;
         });
+    },
+    // Aparte sub-aware filter die de soft tag-match ook toepast voor
+    // descriptor-subs. Geeft eerst een strict gefilterde lijst; als die
+    // leeg is en sub een descriptor is, valt het terug op WAT-resultaat.
+    filterWithSub({ who, what, where, sub } = {}) {
+        const strict = this.filter({ who, what, where, sub });
+        if (!sub) return strict;
+        const subKey = String(sub).toLowerCase();
+        const subIsWat = SITE_DATA.labels.what[subKey];
+        if (subIsWat) return strict; // hard-match was al gedaan
+        // Descriptor-sub: probeer een tag/name match
+        const descriptorLabel = (this.subLabel(what, sub) || '').toLowerCase();
+        const tagMatched = strict.filter(a => {
+            const haystack = ((a.tags || []).join(' ') + ' ' + (a.name || ''))
+                .toLowerCase();
+            return haystack.includes(subKey) || (descriptorLabel && haystack.includes(descriptorLabel));
+        });
+        return tagMatched.length ? tagMatched : strict;
     },
     editorial(dim, key) { return SITE_DATA.editorial[dim]?.[key] || ''; }
 };

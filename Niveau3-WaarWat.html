@@ -120,7 +120,7 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=6"></script>
+<script src="site-data.js?v=7"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -170,7 +170,9 @@
         gradient: SITE_DATA.gradients.who
     });
 
-    const filtered = DATA.filter({ what, where });
+    // Sub-aware filtering: "Boutique Hotels in Italië" toont alleen
+    // boutique-hotels (via tag-match) i.p.v. alle hotels in Italië.
+    const filtered = DATA.filterWithSub({ what, where, sub });
     renderListingPreview('listing', filtered, { limit: 9 });
     document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
     document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({what, where}).toString()}`;

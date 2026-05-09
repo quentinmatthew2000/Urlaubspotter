@@ -147,7 +147,7 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=6"></script>
+<script src="site-data.js?v=7"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -224,8 +224,11 @@
         });
     }
 
-    // Geschikte accommodaties
-    const filtered = DATA.filter({ who, what });
+    // Geschikte accommodaties — sub-aware zodat een Glamping-pagina
+    // ook werkelijk Glamping-accommodaties toont (niet de hele
+    // Camping-pool). Soft-match valt terug op WAT-resultaat als
+    // descriptor-sub geen tag-treffers oplevert.
+    const filtered = DATA.filterWithSub({ who, what, sub });
     renderListingPreview('listing', filtered, { limit: 9 });
     document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
     document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({who, what}).toString()}`;
