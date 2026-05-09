@@ -126,9 +126,9 @@
     const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
     const displayWatLabel = subLabel || whatLabel;
 
-    const crumbCurrent = subLabel
-        ? `${whoLabel || '—'} · ${whatLabel} · ${subLabel} · ${whereLabel || '—'}`
-        : `${whoLabel || '—'} · ${whatLabel || '—'} · ${whereLabel || '—'}`;
+    // Sub-as-primary: breadcrumb + chips tonen alleen het sub-label
+    // wanneer aanwezig (geen Hotel + Wellness Hotels stapel meer).
+    const crumbCurrent = `${whoLabel || '—'} · ${displayWatLabel || '—'} · ${whereLabel || '—'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wie.html">Wie</a>`, `<span class="sep">›</span>`,
@@ -140,14 +140,15 @@
     if (whoLabel && displayWatLabel && whereLabel) {
         document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel} in ${whereLabel}`;
         document.getElementById('page-lead').textContent = `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
+        document.title = `${displayWatLabel} voor ${whoLabel} in ${whereLabel} · Urlaubspotter`;
     }
 
     const activeChips = [];
-    [['who', who, whoLabel], ['what', what, whatLabel], ['where', where, whereLabel]].forEach(([dim, val, lbl]) => {
-        if (!val) return;
-        activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(val)} ${lbl}</span>`);
-    });
-    if (subLabel) activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel}</span>`);
+    if (who)        activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel}</span>`);
+    // Eén WAT-chip die het primaire label toont (sub overschrijft het
+    // generieke WAT-label wanneer aanwezig).
+    if (what)       activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
+    if (where)      activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
     // Sub blijft staan in de "wijzig X" deeplinks zodat de gebruiker
     // niet z'n refinement verliest bij het wisselen van een dimensie.
     const subParam = sub ? `&sub=${sub}` : '';

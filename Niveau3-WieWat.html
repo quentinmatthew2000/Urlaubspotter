@@ -168,9 +168,12 @@
     // pagina "Wellness Hotels voor koppels" toont i.p.v.
     // "Hotel voor koppels".
     const displayWatLabel = subLabel || whatLabel;
-    const crumbCurrent = subLabel
-        ? `${whoLabel || 'Iedereen'} · ${whatLabel} · ${subLabel}`
-        : `${whoLabel || 'Iedereen'} · ${whatLabel || 'Alle types'}`;
+    // Bij sub-context is het sub-label de primaire WAT-identiteit; we
+    // tonen dan in de breadcrumb / chips alleen de sub (niet de
+    // parent-WAT erbovenop) zodat de pagina als zichzelf presenteert
+    // ("Wellness Hotels voor Koppels") i.p.v. "Hotel + Wellness +
+    // Koppels". document.title volgt dezelfde logica voor SEO/share.
+    const crumbCurrent = `${whoLabel || 'Iedereen'} · ${displayWatLabel || 'Alle types'}`;
     const crumb = [
         `<a href="Homepagina.html">Home</a>`,
         `<span class="sep">›</span>`,
@@ -185,20 +188,24 @@
     if (whoLabel && displayWatLabel) {
         document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel}`;
         document.getElementById('page-lead').textContent = `Je zocht op ${whoLabel.toLowerCase()} + ${displayWatLabel.toLowerCase()}. Kies nu een bestemming of bekijk het aanbod.`;
+        document.title = `${displayWatLabel} voor ${whoLabel} · Urlaubspotter`;
     } else if (whoLabel) {
         document.getElementById('page-title').textContent = `${displayWatLabel || 'Vakantie'} voor ${whoLabel}`;
     } else if (displayWatLabel) {
         document.getElementById('page-title').textContent = `${displayWatLabel} voor elk gezelschap`;
     }
 
-    // Active filters — toont sub als aparte chip zodat de gebruiker
-    // ziet dat de WAT-parent EN het sub-type beide actief zijn.
+    // Active filters: ÉÉN WAT-chip die het primaire label toont
+    // (sub OF parent-WAT, niet beide). Voorkomt dat de pagina aanvoelt
+    // als "Hotel met een filter" i.p.v. "Wellness Hotels".
     const chips = [];
     if (whoLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel} ✕</span>`);
-    if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel} ✕</span>`);
-    if (subLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel} ✕</span>`);
+    if (displayWatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel} ✕</span>`);
     chips.push(`<a class="chip" href="Niveau2-Wie.html">+ Verander gezelschap</a>`);
-    chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
+    // "Verander type" gaat terug naar het Niveau 2 — Wat overzicht
+    // zodat de gebruiker een ander type kan kiezen (incl. ander
+    // sub-type binnen dezelfde parent).
+    chips.push(`<a class="chip" href="Niveau2-Wat.html${what ? `?what=${what}` : ''}">+ Verander type</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
     // Derde dimensie: WAAR — op LAND-niveau ipv provincies. Sub-type

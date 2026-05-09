@@ -183,56 +183,60 @@
     const subPre  = params.get('sub') || '';
     const whatLabel = whatPre ? DATA.label('what', whatPre) : '';
 
-    // Sub-type label resolution gedelegeerd naar SITE_DATA.subLabels via
-    // DATA.subLabel(what, sub) zodat alle paginas (Niveau 2/3/4) dezelfde
-    // labels delen en de WAT-context behouden blijft.
+    // Sub-type label resolution via DATA.subLabel(what, sub). Wanneer
+    // sub gezet is wordt het sub-label de PRIMAIRE PAGINA-IDENTITEIT —
+    // niet meer een filter bovenop Hotel/Camping/Vakantiepark, maar
+    // een eigen single-context landing page ("Wellness Hotels").
     const subLabel = (whatPre && subPre) ? DATA.subLabel(whatPre, subPre) : '';
 
-    // Bij sub-context (refinement) tonen we de sub als laagste breadcrumb
-    // en als pagina-titel; de pagina blijft Niveau 2 (zelfde layout) maar
-    // geeft duidelijk de subcategorie aan.
+    // mainLabel = het LABEL DAT DE PAGINA IDENTIFICEERT. Bij sub-
+    // context is dat het sub-label, anders het WAT-label. Wordt
+    // gebruikt voor titel, eyebrow, breadcrumb-current, chip en
+    // document.title zodat de pagina overal als zichzelf presenteert
+    // i.p.v. als generieke Hotel/Camping/Vakantiepark-pagina.
+    const mainLabel = subLabel || whatLabel;
+
+    // Breadcrumb: Home › Wat voor vakantie? › <mainLabel>. Geen
+    // tussenstap voor de WAT-parent — de pagina ís Wellness Hotels,
+    // niet Hotel-met-een-filter. (De "Andere keuze" chip biedt nog
+    // wel een terugweg naar de WAT-parent.)
     document.getElementById('bc').innerHTML = whatPre
-        ? (subLabel
-            ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
-               `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
-               `<a href="Niveau2-Wat.html?what=${whatPre}">${whatLabel}</a>`, `<span class="sep">›</span>`,
-               `<span class="current">${subLabel}</span>`].join('')
-            : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
-               `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
-               `<span class="current">${whatLabel}</span>`].join(''))
+        ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
+           `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
+           `<span class="current">${mainLabel}</span>`].join('')
         : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<span class="current">Wat voor vakantie?</span>`].join('');
 
     if (whatPre) {
-        const headLabel = subLabel || whatLabel;
-        document.getElementById('page-title').textContent = headLabel;
+        document.getElementById('page-title').textContent = mainLabel;
+        // Document.title bumpen voor browser-tab + share-previews.
+        document.title = `${mainLabel} · Urlaubspotter`;
         document.getElementById('page-lead').textContent = subLabel
-            ? `Bekijk de selectie ${subLabel.toLowerCase()}. Verfijn met reisgezelschap of bestemming.`
+            ? `Bekijk onze selectie ${subLabel.toLowerCase()}. Verfijn met reisgezelschap of bestemming.`
             : `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
-        document.getElementById('eyebrow').textContent = subLabel
-            ? `Niveau 2 — Wat › ${whatLabel} › ${subLabel}`
-            : `Niveau 2 — Wat › ${whatLabel}`;
+        // Eyebrow: één primair segment na "Niveau 2 — Wat". Geen
+        // ouder-WAT meer wanneer er een sub-context is.
+        document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${mainLabel}`;
         // Verberg de algemene "Alle vakantietypes" carousel als het type al gekozen is
         document.getElementById('what-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
+        // Active filters: ÉÉN main-chip (sub OF parent-WAT, niet
+        // beide). Bij sub-context blijft de parent-WAT bereikbaar
+        // via de "Andere keuze" link.
         document.getElementById('active-filters').innerHTML = [
-            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${whatLabel}</span>`,
-            subLabel
-                ? `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel}</span>`
-                : '',
-            // Bij sub-context naar de bovenliggende WAT pagina; anders naar
-            // het algemene Niveau 2 — Wat overzicht.
-            `<a class="chip" href="${subLabel ? `Niveau2-Wat.html?what=${whatPre}` : 'Niveau2-Wat.html'}">✕ Andere keuze</a>`
-        ].filter(Boolean).join('');
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${mainLabel}</span>`,
+            `<a class="chip" href="${subLabel ? `Niveau2-Wat.html?what=${whatPre}` : 'Niveau2-Wat.html'}">✕ Andere keuze</a>`,
+        ].join('');
 
-        // Geschikte accommodaties — bij sub-context (bijv.
-        // ?what=hotel&sub=wellness) filteren we ook op het sub-niveau
-        // zodat de listing matcht met de paginatitel.
+        // Geschikte accommodaties — sub-aware filtering zodat de
+        // listing matcht met de paginatitel.
         const matches = DATA.filterWithSub({ what: whatPre, sub: subPre });
         document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
-        document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${whatLabel.toLowerCase()}.`;
-        document.getElementById('matches-all-link').href = `Navigatie.html?what=${whatPre}`;
+        document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${mainLabel.toLowerCase()}.`;
+        // "Bekijk alle →" link houdt parent-WAT + sub.
+        const allLinkParams = subPre ? `?what=${whatPre}&sub=${subPre}` : `?what=${whatPre}`;
+        document.getElementById('matches-all-link').href = `Navigatie.html${allLinkParams}`;
         renderListingPreview('matches-listing', matches, { limit: 6 });
     } else {
         document.getElementById('active-filters').style.display = 'none';
@@ -242,16 +246,22 @@
         linkBuilder: (v) => `Niveau2-Wat.html?what=${v}`,
         gradient: SITE_DATA.gradients.what
     });
+    // Carry-forward voor de sub: deeper navigatie behoudt het
+    // sub-niveau zodat klikken op "Italië" vanaf Wellness Hotels
+    // niet plotseling Hotel-in-Italië wordt.
+    const subParam = subPre ? `&sub=${subPre}` : '';
     renderCategoryTiles('who-tiles', DATA.who(), {
-        linkBuilder: (v) => whatPre ? `Niveau3-WieWat.html?who=${v}&what=${whatPre}` : `Niveau2-Wie.html?who=${v}`,
+        linkBuilder: (v) => whatPre
+            ? `Niveau3-WieWat.html?who=${v}&what=${whatPre}${subParam}`
+            : `Niveau2-Wie.html?who=${v}`,
         gradient: SITE_DATA.gradients.who
     });
     renderCategoryTiles('countries-tiles', DATA.countries(), {
-        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}`,
+        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}${subParam}`,
         gradient: SITE_DATA.gradients.where
     });
     renderCategoryTiles('regions-tiles', DATA.whereNL(), {
-        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}`,
+        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}${subParam}`,
         gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
     });
 

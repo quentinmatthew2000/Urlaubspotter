@@ -139,9 +139,10 @@
     const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
     const displayWatLabel = subLabel || whatLabel;
 
-    const crumbCurrent = subLabel
-        ? `${whereLabel || 'Alle bestemmingen'} · ${whatLabel} · ${subLabel}`
-        : `${whereLabel || 'Alle bestemmingen'} · ${whatLabel || 'Alle types'}`;
+    // Bij sub-context wordt het sub-label de primaire WAT-identiteit;
+    // breadcrumb-current en chips tonen alleen de sub (geen Hotel +
+    // Wellness Hotels stapeling).
+    const crumbCurrent = `${whereLabel || 'Alle bestemmingen'} · ${displayWatLabel || 'Alle types'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
@@ -151,14 +152,14 @@
 
     if (displayWatLabel && whereLabel) {
         document.getElementById('page-title').textContent = `${displayWatLabel} in ${whereLabel}`;
+        document.title = `${displayWatLabel} in ${whereLabel} · Urlaubspotter`;
     }
 
     const chips = [];
     if (whereLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
-    if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel}</span>`);
-    if (subLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${subLabel}</span>`);
+    if (displayWatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
     chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
-    chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
+    chips.push(`<a class="chip" href="Niveau2-Wat.html${what ? `?what=${what}` : ''}">+ Verander type</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
     // Sub-context propageren naar Niveau 4 doorklikken zodat
