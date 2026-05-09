@@ -123,6 +123,70 @@
         "holiday-park": reisgezelschapForWat("holiday-park", "een vakantiepark"),
     };
 
+    // ---- SUB-CONTEXT GENERATORS ----------------------------------------
+    // Wanneer de gebruiker op een sub-pagina is (bijv. ?what=hotel&
+    // sub=wellness → "Wellness Hotels") moet de Inspiratie-tab het
+    // sub-niveau ALTIJD meeslepen. Geen fallback naar de generieke
+    // WAT-pagina meer. Hieronder worden Reisgezelschap, Bestemmingen
+    // en Populair items dynamisch opgebouwd met de subLabel als
+    // titel-prefix en &sub= als URL-parameter, zodat doorklikken
+    // bijvoorbeeld "Wellness Hotels voor koppels" wordt i.p.v.
+    // "Hotels voor koppels".
+
+    function reisgezelschapForSubContext(what, sub, subLabel) {
+        const items = [
+            { who: "families-teens",  icon: "🧑",      label: `${subLabel} voor tieners` },
+            { who: "couples",         icon: "💑",      label: `${subLabel} voor koppels` },
+            { who: "friends",         icon: "👫",      label: `${subLabel} met vrienden` },
+            { who: "families-kids",   icon: "👨‍👩‍👧", label: `${subLabel} voor families` },
+            { who: "solo",            icon: "🚶",      label: `${subLabel} voor solo-reizigers` },
+            { who: "pets",            icon: "🐕",      label: `${subLabel} met huisdier` },
+            { who: "seniors",         icon: "👴",      label: `${subLabel} voor senioren` },
+            { who: "families-babies", icon: "👶",      label: `${subLabel} met baby's` },
+            { who: "families-kids",   icon: "👧",      label: `${subLabel} voor jonge kinderen` },
+        ];
+        return items.map(it => ({
+            icon: it.icon,
+            title: it.label,
+            href: `Niveau3-WieWat.html?who=${it.who}&what=${what}&sub=${sub}`,
+        }));
+    }
+
+    function bestemmingenForSubContext(what, sub, subLabel) {
+        const N3 = (where) => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&where=${where}`;
+        const N2 = `Niveau2-Waar.html`;
+        return [
+            { icon: "🌍",  title: `${subLabel} in Europa`,     href: N2 },
+            { icon: "🌏",  title: `${subLabel} in Azië`,       href: N2 },
+            { icon: "🍺",  title: `${subLabel} in Duitsland`,  href: N3("duitsland") },
+            { icon: "🇳🇱",  title: `${subLabel} in Nederland`,  href: N3("netherlands") },
+            { icon: "⛰️",  title: `${subLabel} bij de bergen`, href: N3("oostenrijk") },
+            { icon: "🗼",  title: `${subLabel} in Frankrijk`,  href: N3("frankrijk") },
+            { icon: "⛵",  title: `${subLabel} in Kroatië`,    href: N3("kroatie") },
+            { icon: "🍝",  title: `${subLabel} in Italië`,     href: N3("italie") },
+        ];
+    }
+
+    function populairForSubContext(what, sub, subLabel) {
+        const N3WIE  = (who)   => `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${sub}`;
+        const N3WAAR = (where) => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&where=${where}`;
+        const N4     = (who, where) =>
+            `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${where}&sub=${sub}`;
+        // 9 items: 3× sub+WIE, 3× sub+WAAR, 3× sub+WIE+WAAR. Iedere
+        // route houdt &sub= bij — geen verlies van het sub-niveau.
+        return [
+            { icon: "💑",      title: `${subLabel} voor koppels`,               href: N3WIE("couples") },
+            { icon: "👨‍👩‍👧", title: `${subLabel} voor gezinnen`,              href: N3WIE("families-kids") },
+            { icon: "👴",      title: `${subLabel} voor senioren`,              href: N3WIE("seniors") },
+            { icon: "🍝",      title: `${subLabel} in Italië`,                  href: N3WAAR("italie") },
+            { icon: "🗼",      title: `${subLabel} in Frankrijk`,               href: N3WAAR("frankrijk") },
+            { icon: "🇳🇱",      title: `${subLabel} in Nederland`,               href: N3WAAR("zeeland") },
+            { icon: "💑",      title: `${subLabel} voor koppels in Italië`,     href: N4("couples",        "italie") },
+            { icon: "👨‍👩‍👧", title: `${subLabel} voor gezinnen in Frankrijk`, href: N4("families-kids",  "frankrijk") },
+            { icon: "👴",      title: `${subLabel} voor senioren in Spanje`,    href: N4("seniors",        "spanje") },
+        ];
+    }
+
     // Populair-tab in WAT-context: 2-variabele combinaties bovenop de
     // pagina-context. Iedere item combineert twee van de drie:
     //   • Reisgezelschap (WIE)
@@ -255,6 +319,18 @@
         const contextWhat = opts.contextWhat && WHAT_REFINEMENTS[opts.contextWhat]
             ? opts.contextWhat
             : null;
+        // contextSub = sub-niveau binnen contextWhat (bijv. 'wellness',
+        // 'boutique', 'glamping'). Wanneer gezet, regenereren we
+        // Reisgezelschap / Bestemmingen / Populair zodat de
+        // sub-context behouden blijft in álle URL's en titels.
+        // SubLabel komt uit SITE_DATA.subLabels via DATA.subLabel().
+        const contextSub = (contextWhat && opts.contextSub &&
+            (typeof DATA !== 'undefined') && DATA.subLabel(contextWhat, opts.contextSub))
+            ? opts.contextSub
+            : null;
+        const contextSubLabel = contextSub
+            ? DATA.subLabel(contextWhat, contextSub)
+            : '';
 
         let activeTab = TABS[0].id;
 
@@ -272,16 +348,22 @@
             const tab = TABS.find(t => t.id === activeTab) || TABS[0];
             if (!contextWhat) return tab.items;
 
-            // Op een Niveau 2 — Wat pagina swappen we drie van de vier
-            // tabs naar context-bewuste lijsten:
-            //   • populair      → Wie+Wat+Waar combinaties uit POPULAIR_BY_WAT
-            //   • vakantietype  → sub-types uit WHAT_REFINEMENTS
-            //   • bestemmingen  → "<artikel> <wat> in <land>" uit BESTEMMINGEN_BY_WAT
-            // De reisgezelschap-tab houdt zijn labels maar de href wordt
-            // herschreven: NIVWIE(who) → LVL3_WIEWAT(who, contextWhat),
-            // zodat klikken op "Met jonge kinderen op vakantie" vanaf
-            // Kamperen leidt naar "Camping voor gezinnen met jonge
-            // kinderen" (Niveau 3 Wie+Wat).
+            // Sub-context (bijv. "Wellness Hotels"): álle dynamische
+            // tabs preserveren het sub-niveau in label én URL.
+            // Vakantietype blijft de refinement-lijst tonen zodat de
+            // gebruiker eventueel naar een ander sub-type kan
+            // overstappen — daar voegen we geen sub aan toe omdat de
+            // refinements zelf al sub-keuzes zijn.
+            if (contextSub) {
+                if (activeTab === "populair")      return populairForSubContext(contextWhat, contextSub, contextSubLabel);
+                if (activeTab === "reisgezelschap") return reisgezelschapForSubContext(contextWhat, contextSub, contextSubLabel);
+                if (activeTab === "bestemmingen")   return bestemmingenForSubContext(contextWhat, contextSub, contextSubLabel);
+                if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat]) return WHAT_REFINEMENTS[contextWhat];
+                return tab.items;
+            }
+
+            // WAT-context zonder sub: tabs swappen naar de bestaande
+            // WAT-specifieke lijsten (geen sub-prefix in labels).
             if (activeTab === "populair"     && POPULAIR_BY_WAT[contextWhat])     return POPULAIR_BY_WAT[contextWhat];
             if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat])    return WHAT_REFINEMENTS[contextWhat];
             if (activeTab === "bestemmingen" && BESTEMMINGEN_BY_WAT[contextWhat]) return BESTEMMINGEN_BY_WAT[contextWhat];

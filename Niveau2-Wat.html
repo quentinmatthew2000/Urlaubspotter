@@ -174,7 +174,7 @@
 
 <script src="site-data.js?v=6"></script>
 <script src="site.js?v=16"></script>
-<script src="inspiration-tabs.js?v=10"></script>
+<script src="inspiration-tabs.js?v=11"></script>
 <script>
     renderHeader('wat');
 
@@ -260,7 +260,14 @@
     // Zonder context renderen we nog niet — homepage-style inspiratie
     // hoort niet bij de generieke "Wat voor vakantie?" overzichtspagina.
     if (whatPre && typeof renderInspirationTabs === 'function') {
-        renderInspirationTabs('inspiration-tabs', { contextWhat: whatPre });
+        // Sub-context (subPre, bv. "wellness" / "boutique" / "glamping")
+        // wordt meegegeven zodat alle inspiratie-links het sub-niveau
+        // bewaren — "Wellness Hotels voor koppels" i.p.v. te
+        // degenereren tot "Hotels voor koppels".
+        renderInspirationTabs('inspiration-tabs', {
+            contextWhat: whatPre,
+            contextSub:  subPre || null,
+        });
     }
     renderNewsSocial('news-social');
     renderFooter();
