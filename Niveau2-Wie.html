@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Vakantie voor wie? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
+    <!-- Premium category hero — applyPremiumPage() overlay'd op deze
+         Wie-pagina. Zonder WAT-context worden de inspiratie-tabs
+         niet gemount; het generic-thema voorziet de hero van een
+         neutraal premium-uitstraling. -->
+    <link rel="stylesheet" href="premium-hero.css?v=5">
 </head>
 <body>
 
@@ -164,8 +172,11 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=11"></script>
+<script src="site-data.js?v=12"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
+<script src="premium-page.js?v=1"></script>
 <script>
     renderHeader('wie');
 
@@ -188,10 +199,12 @@
         document.getElementById('who-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
-        document.getElementById('active-filters').innerHTML = [
-            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whoPre)} ${whoLabel}</span>`,
-            `<a class="chip" href="Niveau2-Wie.html">✕ Andere keuze</a>`
-        ].join('');
+        // Active filter: alleen het WIE-chip. "Andere keuze" navigatie-
+        // chip weg — breadcrumb biedt al de terugweg naar het Wie-
+        // overzicht. Premium hero (applyPremiumPage onderaan) toont
+        // dezelfde chip in zijn eigen chip-strip.
+        document.getElementById('active-filters').innerHTML =
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whoPre)} ${whoLabel}</span>`;
 
         // Geschikte accommodaties (filter op who)
         const matches = DATA.filter({ who: whoPre });
@@ -229,6 +242,20 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('who-carousel');
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Alleen activeren bij een gekozen WIE — zonder context blijft
+    // de vanilla overzichts-pagina staan zodat de WIE-keuze-carousel
+    // de primaire interactie is.
+    if (whoPre && typeof window.applyPremiumPage === 'function') {
+        window.applyPremiumPage({
+            who: whoPre,
+            root: [
+                { href: 'Homepagina.html',  text: 'Home' },
+                { href: 'Niveau2-Wie.html', text: 'Wie gaat er mee?' },
+            ],
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

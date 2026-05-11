@@ -8,6 +8,14 @@
     <meta http-equiv="Expires" content="0">
     <title>Wie + Wat · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=3">
+    <!-- Premium category hero — applyPremiumPage() overlay'd op deze
+         pagina via premium-page.js. Themes adapteren zich aan {who,
+         what, sub} context. Hero verbergt de vanilla breadcrumb +
+         section.tight kop, mountet de inspiratie-tabs (sub-aware),
+         en injecteert de Tips + Stories carousels gescoord tegen
+         de actieve context. -->
+    <link rel="stylesheet" href="premium-hero.css?v=5">
 </head>
 <body>
 
@@ -24,6 +32,14 @@
         </div>
     </div>
 </section>
+
+<!-- Inspiratie voor jou — sub-aware tabs, gemount door
+     applyPremiumPage() of door de directe renderInspirationTabs
+     fallback onderaan. Op deze pagina staat het mount-punt al in
+     de HTML zodat de volgorde (hero → tabs → matches) gegarandeerd
+     is, ook wanneer de premium-overlay om wat voor reden niet
+     activeert. -->
+<div id="inspiration-tabs"></div>
 
 <!-- Actieve filter-chips -->
 <section class="section tight">
@@ -150,10 +166,12 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=11"></script>
+<script src="site-data.js?v=12"></script>
 <script src="sub-context.js?v=1"></script>
 <script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
+<script src="inspiration-tabs.js?v=15"></script>
+<script src="premium-page.js?v=1"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
@@ -251,6 +269,32 @@
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Overlay de editorial hero + Tips/Stories rails op deze Niveau 3
+    // pagina. applyPremiumPage detecteert de bestaande
+    // #inspiration-tabs mount, scoort blogs/stories tegen de
+    // {who, what, sub} context en verplaatst keuzehulp onder het
+    // listing-blok. Vanilla flow blijft de fallback voor wanneer
+    // de helper niet geladen kan worden.
+    if (typeof window.applyPremiumPage === 'function' && (who || what)) {
+        window.applyPremiumPage({
+            who:  who  || null,
+            what: what || null,
+            sub:  sub  || null,
+            root: [
+                { href: 'Homepagina.html',   text: 'Home' },
+                { href: 'Niveau2-Wie.html',  text: 'Wie' },
+                { href: 'Niveau2-Wat.html',  text: 'Wat' },
+            ],
+        });
+    } else if (typeof renderInspirationTabs === 'function' && what) {
+        // Fallback: zonder premium-page toch de sub-aware tabs.
+        renderInspirationTabs('inspiration-tabs', {
+            contextWhat: what,
+            contextSub:  sub || null,
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

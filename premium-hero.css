@@ -180,6 +180,238 @@
     z-index: 0;
 }
 
+/* ---------- Thema: CAMPING (forest / earthy outdoor) ---------- */
+.ph-hero--camping {
+    --ph-bg-start:  #e9f0e1;   /* zacht bladgroen */
+    --ph-bg-end:    #c8d6b8;   /* dieper olive */
+    --ph-accent:    #3f6b3a;   /* bos-groen */
+    --ph-text:      #1f2b1c;
+    --ph-text-soft: #4f5d49;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(63, 107, 58, 0.22);
+}
+.ph-hero--camping::before {
+    content: "";
+    position: absolute;
+    top: -90px; right: -120px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(212, 232, 178, 0.6) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: VAKANTIEPARK (family blue / playful) ---------- */
+.ph-hero--vakantiepark {
+    --ph-bg-start:  #e7f0fb;   /* zacht hemelblauw */
+    --ph-bg-end:    #c4dbf2;   /* dieper familieblauw */
+    --ph-accent:    #1e6fb4;
+    --ph-text:      #16243a;
+    --ph-text-soft: #4d5e75;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(30, 111, 180, 0.22);
+}
+.ph-hero--vakantiepark::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(186, 224, 255, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: WELLNESS (sage / soft purple) ---------- */
+.ph-hero--wellness {
+    --ph-bg-start:  #f1ecf3;
+    --ph-bg-end:    #d8c9dc;
+    --ph-accent:    #7e5d8b;
+    --ph-text:      #2a1f30;
+    --ph-text-soft: #5e4f63;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(126, 93, 139, 0.22);
+}
+.ph-hero--wellness::before {
+    content: "";
+    position: absolute;
+    top: -90px; right: -110px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(230, 211, 234, 0.6) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: BERGEN (alpine slate / cool dawn) ---------- */
+.ph-hero--bergen {
+    --ph-bg-start:  #e7ecf2;
+    --ph-bg-end:    #b8c5d5;
+    --ph-accent:    #2f4e7a;
+    --ph-text:      #161f2d;
+    --ph-text-soft: #4d5d75;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.80);
+    --ph-chip-border: rgba(47, 78, 122, 0.22);
+}
+.ph-hero--bergen::before {
+    content: "";
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 540px; height: 540px;
+    background: radial-gradient(circle, rgba(214, 226, 240, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: AAN-ZEE (coastal cyan / sand) ---------- */
+.ph-hero--aan-zee {
+    --ph-bg-start:  #e6f3f4;
+    --ph-bg-end:    #c4dfe4;
+    --ph-accent:    #1d6f7d;
+    --ph-text:      #112429;
+    --ph-text-soft: #466068;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.80);
+    --ph-chip-border: rgba(29, 111, 125, 0.22);
+}
+.ph-hero--aan-zee::before {
+    content: "";
+    position: absolute;
+    top: -110px; right: -100px;
+    width: 540px; height: 540px;
+    background:
+        radial-gradient(circle, rgba(196, 232, 232, 0.65) 0%, transparent 62%),
+        radial-gradient(circle at 80% 90%, rgba(245, 220, 180, 0.35) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: ITALIE (terracotta / cream) ---------- */
+.ph-hero--italie {
+    --ph-bg-start:  #fbeede;
+    --ph-bg-end:    #e8c4a0;
+    --ph-accent:    #a04a23;
+    --ph-text:      #2c1a10;
+    --ph-text-soft: #6e503e;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(160, 74, 35, 0.22);
+}
+.ph-hero--italie::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(252, 220, 178, 0.6) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: FRANKRIJK (lavender / wheat) ---------- */
+.ph-hero--frankrijk {
+    --ph-bg-start:  #efeaf6;
+    --ph-bg-end:    #d4c4e0;
+    --ph-accent:    #5b417b;
+    --ph-text:      #1f152d;
+    --ph-text-soft: #574868;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(91, 65, 123, 0.22);
+}
+.ph-hero--frankrijk::before {
+    content: "";
+    position: absolute;
+    top: -110px; right: -110px;
+    width: 540px; height: 540px;
+    background:
+        radial-gradient(circle, rgba(222, 208, 240, 0.55) 0%, transparent 60%),
+        radial-gradient(circle at 80% 90%, rgba(245, 235, 200, 0.35) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: EUROPA (broad / continental) ---------- */
+.ph-hero--europa {
+    --ph-bg-start:  #ecf1f7;
+    --ph-bg-end:    #cad8e8;
+    --ph-accent:    #2c5288;
+    --ph-text:      #14213a;
+    --ph-text-soft: #4a5872;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(44, 82, 136, 0.22);
+}
+.ph-hero--europa::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(208, 222, 240, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: GLAMPING (warm earth / soft pink) ---------- */
+.ph-hero--glamping {
+    --ph-bg-start:  #f7ece1;
+    --ph-bg-end:    #e1c8b0;
+    --ph-accent:    #a05a3e;
+    --ph-text:      #28180f;
+    --ph-text-soft: #6a4f3f;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(160, 90, 62, 0.22);
+}
+.ph-hero--glamping::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(248, 220, 196, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: CITYTRIP (urban warm grey / coral) ---------- */
+.ph-hero--citytrip {
+    --ph-bg-start:  #f1ecea;
+    --ph-bg-end:    #d6c8c2;
+    --ph-accent:    #a14c41;
+    --ph-text:      #1f1411;
+    --ph-text-soft: #5d4943;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.80);
+    --ph-chip-border: rgba(161, 76, 65, 0.22);
+}
+.ph-hero--citytrip::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(240, 218, 210, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: AVONTUUR (rust / sage) ---------- */
+.ph-hero--avontuur {
+    --ph-bg-start:  #ebede5;
+    --ph-bg-end:    #c7c8b3;
+    --ph-accent:    #5a6b2c;
+    --ph-text:      #1d2014;
+    --ph-text-soft: #4a5340;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.80);
+    --ph-chip-border: rgba(90, 107, 44, 0.22);
+}
+.ph-hero--avontuur::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(216, 222, 195, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
+/* ---------- Thema: GENERIC (default, neutral premium) ---------- */
+.ph-hero--generic {
+    --ph-bg-start:  #f4f6f9;
+    --ph-bg-end:    #dde3eb;
+    --ph-accent:    #1e6fff;
+    --ph-text:      #131825;
+    --ph-text-soft: #4d5466;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.80);
+    --ph-chip-border: rgba(0, 0, 0, 0.10);
+}
+.ph-hero--generic::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(220, 232, 248, 0.55) 0%, transparent 62%);
+    pointer-events: none; z-index: 0;
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 720px) {
     .ph-hero { padding: 40px 20px 56px; }
@@ -187,7 +419,7 @@
     .ph-hero-eyebrow { margin-bottom: 10px; }
     .ph-hero-title { margin-bottom: 14px; }
     .ph-hero-lead { margin-bottom: 24px; }
-    .ph-hero--hotel::before { width: 360px; height: 360px; right: -120px; top: -80px; }
+    .ph-hero::before { width: 360px !important; height: 360px !important; right: -120px !important; top: -80px !important; }
 }
 
 /* ============================================================
@@ -342,10 +574,22 @@
     margin: 0;
 }
 
-/* Hotel-thema accent overerving */
-.ph-tips--hotel {
-    --ph-tips-accent: #8b6914;
-}
+/* Thema-accent overerving — houden het Tips-blok visueel consistent
+   met de bovenliggende hero. Alleen de accent-kleur shift; de basis
+   blijft een schone witte sectie. */
+.ph-tips--hotel        { --ph-tips-accent: #8b6914; }
+.ph-tips--camping      { --ph-tips-accent: #3f6b3a; }
+.ph-tips--vakantiepark { --ph-tips-accent: #1e6fb4; }
+.ph-tips--wellness     { --ph-tips-accent: #7e5d8b; }
+.ph-tips--bergen       { --ph-tips-accent: #2f4e7a; }
+.ph-tips--aan-zee      { --ph-tips-accent: #1d6f7d; }
+.ph-tips--italie       { --ph-tips-accent: #a04a23; }
+.ph-tips--frankrijk    { --ph-tips-accent: #5b417b; }
+.ph-tips--europa       { --ph-tips-accent: #2c5288; }
+.ph-tips--glamping     { --ph-tips-accent: #a05a3e; }
+.ph-tips--citytrip     { --ph-tips-accent: #a14c41; }
+.ph-tips--avontuur     { --ph-tips-accent: #5a6b2c; }
+.ph-tips--generic      { --ph-tips-accent: #1e6fff; }
 
 @media (max-width: 720px) {
     .ph-tips { padding: 44px 20px 56px; }
@@ -467,30 +711,53 @@
 }
 .ph-story-link:hover { transform: translateX(2px); }
 
+/* Thema-varianten: matchen de subtle background + accent van de
+   bovenliggende hero. We laten de cards zelf wit zodat ze ALTIJD
+   leesbaar zijn — alleen de strook eromheen krijgt het thema. */
+.ph-stories--hotel        { --ph-stories-bg: #f7f1e6; --ph-stories-accent: #8b6914; }
+.ph-stories--camping      { --ph-stories-bg: #eef2e6; --ph-stories-accent: #3f6b3a; }
+.ph-stories--vakantiepark { --ph-stories-bg: #ecf3fb; --ph-stories-accent: #1e6fb4; }
+.ph-stories--wellness     { --ph-stories-bg: #f3edf5; --ph-stories-accent: #7e5d8b; }
+.ph-stories--bergen       { --ph-stories-bg: #ecf0f5; --ph-stories-accent: #2f4e7a; }
+.ph-stories--aan-zee      { --ph-stories-bg: #ecf5f5; --ph-stories-accent: #1d6f7d; }
+.ph-stories--italie       { --ph-stories-bg: #fbf1e3; --ph-stories-accent: #a04a23; }
+.ph-stories--frankrijk    { --ph-stories-bg: #f1edf7; --ph-stories-accent: #5b417b; }
+.ph-stories--europa       { --ph-stories-bg: #eef3f9; --ph-stories-accent: #2c5288; }
+.ph-stories--glamping     { --ph-stories-bg: #f9efe4; --ph-stories-accent: #a05a3e; }
+.ph-stories--citytrip     { --ph-stories-bg: #f4eeec; --ph-stories-accent: #a14c41; }
+.ph-stories--avontuur     { --ph-stories-bg: #eef0e8; --ph-stories-accent: #5a6b2c; }
+.ph-stories--generic      { --ph-stories-bg: #f1f4f9; --ph-stories-accent: #1e6fff; }
+
 @media (max-width: 720px) {
     .ph-stories { padding: 40px 20px 52px; }
 }
 
 /* ============================================================
-   Hotel page body-modifier (.ph-hotel-page)
+   Premium page body-modifier (.ph-premium-page)
    ============================================================
-   Niveau 2 — Wat › Hotel krijgt een eigen page-flow:
+   Iedere Niveau 2/3 pagina die applyPremiumPage() aanroept krijgt
+   deze body-class. De legacy .ph-hotel-page class blijft als
+   alias gelden zodat geen oude selector breekt; alle regels zijn
+   thema-onafhankelijk geformuleerd.
+
    1. Verberg de "Begin je zoektocht" search-pill (.sn-bar).
    2. Houd de drie categorie-tabs (.sn-tabs) sticky onder de
       hoofd-header.
    3. Tight spacing van hero naar Inspiratie voor jou.
    ============================================================ */
 
-/* Site-header zelf op de Hotel-pagina: geen eigen border/shadow
+/* Site-header zelf op een premium-pagina: geen eigen border/shadow
    meer. Het sticky tab-blok eronder krijgt de divider — dat
    voorkomt het dubbele "drijvend grijs strookje" effect waar
    header-shadow en tab-border tegen elkaar aan zaten. */
-body.ph-hotel-page .site-header {
+body.ph-premium-page .site-header,
+body.ph-hotel-page   .site-header {
     border-bottom: none;
     box-shadow: none;
 }
 
-body.ph-hotel-page #hero-searchbar {
+body.ph-premium-page #hero-searchbar,
+body.ph-hotel-page   #hero-searchbar {
     position: sticky;
     top: var(--header-h, 64px);
     z-index: 50;
@@ -500,8 +767,10 @@ body.ph-hotel-page #hero-searchbar {
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
-body.ph-hotel-page .sn-bar { display: none !important; }
-body.ph-hotel-page .sn-bar-wrap {
+body.ph-premium-page .sn-bar,
+body.ph-hotel-page   .sn-bar { display: none !important; }
+body.ph-premium-page .sn-bar-wrap,
+body.ph-hotel-page   .sn-bar-wrap {
     padding: 6px 24px;
     gap: 0;
     flex-direction: row;
@@ -509,7 +778,8 @@ body.ph-hotel-page .sn-bar-wrap {
     justify-content: center;
     background: #ffffff;
 }
-body.ph-hotel-page .sn-tabs {
+body.ph-premium-page .sn-tabs,
+body.ph-hotel-page   .sn-tabs {
     width: 100%;
     max-width: 1280px;
     /* Centreer de drie tabs als een premium category switcher
@@ -521,28 +791,50 @@ body.ph-hotel-page .sn-tabs {
     overflow-x: auto;
     scrollbar-width: none;
 }
-body.ph-hotel-page .sn-tabs::-webkit-scrollbar { display: none; }
-body.ph-hotel-page .sn-tab { padding: 8px 4px 10px; }
-body.ph-hotel-page .sn-tab-emoji { font-size: 1.3rem; }
-body.ph-hotel-page .sn-tab-label { font-size: 0.82rem; white-space: nowrap; }
+body.ph-premium-page .sn-tabs::-webkit-scrollbar,
+body.ph-hotel-page   .sn-tabs::-webkit-scrollbar { display: none; }
+body.ph-premium-page .sn-tab,
+body.ph-hotel-page   .sn-tab { padding: 8px 4px 10px; }
+body.ph-premium-page .sn-tab-emoji,
+body.ph-hotel-page   .sn-tab-emoji { font-size: 1.3rem; }
+body.ph-premium-page .sn-tab-label,
+body.ph-hotel-page   .sn-tab-label { font-size: 0.82rem; white-space: nowrap; }
 @media (min-width: 720px) {
-    body.ph-hotel-page .sn-tabs { gap: 56px; }
-    body.ph-hotel-page .sn-tab-emoji { font-size: 1.5rem; }
-    body.ph-hotel-page .sn-tab-label { font-size: 0.9rem; }
+    body.ph-premium-page .sn-tabs,
+    body.ph-hotel-page   .sn-tabs { gap: 56px; }
+    body.ph-premium-page .sn-tab-emoji,
+    body.ph-hotel-page   .sn-tab-emoji { font-size: 1.5rem; }
+    body.ph-premium-page .sn-tab-label,
+    body.ph-hotel-page   .sn-tab-label { font-size: 0.9rem; }
 }
 @media (min-width: 1024px) {
-    body.ph-hotel-page .sn-tabs { gap: 72px; }
+    body.ph-premium-page .sn-tabs,
+    body.ph-hotel-page   .sn-tabs { gap: 72px; }
 }
 
 /* Tight transition: hero → inspiratie. Verlaag de bottom-padding
    van de hero én de top-padding van het inspiratie-blok. */
-body.ph-hotel-page .ph-hero { padding-bottom: 48px; }
-body.ph-hotel-page #inspiration-tabs .it-section { padding-top: 28px; padding-bottom: 12px; }
+body.ph-premium-page .ph-hero,
+body.ph-hotel-page   .ph-hero { padding-bottom: 48px; }
+body.ph-premium-page #inspiration-tabs .it-section,
+body.ph-hotel-page   #inspiration-tabs .it-section { padding-top: 28px; padding-bottom: 12px; }
 /* Tips sectie sluit visueel aan op de inspiratie i.p.v. een
    nieuwe luchtlaag te openen. */
-body.ph-hotel-page .ph-tips { padding-top: 36px; padding-bottom: 56px; }
+body.ph-premium-page .ph-tips,
+body.ph-hotel-page   .ph-tips { padding-top: 36px; padding-bottom: 56px; }
+
+/* Verberg de generieke pagina-koppen (breadcrumb + section.tight
+   met h1+lead+chips) zodat de premium hero zelf het hero-aandeel
+   neemt. applyPremiumHero() doet dit ook via inline style maar
+   CSS is een vangnet: als JS uitstaat zien gebruikers nog een
+   bruikbare pagina ipv een dubbele kop. */
+body.ph-premium-page .breadcrumb#bc { display: none; }
+
 @media (max-width: 720px) {
-    body.ph-hotel-page .ph-hero { padding-bottom: 36px; }
-    body.ph-hotel-page #inspiration-tabs .it-section { padding-top: 20px; }
-    body.ph-hotel-page .ph-tips { padding-top: 24px; padding-bottom: 44px; }
+    body.ph-premium-page .ph-hero,
+    body.ph-hotel-page   .ph-hero { padding-bottom: 36px; }
+    body.ph-premium-page #inspiration-tabs .it-section,
+    body.ph-hotel-page   #inspiration-tabs .it-section { padding-top: 20px; }
+    body.ph-premium-page .ph-tips,
+    body.ph-hotel-page   .ph-tips { padding-top: 24px; padding-bottom: 44px; }
 }

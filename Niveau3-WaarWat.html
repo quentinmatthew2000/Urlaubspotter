@@ -8,6 +8,13 @@
     <meta http-equiv="Expires" content="0">
     <title>Waar + Wat · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=3">
+    <!-- Premium category hero — applyPremiumPage() overlay'd op deze
+         Waar+Wat pagina. Theme adapteert zich aan {what, sub, where,
+         region}: "Hotels in Italië" wordt italië-thema, "Hotels in
+         Europa" wordt europa-thema, etc. Vanilla flow blijft de
+         fallback. -->
+    <link rel="stylesheet" href="premium-hero.css?v=5">
 </head>
 <body>
 
@@ -23,6 +30,11 @@
         </div>
     </div>
 </section>
+
+<!-- Mount-punt voor de premium inspiratie-tabs (sub-aware
+     refinements). applyPremiumPage() hangt hier de tabs aan; bij
+     fallback blijft de div leeg en is dat niet erg. -->
+<div id="inspiration-tabs"></div>
 
 <section class="section tight">
     <div class="chips" id="active-filters"></div>
@@ -123,10 +135,12 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=11"></script>
+<script src="site-data.js?v=12"></script>
 <script src="sub-context.js?v=1"></script>
 <script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
+<script src="inspiration-tabs.js?v=15"></script>
+<script src="premium-page.js?v=1"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const what = params.get('what') || '';
@@ -213,6 +227,30 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('who-carousel');
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Theme-resolutie houdt rekening met region (Europa / Bergen /
+    // Aan-Zee) én individueel land (Italië / Frankrijk / ...).
+    // Tips + Stories worden gescoord tegen de volledige context
+    // zodat "Hotels in Italië" Italië-getinte content surfacet.
+    if (typeof window.applyPremiumPage === 'function' && (what || where || region)) {
+        window.applyPremiumPage({
+            what:   what   || null,
+            where:  where  || null,
+            region: region || null,
+            sub:    sub    || null,
+            root: [
+                { href: 'Homepagina.html',   text: 'Home' },
+                { href: 'Niveau2-Waar.html', text: 'Waar' },
+                { href: 'Niveau2-Wat.html',  text: 'Wat' },
+            ],
+        });
+    } else if (typeof renderInspirationTabs === 'function' && what) {
+        renderInspirationTabs('inspiration-tabs', {
+            contextWhat: what,
+            contextSub:  sub || null,
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

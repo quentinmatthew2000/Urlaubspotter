@@ -13,11 +13,12 @@
     <title>Wat voor vakantie? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
-    <!-- Premium category hero — voorlopig alleen geactiveerd op de
-         Hotel-pagina (zie inline script onderaan). De CSS is generiek
-         opgezet zodat we hetzelfde patroon later eenvoudig uitrollen
-         naar andere Niveau 2/3/4 WAT-categorieën. -->
-    <link rel="stylesheet" href="premium-hero.css?v=4">
+    <!-- Premium category hero — geactiveerd voor alle WAT-presets
+         (hotel / camping / vakantiepark, met of zonder sub) via
+         premium-page.js applyPremiumPage(). Generiek thema-systeem;
+         valt terug op de vanilla pagina-flow wanneer er geen WAT
+         gekozen is. -->
+    <link rel="stylesheet" href="premium-hero.css?v=5">
 </head>
 <body>
 
@@ -87,7 +88,9 @@
     <div class="cat-grid small" id="who-tiles"></div>
 </section>
 
-<!-- BLOG — Tips & reisverhalen (sleepbaar) -->
+<!-- BLOG — Tips & reisverhalen (sleepbaar). Wordt verborgen door
+     applyPremiumPage() wanneer een premium-hero actief is — de
+     premium Tips-carousel vervangt deze strook. -->
 <div class="section-bg-alt-wrap">
 <section class="section">
     <div class="section-head">
@@ -132,7 +135,9 @@
 </section>
 </div>
 
-<!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset) -->
+<!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset).
+     Wordt verborgen door applyPremiumPage() wanneer een premium-
+     stories carousel actief is. -->
 <div class="section-bg-alt-wrap preset-only" style="display:none">
 <section class="section">
     <div class="section-head">
@@ -184,11 +189,12 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=11"></script>
+<script src="site-data.js?v=12"></script>
 <script src="sub-context.js?v=1"></script>
 <script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script src="inspiration-tabs.js?v=15"></script>
+<script src="premium-page.js?v=1"></script>
 <script>
     renderHeader('wat');
 
@@ -200,19 +206,15 @@
 
     // mainLabel = het LABEL DAT DE PAGINA IDENTIFICEERT. Bij sub-
     // context is dat het sub-label, anders het WAT-label. Wordt
-    // gebruikt voor titel, eyebrow, breadcrumb-current, chip en
-    // document.title zodat de pagina overal als zichzelf presenteert
-    // i.p.v. als generieke Hotel/Camping/Vakantiepark-pagina.
+    // gebruikt voor de fallback (vanilla) pagina-rendering wanneer
+    // applyPremiumPage NIET geactiveerd wordt. Bij een premium-preset
+    // overschrijft applyPremiumPage de hele bovenkant van de pagina.
     const mainLabel = subLabel || whatLabel;
-    // Diagnose-log (zichtbaar in DevTools). Maakt het mogelijk om in
-    // 1 oogopslag te zien of de sub-as-primary code daadwerkelijk
-    // geladen is door deze pagina-render.
     console.log('[Niveau2-Wat]', { whatPre, subPre, whatLabel, subLabel, mainLabel });
 
-    // Breadcrumb: Home › Wat voor vakantie? › <mainLabel>. Geen
-    // tussenstap voor de WAT-parent — de pagina ís Wellness Hotels,
-    // niet Hotel-met-een-filter. (De "Andere keuze" chip biedt nog
-    // wel een terugweg naar de WAT-parent.)
+    // Vanilla breadcrumb / page-head: wordt alleen ECHT zichtbaar als
+    // we onder de premium-flow uit komen (geen preset → overzichts-
+    // pagina). Bij premium-preset verbergt applyPremiumHero deze.
     document.getElementById('bc').innerHTML = whatPre
         ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
@@ -222,35 +224,22 @@
 
     if (whatPre) {
         document.getElementById('page-title').textContent = mainLabel;
-        // Document.title bumpen voor browser-tab + share-previews.
         document.title = `${mainLabel} · Urlaubspotter`;
-        // Contextuele intro-copy via context-copy.js. Per sub × WIE
-        // een eigen NL-zin (zie context-copy.js voor de matrix).
-        // Valt terug op een korte zin wanneer de helper onverhoopt
-        // niet geladen is.
         const lead = (typeof window.buildContextLead === 'function'
             ? window.buildContextLead({ what: whatPre, sub: subPre })
             : '') || `Bekijk onze selectie ${(subLabel || whatLabel).toLowerCase()}.`;
         document.getElementById('page-lead').textContent = lead;
-        // Eyebrow: één primair segment na "Niveau 2 — Wat". Geen
-        // ouder-WAT meer wanneer er een sub-context is.
         document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${mainLabel}`;
-        // Verberg de algemene "Alle vakantietypes" carousel als het type al gekozen is
         document.getElementById('what-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
-        // Active filters: alleen het actieve context-chip. Geen
-        // "Andere keuze" / "Verander type" meer — de breadcrumb biedt
-        // de terugweg naar de parent WAT.
         document.getElementById('active-filters').innerHTML =
             `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${mainLabel}</span>`;
 
-        // Geschikte accommodaties — sub-aware filtering zodat de
-        // listing matcht met de paginatitel.
+        // Geschikte accommodaties — sub-aware filtering.
         const matches = DATA.filterWithSub({ what: whatPre, sub: subPre });
         document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
         document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${mainLabel.toLowerCase()}.`;
-        // "Bekijk alle →" link houdt parent-WAT + sub.
         const allLinkParams = subPre ? `?what=${whatPre}&sub=${subPre}` : `?what=${whatPre}`;
         document.getElementById('matches-all-link').href = `Navigatie.html${allLinkParams}`;
         renderListingPreview('matches-listing', matches, { limit: 6 });
@@ -262,9 +251,6 @@
         linkBuilder: (v) => `Niveau2-Wat.html?what=${v}`,
         gradient: SITE_DATA.gradients.what
     });
-    // Carry-forward voor de sub: deeper navigatie behoudt het
-    // sub-niveau zodat klikken op "Italië" vanaf Wellness Hotels
-    // niet plotseling Hotel-in-Italië wordt.
     const subParam = subPre ? `&sub=${subPre}` : '';
     renderCategoryTiles('who-tiles', DATA.who(), {
         linkBuilder: (v) => whatPre
@@ -283,15 +269,9 @@
 
     renderBlogPreview('blog-preview', whatLabel || 'Vakantietype');
     renderKeuzehulpCTA('keuzehulp-block');
-    // Context-aware Inspiratie-tabs: alleen activeren wanneer een
-    // WAT-type bekend is dat refinements heeft (hotel/camping/holiday-park).
-    // Zonder context renderen we nog niet — homepage-style inspiratie
-    // hoort niet bij de generieke "Wat voor vakantie?" overzichtspagina.
+    // Inspiratie-tabs alleen mounten bij een gekozen WAT. Geen
+    // context = geen contextuele refinements.
     if (whatPre && typeof renderInspirationTabs === 'function') {
-        // Sub-context (subPre, bv. "wellness" / "boutique" / "glamping")
-        // wordt meegegeven zodat alle inspiratie-links het sub-niveau
-        // bewaren — "Wellness Hotels voor koppels" i.p.v. te
-        // degenereren tot "Hotels voor koppels".
         renderInspirationTabs('inspiration-tabs', {
             contextWhat: whatPre,
             contextSub:  subPre || null,
@@ -301,331 +281,25 @@
     renderFooter();
     bindCarousel('what-carousel');
 
-    // ---- Premium category hero — opt-in test op Hotel-pagina ----
-    // Niveau2-Wat.html?what=hotel (geen sub) krijgt een premium
-    // editorial hero. Op alle andere combinaties valt het terug op
-    // de bestaande generieke header. De helper is bewust generiek
-    // gehouden zodat we hetzelfde patroon later kunnen uitrollen
-    // naar Camping, Vakantiepark, sub-pagina's, etc.
-    function applyPremiumHero(config) {
-        const oldCrumb = document.getElementById('bc');
-        const oldHeadSection = document.querySelector('section.section.tight');
-        if (oldCrumb) oldCrumb.style.display = 'none';
-        if (oldHeadSection) oldHeadSection.style.display = 'none';
-
-        const crumbHTML = (config.breadcrumb || []).map((seg, i, arr) => {
-            const isLast = i === arr.length - 1;
-            const sep = i > 0 ? `<span class="ph-sep">/</span>` : '';
-            const node = seg.href && !isLast
-                ? `<a href="${seg.href}">${seg.text}</a>`
-                : `<span class="ph-current">${seg.text}</span>`;
-            return sep + node;
-        }).join('');
-
-        const chipsHTML = (config.chips || []).map(c => `
-            <span class="ph-chip${c.active ? ' ph-chip--active' : ''}">
-                ${c.icon ? `<span class="ph-chip-icon" aria-hidden="true">${c.icon}</span>` : ''}
-                <span>${c.label}</span>
-            </span>
-        `).join('');
-
-        const heroHTML = `
-            <section class="ph-hero ph-hero--${config.theme || 'generic'}">
-                <div class="ph-hero-inner">
-                    <nav class="ph-hero-breadcrumb" aria-label="Kruimelpad">${crumbHTML}</nav>
-                    ${config.eyebrow ? `<span class="ph-hero-eyebrow">${config.eyebrow}</span>` : ''}
-                    <h1 class="ph-hero-title">${config.title}</h1>
-                    ${config.lead ? `<p class="ph-hero-lead">${config.lead}</p>` : ''}
-                    ${chipsHTML ? `<div class="ph-hero-chips">${chipsHTML}</div>` : ''}
-                </div>
-            </section>
-        `;
-        // Anchor de hero ONDER de "Begin je zoektocht" search-navigation
-        // (#hero-searchbar) wanneer die aanwezig is. Search blijft zo
-        // bovenaan zichtbaar als primaire interactie-laag; de premium
-        // hero komt eronder als editorial intro.
-        const anchor = document.getElementById('hero-searchbar')
-            || document.querySelector('header.site-header');
-        if (anchor) anchor.insertAdjacentHTML('afterend', heroHTML);
-        // Document title sluit aan op de editorial titel.
-        document.title = `${config.title} · Urlaubspotter`;
-    }
-
-    // makePhDragRail — kleine drag-to-scroll helper voor de premium
-    // horizontale carousels (.ph-tips-grid en .ph-stories-rail).
-    // Touch swipe + scroll wheel zijn nativef; voor desktop muis-
-    // gebruikers voegt deze helper grab-cursor en click-blocker toe
-    // zodat een drag niet per ongeluk een card-klik triggert.
-    function makePhDragRail(el) {
-        if (!el || el.dataset.phDragBound === '1') return;
-        el.dataset.phDragBound = '1';
-        let isDown = false, startX = 0, startLeft = 0, moved = 0, dragging = false;
-        el.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return;
-            isDown = true; moved = 0; dragging = false;
-            startX = e.clientX; startLeft = el.scrollLeft;
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            const dx = e.clientX - startX;
-            moved = Math.abs(dx);
-            if (moved > 5) {
-                if (!dragging) { dragging = true; el.style.cursor = 'grabbing'; el.style.userSelect = 'none'; }
-                el.scrollLeft = startLeft - dx;
-                e.preventDefault();
-            }
-        });
-        window.addEventListener('mouseup', () => {
-            if (!isDown) return;
-            isDown = false;
-            if (dragging) {
-                // Block de eerstvolgende klik zodat de card waar we
-                // op losgelaten zijn niet navigeert.
-                const blocker = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
-                el.addEventListener('click', blocker, { capture: true, once: true });
-                setTimeout(() => el.removeEventListener('click', blocker, true), 50);
-            }
-            dragging = false;
-            el.style.cursor = '';
-            el.style.userSelect = '';
-        });
-        el.style.cursor = 'grab';
-        // Verticaal scrollwiel → horizontale scroll wanneer er geen
-        // vertikale overflow is. Gebruikelijk voor magazine-rails.
-        el.addEventListener('wheel', (e) => {
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                el.scrollLeft += e.deltaY;
-                e.preventDefault();
-            }
-        }, { passive: false });
-    }
-
-    // applyPremiumTips — editorial "Tips per vakantietype" sectie.
-    // Wordt direct na het inspiratie-tabs blok geïnjecteerd (dus
-    // tussen "Inspiratie voor jou" en de matches grid). Hide ook
-    // de legacy blog-section met dezelfde titel om duplicatie te
-    // voorkomen. Generieke helper: per pagina geef je eigen content
-    // mee zodat we 'm later op andere WAT-types kunnen hergebruiken.
-    function applyPremiumTips(config) {
-        const inspirationDiv = document.getElementById('inspiration-tabs');
-        if (!inspirationDiv) return;
-
-        const cardsHTML = (config.cards || []).map(c => `
-            <a class="ph-tip-card" href="${c.href}">
-                <div class="ph-tip-img" style="background: ${c.gradient}">
-                    <span class="ph-tip-emoji" aria-hidden="true">${c.emoji}</span>
-                </div>
-                <div class="ph-tip-body">
-                    <span class="ph-tip-tag">${c.tag}</span>
-                    <h3 class="ph-tip-title">${c.title}</h3>
-                    <p class="ph-tip-intro">${c.intro}</p>
-                </div>
-            </a>
-        `).join('');
-
-        const sectionHTML = `
-            <section class="ph-tips ph-tips--${config.theme || 'generic'}" aria-label="${config.title}">
-                <div class="ph-tips-inner">
-                    <div class="ph-tips-head">
-                        <div>
-                            <span class="ph-tips-eyebrow">${config.eyebrow || 'Inspiratie'}</span>
-                            <h2 class="ph-tips-title">${config.title}</h2>
-                        </div>
-                        ${config.moreHref ? `<a class="ph-tips-more" href="${config.moreHref}">${config.moreLabel || 'Alle tips →'}</a>` : ''}
-                    </div>
-                    <div class="ph-tips-grid">${cardsHTML}</div>
-                </div>
-            </section>
-        `;
-        inspirationDiv.insertAdjacentHTML('afterend', sectionHTML);
-
-        // Verberg de legacy "Tips per vakantietype" blog-strook (#blog-
-        // preview leeft in een .section-bg-alt-wrap wrapper) om
-        // dubbele content te voorkomen.
-        const blogPreview = document.getElementById('blog-preview');
-        const legacyWrap = blogPreview ? blogPreview.closest('.section-bg-alt-wrap') : null;
-        if (legacyWrap) legacyWrap.style.display = 'none';
-
-        // Activeer drag-rail op de zojuist geïnjecteerde grid.
-        const newGrid = document.querySelector('.ph-tips-grid');
-        if (newGrid) makePhDragRail(newGrid);
-    }
-
-    // applyPremiumStories — editorial "Reisverslagen" carousel.
-    // Wordt direct na de Tips-sectie geïnjecteerd. Hide tegelijk
-    // het legacy "Reisverslagen" blok onderaan de pagina (de
-    // .section-bg-alt-wrap.preset-only met editorial-grid).
-    function applyPremiumStories(config) {
-        const tipsSection = document.querySelector('.ph-tips');
-        if (!tipsSection) return;
-
-        const cardsHTML = (config.stories || []).map(s => `
-            <article class="ph-story-card">
-                <div class="ph-story-img" style="background: ${s.gradient}">
-                    <span class="ph-story-emoji" aria-hidden="true">${s.emoji}</span>
-                </div>
-                <div class="ph-story-body">
-                    <span class="ph-story-author">${s.author}</span>
-                    <h3 class="ph-story-title">${s.title}</h3>
-                    <p class="ph-story-intro">${s.intro}</p>
-                    ${s.href ? `<a class="ph-story-link" href="${s.href}">Lees het verslag →</a>` : ''}
-                </div>
-            </article>
-        `).join('');
-
-        const sectionHTML = `
-            <section class="ph-stories ph-stories--${config.theme || 'generic'}" aria-label="${config.title}">
-                <div class="ph-stories-inner">
-                    <div class="ph-tips-head">
-                        <div>
-                            <span class="ph-tips-eyebrow">${config.eyebrow || 'Van de redactie'}</span>
-                            <h2 class="ph-tips-title">${config.title}</h2>
-                        </div>
-                        ${config.moreHref ? `<a class="ph-tips-more" href="${config.moreHref}">${config.moreLabel || 'Alle verslagen →'}</a>` : ''}
-                    </div>
-                    <div class="ph-stories-rail">${cardsHTML}</div>
-                </div>
-            </section>
-        `;
-        tipsSection.insertAdjacentHTML('afterend', sectionHTML);
-
-        // Verberg het legacy editorial blok onderaan de pagina
-        // (de .section-bg-alt-wrap.preset-only met dezelfde titel).
-        document.querySelectorAll('.section-bg-alt-wrap.preset-only').forEach(el => {
-            if (el.querySelector('.editorial-grid')) el.style.display = 'none';
-        });
-
-        const newRail = document.querySelector('.ph-stories-rail');
-        if (newRail) makePhDragRail(newRail);
-    }
-
-    // ALLEEN activeren voor de Hotel-pagina zonder sub-context.
-    if (whatPre === 'hotel' && !subPre) {
-        // Body-class triggert de Hotel-specifieke CSS-overrides
-        // (sticky tabs, verborgen search-pill, tight spacing).
-        document.body.classList.add('ph-hotel-page');
-        applyPremiumHero({
-            theme:    'hotel',
-            eyebrow:  'Niveau 2 — Wat › Hotel',
-            title:    'Vind jouw ideale hotelvakantie',
-            lead:     'Van luxe resorts en boutique hotels tot sfeervolle city stays en wellness escapes — ontdek hotels voor iedere reisstijl en bestemming.',
-            breadcrumb: [
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Activeer applyPremiumPage() voor elke gekozen WAT (met of
+    // zonder sub). De helper bouwt zelf de hero, mountet de
+    // inspiration-tabs (al gerenderd hierboven — applyPremiumPage
+    // detecteert de bestaande mount en skip't hercreatie), voegt
+    // de premium Tips- en Stories-rails toe, en verplaatst de
+    // keuzehulp naar onder het matches-blok.
+    //
+    // Wanneer er GEEN WAT gekozen is blijft de vanilla overzichts-
+    // pagina overeind ("Wat voor vakantie zoek jij?" + alle types).
+    if (whatPre && typeof window.applyPremiumPage === 'function') {
+        window.applyPremiumPage({
+            what: whatPre,
+            sub:  subPre || null,
+            root: [
                 { href: 'Homepagina.html',  text: 'Home' },
                 { href: 'Niveau2-Wat.html', text: 'Wat voor vakantie?' },
-                {                            text: 'Hotels' },
-            ],
-            chips: [
-                { icon: '🏨', label: 'Hotel', active: true },
             ],
         });
-
-        applyPremiumTips({
-            theme:      'hotel',
-            eyebrow:    'Inspiratie',
-            title:      'Tips per vakantietype',
-            moreHref:   'blogs.html',
-            moreLabel:  'Alle tips →',
-            cards: [
-                // Iedere tip linkt naar een echte blog-detail-pagina
-                // (SITE_DATA.blogs id 7-10, hotel-themed content).
-                {
-                    tag:      'Boutique',
-                    emoji:    '🛎️',
-                    gradient: 'linear-gradient(135deg, #faf3e6 0%, #d4b682 100%)',
-                    title:    'De mooiste boutique hotels in Europa',
-                    intro:    'Karaktervolle suites, persoonlijke service en geen ketenervaring — onze pick van Europa\'s mooiste boutique hotels.',
-                    href:     'blog-detail.html?id=7',
-                },
-                {
-                    tag:      'Wellness',
-                    emoji:    '💆',
-                    gradient: 'linear-gradient(135deg, #fde6e6 0%, #c89292 100%)',
-                    title:    '5 wellness hotels voor een romantisch weekend',
-                    intro:    'Spa, infinity pools en kaarslicht — vijf wellness hotels waar jullie samen tot rust komen.',
-                    href:     'blog-detail.html?id=8',
-                },
-                {
-                    tag:      'Citytrip',
-                    emoji:    '🏙️',
-                    gradient: 'linear-gradient(135deg, #e0eaf5 0%, #6f8ca6 100%)',
-                    title:    'De leukste citytrip hotels in Italië',
-                    intro:    'Van Romeinse rooftops tot Toscaanse stadssuites — Italiaanse hotels met die ene perfecte ligging.',
-                    href:     'blog-detail.html?id=9',
-                },
-                {
-                    tag:      'Luxe',
-                    emoji:    '🌴',
-                    gradient: 'linear-gradient(135deg, #e8f0e8 0%, #5d8a6a 100%)',
-                    title:    'Hotels met infinity pools',
-                    intro:    'Zwemmen tot aan de horizon — een selectie hotels met de meest spectaculaire infinity pools van Europa.',
-                    href:     'blog-detail.html?id=10',
-                },
-            ],
-        });
-
-        applyPremiumStories({
-            theme:     'hotel',
-            eyebrow:   'Van de redactie',
-            title:     'Reisverslagen van onze redactie',
-            moreHref:  'reisverslagen.html',
-            moreLabel: 'Alle reisverslagen →',
-            stories: [
-                // Iedere story linkt naar een echte reisverslag-detail-
-                // pagina (SITE_DATA.stories id 7-11, hotel-themed).
-                {
-                    emoji:    '🥐',
-                    gradient: 'linear-gradient(135deg, #f3e7d2 0%, #c19a5a 100%)',
-                    author:   'Door Sophie · Redacteur citytrips',
-                    title:    '48 uur in een boutique hotel in Parijs',
-                    intro:    'Een lang weekend in een sfeervol boutique hotel in de Marais — kleine ontbijten, persoonlijke service en de stad voor de deur.',
-                    href:     'reisverslag-detail.html?id=7',
-                },
-                {
-                    emoji:    '🌿',
-                    gradient: 'linear-gradient(135deg, #f0e6d9 0%, #b59b6a 100%)',
-                    author:   'Door Anouk · Redacteur wellness',
-                    title:    'Onze favoriete wellness hotels in Italië',
-                    intro:    'Van thermen in Toscane tot spa-suites aan de Comomeer — Anouk test vier wellness hotels in Italië.',
-                    href:     'reisverslag-detail.html?id=8',
-                },
-                {
-                    emoji:    '🖤',
-                    gradient: 'linear-gradient(135deg, #e7e0d4 0%, #806d4a 100%)',
-                    author:   'Door Mark · Redacteur design',
-                    title:    'Een weekend in een design hotel in Kopenhagen',
-                    intro:    'Strakke lijnen, doordachte details en Scandinavisch comfort — een weekend in Kopenhagens beste design hotel.',
-                    href:     'reisverslag-detail.html?id=9',
-                },
-                {
-                    emoji:    '🌅',
-                    gradient: 'linear-gradient(135deg, #f5dfc2 0%, #c97a4a 100%)',
-                    author:   'Door Esther · Redacteur luxe reizen',
-                    title:    'De mooiste rooftop hotels van Europa',
-                    intro:    'Zwembaden tot aan de skyline, sunset bars en stadsuitzichten — onze pick van Europa\'s mooiste rooftop hotels.',
-                    href:     'reisverslag-detail.html?id=10',
-                },
-                {
-                    emoji:    '🗺️',
-                    gradient: 'linear-gradient(135deg, #e6dccd 0%, #8b6914 100%)',
-                    author:   'Door Lisa · Hoofdredacteur',
-                    title:    'Hoe wij de perfecte citytrip hotels vonden',
-                    intro:    'Welke ligging, welke prijs, welke faciliteiten — onze redactie deelt hoe ze de beste citytrip hotels selecteren.',
-                    href:     'reisverslag-detail.html?id=11',
-                },
-            ],
-        });
-
-        // Verplaats "De ultieme zoektool" (keuzehulp-block) naar direct
-        // ONDER het "15 geschikte accommodaties" matches-blok.
-        // Standaard staat het verderop in de DOM, ná de WIE/Waar
-        // carousels. Op de Hotel-pagina willen we de zoektool als
-        // logische volgende stap NA de aanbevolen accommodaties.
-        const keuzehulpBlock = document.getElementById('keuzehulp-block');
-        const matchesListing = document.getElementById('matches-listing');
-        const matchesSection = matchesListing ? matchesListing.closest('section') : null;
-        if (keuzehulpBlock && matchesSection) {
-            matchesSection.insertAdjacentElement('afterend', keuzehulpBlock);
-        }
     }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
