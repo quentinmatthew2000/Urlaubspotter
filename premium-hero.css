@@ -189,3 +189,151 @@
     .ph-hero-lead { margin-bottom: 24px; }
     .ph-hero--hotel::before { width: 360px; height: 360px; right: -120px; top: -80px; }
 }
+
+/* ============================================================
+   .ph-tips — editorial "Tips per vakantietype" sectie.
+   Visueel afgestemd op de premium hero (zelfde typografische
+   ritmiek, witte achtergrond, kleine accent-eyebrow, premium
+   card-hover). Generieke base + thema-modifier voor de accent-
+   kleur, zodat we later .ph-tips--camping / --vakantiepark
+   kunnen toevoegen.
+   ============================================================ */
+
+.ph-tips {
+    --ph-tips-bg: #ffffff;
+    --ph-tips-text: #1a1f2c;
+    --ph-tips-text-soft: #5a6373;
+    --ph-tips-accent: var(--primary, #1e6fff);
+    --ph-tips-card-border: rgba(0, 0, 0, 0.06);
+
+    background: var(--ph-tips-bg);
+    padding: 64px 24px 72px;
+    color: var(--ph-tips-text);
+}
+.ph-tips-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.ph-tips-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+.ph-tips-eyebrow {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ph-tips-accent);
+    margin-bottom: 8px;
+    opacity: 0.85;
+}
+.ph-tips-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ph-tips-text);
+}
+.ph-tips-more {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ph-tips-accent);
+    text-decoration: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.ph-tips-more:hover { opacity: 0.7; transform: translateX(2px); }
+
+.ph-tips-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+}
+@media (min-width: 600px) {
+    .ph-tips-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+    .ph-tips-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+}
+
+.ph-tip-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--ph-tips-card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.ph-tip-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.04);
+}
+.ph-tip-img {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 14px;
+}
+.ph-tip-emoji {
+    background: rgba(255, 255, 255, 0.94);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+}
+.ph-tip-body {
+    padding: 18px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+.ph-tip-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ph-tips-accent);
+}
+.ph-tip-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ph-tips-text);
+    margin: 0;
+}
+.ph-tip-intro {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ph-tips-text-soft);
+    margin: 0;
+}
+
+/* Hotel-thema accent overerving */
+.ph-tips--hotel {
+    --ph-tips-accent: #8b6914;
+}
+
+@media (max-width: 720px) {
+    .ph-tips { padding: 44px 20px 56px; }
+    .ph-tips-head { margin-bottom: 22px; }
+}

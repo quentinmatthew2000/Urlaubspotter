@@ -17,7 +17,7 @@
          Hotel-pagina (zie inline script onderaan). De CSS is generiek
          opgezet zodat we hetzelfde patroon later eenvoudig uitrollen
          naar andere Niveau 2/3/4 WAT-categorieën. -->
-    <link rel="stylesheet" href="premium-hero.css?v=1">
+    <link rel="stylesheet" href="premium-hero.css?v=2">
 </head>
 <body>
 
@@ -340,10 +340,62 @@
                 </div>
             </section>
         `;
-        const header = document.querySelector('header.site-header');
-        if (header) header.insertAdjacentHTML('afterend', heroHTML);
+        // Anchor de hero ONDER de "Begin je zoektocht" search-navigation
+        // (#hero-searchbar) wanneer die aanwezig is. Search blijft zo
+        // bovenaan zichtbaar als primaire interactie-laag; de premium
+        // hero komt eronder als editorial intro.
+        const anchor = document.getElementById('hero-searchbar')
+            || document.querySelector('header.site-header');
+        if (anchor) anchor.insertAdjacentHTML('afterend', heroHTML);
         // Document title sluit aan op de editorial titel.
         document.title = `${config.title} · Urlaubspotter`;
+    }
+
+    // applyPremiumTips — editorial "Tips per vakantietype" sectie.
+    // Wordt direct na het inspiratie-tabs blok geïnjecteerd (dus
+    // tussen "Inspiratie voor jou" en de matches grid). Hide ook
+    // de legacy blog-section met dezelfde titel om duplicatie te
+    // voorkomen. Generieke helper: per pagina geef je eigen content
+    // mee zodat we 'm later op andere WAT-types kunnen hergebruiken.
+    function applyPremiumTips(config) {
+        const inspirationDiv = document.getElementById('inspiration-tabs');
+        if (!inspirationDiv) return;
+
+        const cardsHTML = (config.cards || []).map(c => `
+            <a class="ph-tip-card" href="${c.href}">
+                <div class="ph-tip-img" style="background: ${c.gradient}">
+                    <span class="ph-tip-emoji" aria-hidden="true">${c.emoji}</span>
+                </div>
+                <div class="ph-tip-body">
+                    <span class="ph-tip-tag">${c.tag}</span>
+                    <h3 class="ph-tip-title">${c.title}</h3>
+                    <p class="ph-tip-intro">${c.intro}</p>
+                </div>
+            </a>
+        `).join('');
+
+        const sectionHTML = `
+            <section class="ph-tips ph-tips--${config.theme || 'generic'}" aria-label="${config.title}">
+                <div class="ph-tips-inner">
+                    <div class="ph-tips-head">
+                        <div>
+                            <span class="ph-tips-eyebrow">${config.eyebrow || 'Inspiratie'}</span>
+                            <h2 class="ph-tips-title">${config.title}</h2>
+                        </div>
+                        ${config.moreHref ? `<a class="ph-tips-more" href="${config.moreHref}">${config.moreLabel || 'Alle tips →'}</a>` : ''}
+                    </div>
+                    <div class="ph-tips-grid">${cardsHTML}</div>
+                </div>
+            </section>
+        `;
+        inspirationDiv.insertAdjacentHTML('afterend', sectionHTML);
+
+        // Verberg de legacy "Tips per vakantietype" blog-strook (#blog-
+        // preview leeft in een .section-bg-alt-wrap wrapper) om
+        // dubbele content te voorkomen.
+        const blogPreview = document.getElementById('blog-preview');
+        const legacyWrap = blogPreview ? blogPreview.closest('.section-bg-alt-wrap') : null;
+        if (legacyWrap) legacyWrap.style.display = 'none';
     }
 
     // ALLEEN activeren voor de Hotel-pagina zonder sub-context.
@@ -360,6 +412,48 @@
             ],
             chips: [
                 { icon: '🏨', label: 'Hotel', active: true },
+            ],
+        });
+
+        applyPremiumTips({
+            theme:      'hotel',
+            eyebrow:    'Inspiratie',
+            title:      'Tips per vakantietype',
+            moreHref:   'blogs.html',
+            moreLabel:  'Alle tips →',
+            cards: [
+                {
+                    tag:      'Boutique',
+                    emoji:    '🛎️',
+                    gradient: 'linear-gradient(135deg, #faf3e6 0%, #d4b682 100%)',
+                    title:    'De mooiste boutique hotels in Europa',
+                    intro:    'Karaktervolle suites, persoonlijke service en geen ketenervaring — onze pick van Europa\'s mooiste boutique hotels.',
+                    href:     'Niveau3-WaarWat.html?what=hotel&region=europa&sub=boutique',
+                },
+                {
+                    tag:      'Wellness',
+                    emoji:    '💆',
+                    gradient: 'linear-gradient(135deg, #fde6e6 0%, #c89292 100%)',
+                    title:    '5 wellness hotels voor een romantisch weekend',
+                    intro:    'Spa, infinity pools en kaarslicht — vijf wellness hotels waar jullie samen tot rust komen.',
+                    href:     'Niveau3-WieWat.html?who=couples&what=hotel&sub=wellness',
+                },
+                {
+                    tag:      'Citytrip',
+                    emoji:    '🏙️',
+                    gradient: 'linear-gradient(135deg, #e0eaf5 0%, #6f8ca6 100%)',
+                    title:    'De leukste citytrip hotels in Italië',
+                    intro:    'Van Romeinse rooftops tot Toscaanse stadssuites — Italiaanse hotels met die ene perfecte ligging.',
+                    href:     'Niveau3-WaarWat.html?what=hotel&where=italie&sub=city',
+                },
+                {
+                    tag:      'Luxe',
+                    emoji:    '🌴',
+                    gradient: 'linear-gradient(135deg, #e8f0e8 0%, #5d8a6a 100%)',
+                    title:    'Hotels met infinity pools',
+                    intro:    'Zwemmen tot aan de horizon — een selectie hotels met de meest spectaculaire infinity pools van Europa.',
+                    href:     'Niveau3-WieWat.html?who=couples&what=hotel&sub=resort',
+                },
             ],
         });
     }
