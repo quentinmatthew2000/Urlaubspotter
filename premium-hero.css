@@ -249,21 +249,29 @@
 }
 .ph-tips-more:hover { opacity: 0.7; transform: translateX(2px); }
 
+/* Horizontale carousel — Netflix/Airbnb-style swipe rail. Touch + mouse
+   drag wordt geactiveerd via een lichte JS-helper op de Niveau 2 — Wat
+   pagina. De scrollbar is verborgen voor de premium look. */
 .ph-tips-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 22px;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 18px;
+    padding: 4px 0 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
-@media (min-width: 600px) {
-    .ph-tips-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 1024px) {
-    .ph-tips-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-}
+.ph-tips-grid::-webkit-scrollbar { display: none; }
 
 .ph-tip-card {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
+    width: 280px;
+    scroll-snap-align: start;
     background: #fff;
     border: 1px solid var(--ph-tips-card-border);
     border-radius: 16px;
@@ -271,6 +279,12 @@
     text-decoration: none;
     color: inherit;
     transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+@media (min-width: 720px) {
+    .ph-tip-card { width: 320px; }
+}
+@media (min-width: 1024px) {
+    .ph-tip-card { width: 340px; }
 }
 .ph-tip-card:hover {
     transform: translateY(-4px);
@@ -336,4 +350,181 @@
 @media (max-width: 720px) {
     .ph-tips { padding: 44px 20px 56px; }
     .ph-tips-head { margin-bottom: 22px; }
+}
+
+/* ============================================================
+   .ph-stories — "Reisverslagen van onze redactie" editoriële
+   carousel met magazine-style cards (auteur byline, intro,
+   "Lees het verslag →" CTA). Zelfde rail-mechanics als .ph-tips
+   voor consistent swipe-gedrag.
+   ============================================================ */
+
+.ph-stories {
+    --ph-stories-bg:        #f7f1e6;   /* warm cream (matcht hotel hero) */
+    --ph-stories-text:      var(--ph-tips-text, #1a1f2c);
+    --ph-stories-text-soft: var(--ph-tips-text-soft, #5a6373);
+    --ph-stories-accent:    var(--ph-tips-accent, #8b6914);
+    --ph-stories-card-border: rgba(0, 0, 0, 0.05);
+
+    background: var(--ph-stories-bg);
+    padding: 56px 24px 64px;
+    color: var(--ph-stories-text);
+}
+.ph-stories-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.ph-stories-rail {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 22px;
+    padding: 4px 0 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.ph-stories-rail::-webkit-scrollbar { display: none; }
+
+.ph-story-card {
+    flex: 0 0 auto;
+    width: 300px;
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--ph-stories-card-border);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.ph-story-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+}
+@media (min-width: 720px) {
+    .ph-story-card { width: 360px; }
+}
+.ph-story-img {
+    aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 14px;
+}
+.ph-story-emoji {
+    background: rgba(255, 255, 255, 0.94);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+}
+.ph-story-body {
+    padding: 18px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+.ph-story-author {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ph-stories-text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.ph-story-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ph-stories-text);
+}
+.ph-story-intro {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ph-stories-text-soft);
+    margin: 0;
+}
+.ph-story-link {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ph-stories-accent);
+    text-decoration: none;
+    margin-top: auto;
+    padding-top: 4px;
+    transition: transform 0.15s ease;
+    align-self: flex-start;
+}
+.ph-story-link:hover { transform: translateX(2px); }
+
+@media (max-width: 720px) {
+    .ph-stories { padding: 40px 20px 52px; }
+}
+
+/* ============================================================
+   Hotel page body-modifier (.ph-hotel-page)
+   ============================================================
+   Niveau 2 — Wat › Hotel krijgt een eigen page-flow:
+   1. Verberg de "Begin je zoektocht" search-pill (.sn-bar).
+   2. Houd de drie categorie-tabs (.sn-tabs) sticky onder de
+      hoofd-header.
+   3. Tight spacing van hero naar Inspiratie voor jou.
+   ============================================================ */
+
+body.ph-hotel-page #hero-searchbar {
+    position: sticky;
+    top: var(--header-h, 64px);
+    z-index: 50;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+body.ph-hotel-page .sn-bar { display: none !important; }
+body.ph-hotel-page .sn-bar-wrap {
+    padding: 6px 24px;
+    gap: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+body.ph-hotel-page .sn-tabs {
+    width: 100%;
+    max-width: 1280px;
+    justify-content: flex-start;
+    gap: 26px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+body.ph-hotel-page .sn-tabs::-webkit-scrollbar { display: none; }
+body.ph-hotel-page .sn-tab { padding: 8px 4px 10px; }
+body.ph-hotel-page .sn-tab-emoji { font-size: 1.3rem; }
+body.ph-hotel-page .sn-tab-label { font-size: 0.82rem; white-space: nowrap; }
+@media (min-width: 720px) {
+    body.ph-hotel-page .sn-tabs { gap: 40px; }
+    body.ph-hotel-page .sn-tab-emoji { font-size: 1.5rem; }
+    body.ph-hotel-page .sn-tab-label { font-size: 0.9rem; }
+}
+
+/* Tight transition: hero → inspiratie. Verlaag de bottom-padding
+   van de hero én de top-padding van het inspiratie-blok. */
+body.ph-hotel-page .ph-hero { padding-bottom: 48px; }
+body.ph-hotel-page #inspiration-tabs .it-section { padding-top: 28px; padding-bottom: 12px; }
+/* Tips sectie sluit visueel aan op de inspiratie i.p.v. een
+   nieuwe luchtlaag te openen. */
+body.ph-hotel-page .ph-tips { padding-top: 36px; padding-bottom: 56px; }
+@media (max-width: 720px) {
+    body.ph-hotel-page .ph-hero { padding-bottom: 36px; }
+    body.ph-hotel-page #inspiration-tabs .it-section { padding-top: 20px; }
+    body.ph-hotel-page .ph-tips { padding-top: 24px; padding-bottom: 44px; }
 }
