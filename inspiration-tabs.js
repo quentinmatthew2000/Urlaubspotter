@@ -332,14 +332,39 @@
         // 'boutique', 'glamping'). Wanneer gezet, regenereren we
         // Reisgezelschap / Bestemmingen / Populair zodat de
         // sub-context behouden blijft in álle URL's en titels.
-        // SubLabel komt uit SITE_DATA.subLabels via DATA.subLabel().
-        const contextSub = (contextWhat && opts.contextSub &&
-            (typeof DATA !== 'undefined') && DATA.subLabel(contextWhat, opts.contextSub))
+        //
+        // We gebruiken window.safeSubLabel (uit sub-context.js) i.p.v.
+        // DATA.subLabel direct. safeSubLabel valt namelijk terug op een
+        // inline labelmap wanneer een browser-cache nog een oude
+        // site-data.js heeft zonder SITE_DATA.subLabels. Zonder die
+        // fallback zou een verouderde site-data.js de sub-context-
+        // detectie laten falen — contextSub zou null worden en het
+        // blok zou degeneren naar generieke WAT-combinaties (bijv.
+        // "Wellness hotels voor koppels" op een Boutique Hotels
+        // pagina). Bewuste defensieve programmering.
+        const _resolveSubLabel = (typeof window !== 'undefined' && typeof window.safeSubLabel === 'function')
+            ? window.safeSubLabel
+            : (typeof DATA !== 'undefined' && typeof DATA.subLabel === 'function'
+                ? DATA.subLabel.bind(DATA)
+                : function () { return ''; });
+        const _resolvedSubLabel = (contextWhat && opts.contextSub)
+            ? _resolveSubLabel(contextWhat, opts.contextSub)
+            : '';
+        const contextSub = (contextWhat && opts.contextSub && _resolvedSubLabel)
             ? opts.contextSub
             : null;
-        const contextSubLabel = contextSub
-            ? DATA.subLabel(contextWhat, contextSub)
-            : '';
+        const contextSubLabel = _resolvedSubLabel || '';
+        // Diagnostic: zie in DevTools direct of de sub-context goed
+        // wordt herkend ("contextSub: 'boutique'" / contextSubLabel:
+        // 'Boutique Hotels'). Bij null is dat het smoking gun voor
+        // een stale fallback-bug.
+        console.log('[inspiration-tabs]', {
+            contextWhat,
+            inputContextSub: opts.contextSub,
+            contextSub,
+            contextSubLabel,
+            resolverUsed: (typeof window !== 'undefined' && typeof window.safeSubLabel === 'function') ? 'safeSubLabel' : 'DATA.subLabel',
+        });
 
         let activeTab = TABS[0].id;
 
