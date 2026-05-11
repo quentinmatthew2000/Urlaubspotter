@@ -78,14 +78,19 @@
     //   • Continenten → eigen continent-landing (europa.html / azie.html)
     //     met ?what= zodat de pagina kan filteren op het huidige type.
     function bestemmingenForWat(what, articleLabel) {
-        const N3 = (where) => `Niveau3-WaarWat.html?what=${what}&where=${where}`;
-        const CONT = (slug) => `${slug}.html?what=${what}`;
+        // Concrete landen → Niveau3-WaarWat met ?where=. Aggregaten
+        // (continenten + "bergen") → Niveau3-WaarWat met ?region=
+        // zodat de WAT-context behouden blijft (Hotels in Europa,
+        // Hotels nabij de bergen) i.p.v. te degenereren naar een
+        // generieke Niveau 1 continentpagina of een toevallig land.
+        const N3  = (where)  => `Niveau3-WaarWat.html?what=${what}&where=${where}`;
+        const N3R = (region) => `Niveau3-WaarWat.html?what=${what}&region=${region}`;
         return [
-            { icon: "🌍",  title: `Naar ${articleLabel} in Europa`,     href: CONT("europa") },
-            { icon: "🌏",  title: `Naar ${articleLabel} in Azië`,       href: CONT("azie") },
+            { icon: "🌍",  title: `Naar ${articleLabel} in Europa`,     href: N3R("europa") },
+            { icon: "🌏",  title: `Naar ${articleLabel} in Azië`,       href: N3R("azie") },
             { icon: "🍺",  title: `Naar ${articleLabel} in Duitsland`,  href: N3("duitsland") },
             { icon: "🇳🇱",  title: `Naar ${articleLabel} in Nederland`,  href: N3("netherlands") },
-            { icon: "⛰️",  title: `Naar ${articleLabel} bij de bergen`, href: N3("oostenrijk") },
+            { icon: "⛰️",  title: `Naar ${articleLabel} bij de bergen`, href: N3R("bergen") },
             { icon: "🗼",  title: `Naar ${articleLabel} in Frankrijk`,  href: N3("frankrijk") },
             { icon: "⛵",  title: `Naar ${articleLabel} in Kroatië`,    href: N3("kroatie") },
             { icon: "🍝",  title: `Naar ${articleLabel} in Italië`,     href: N3("italie") },
@@ -153,14 +158,18 @@
     }
 
     function bestemmingenForSubContext(what, sub, subLabel) {
-        const N3 = (where) => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&where=${where}`;
-        const N2 = `Niveau2-Waar.html`;
+        // Idem als bestemmingenForWat maar met &sub= meegekoppeld
+        // zodat we niet alleen Hotels in Europa zien maar
+        // Wellness Hotels in Europa / Boutique Hotels nabij de
+        // bergen / etc. Region wint van land voor aggregaten.
+        const N3  = (where)  => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&where=${where}`;
+        const N3R = (region) => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&region=${region}`;
         return [
-            { icon: "🌍",  title: `${subLabel} in Europa`,     href: N2 },
-            { icon: "🌏",  title: `${subLabel} in Azië`,       href: N2 },
+            { icon: "🌍",  title: `${subLabel} in Europa`,     href: N3R("europa") },
+            { icon: "🌏",  title: `${subLabel} in Azië`,       href: N3R("azie") },
             { icon: "🍺",  title: `${subLabel} in Duitsland`,  href: N3("duitsland") },
             { icon: "🇳🇱",  title: `${subLabel} in Nederland`,  href: N3("netherlands") },
-            { icon: "⛰️",  title: `${subLabel} bij de bergen`, href: N3("oostenrijk") },
+            { icon: "⛰️",  title: `${subLabel} bij de bergen`, href: N3R("bergen") },
             { icon: "🗼",  title: `${subLabel} in Frankrijk`,  href: N3("frankrijk") },
             { icon: "⛵",  title: `${subLabel} in Kroatië`,    href: N3("kroatie") },
             { icon: "🍝",  title: `${subLabel} in Italië`,     href: N3("italie") },

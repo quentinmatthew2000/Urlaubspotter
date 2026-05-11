@@ -60,6 +60,22 @@ const SITE_DATA = {
             'portugal': 'Portugal',
             'kroatie': 'Kroatië'
         },
+        // Regio's — aggregaten boven landen heen voor de Bestemmingen-
+        // tab. Een region groepeert meerdere where-keys (bijv. europa =
+        // alle EU-landen) en draagt een eigen label + Nederlandse
+        // preposition. Hierdoor kunnen we "Hotels in Europa" en
+        // "Hotels nabij de bergen" laten renderen i.p.v. een
+        // generieke continent-pagina of het verkeerde land.
+        regions: {
+            'europa':     { label: 'Europa',      preposition: 'in',    wheres: ['belgie','duitsland','frankrijk','spanje','italie','oostenrijk','portugal','kroatie'] },
+            'azie':       { label: 'Azië',        preposition: 'in',    wheres: [] },
+            'afrika':     { label: 'Afrika',      preposition: 'in',    wheres: [] },
+            'scandinavie': { label: 'Scandinavië', preposition: 'in',    wheres: [] },
+            // Bergen = bergachtige bestemmingen — "Hotels nabij de bergen".
+            // De preposition is afwijkend (nabij i.p.v. in).
+            'bergen':     { label: 'de bergen',   preposition: 'nabij', wheres: ['oostenrijk','italie','duitsland'] },
+        },
+
         // Sub-type labels per WAT-key — sturen Niveau 2/3/4 paginas
         // aan om bij ?sub= een specifieke ondertitel/breadcrumb te tonen.
         // Houdt in sync met inspiration-tabs WHAT_REFINEMENTS.
@@ -439,7 +455,15 @@ const DATA = {
     subLabel(what, sub) {
         return (SITE_DATA.subLabels?.[what]?.[sub]) || '';
     },
-    filter({ who, what, where, sub } = {}) {
+    // Regio-helpers — gebruikt door Niveau3-WaarWat met ?region= zodat
+    // continenten en bergachtige aggregaten ook context-bewust
+    // renderen ("Hotels in Europa", "Hotels nabij de bergen") i.p.v.
+    // te vallen op het generieke Niveau 2 — Waar overzicht of een
+    // verkeerd land.
+    region(key)            { return key ? (SITE_DATA.regions?.[key]) : null; },
+    regionLabel(key)       { return this.region(key)?.label || ''; },
+    regionPreposition(key) { return this.region(key)?.preposition || 'in'; },
+    filter({ who, what, where, sub, region } = {}) {
         // Sub-niveau (bijv. wellness / boutique / glamping / waterpark)
         // bewaart de subtype-context op Niveau 3/4 paginas zodat de
         // listing daadwerkelijk overeenstemt met de paginatitel.
@@ -458,6 +482,11 @@ const DATA = {
         // where='netherlands') en moet matchen tegen alle NL-provincies.
         const NL_KEYS = Object.keys(SITE_DATA.labels.whereNL);
         const whereNL = where === 'netherlands';
+        // Region-aggregaat (europa, bergen, etc.) — verzamel de where-
+        // keys uit SITE_DATA.regions zodat een region matcht tegen
+        // alle landen die eronder vallen.
+        const regionDef = region ? SITE_DATA.regions?.[region] : null;
+        const regionWheres = regionDef ? regionDef.wheres : null;
         return SITE_DATA.accommodations.filter(a => {
             if (who && !a.who.includes(who)) return false;
             if (what && !a.what.includes(what)) return false;
@@ -468,6 +497,11 @@ const DATA = {
                     return false;
                 }
             }
+            if (regionWheres) {
+                // Lege region (azie/afrika/scandinavie) → geen treffers,
+                // wat correct is gegeven de huidige dataset.
+                if (!regionWheres.includes(a.where)) return false;
+            }
             if (subIsWat && !a.what.includes(subKey)) return false;
             return true;
         });
@@ -475,8 +509,8 @@ const DATA = {
     // Aparte sub-aware filter die de soft tag-match ook toepast voor
     // descriptor-subs. Geeft eerst een strict gefilterde lijst; als die
     // leeg is en sub een descriptor is, valt het terug op WAT-resultaat.
-    filterWithSub({ who, what, where, sub } = {}) {
-        const strict = this.filter({ who, what, where, sub });
+    filterWithSub({ who, what, where, sub, region } = {}) {
+        const strict = this.filter({ who, what, where, sub, region });
         if (!sub) return strict;
         const subKey = String(sub).toLowerCase();
         const subIsWat = SITE_DATA.labels.what[subKey];

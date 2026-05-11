@@ -123,7 +123,7 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=8"></script>
+<script src="site-data.js?v=9"></script>
 <script src="sub-context.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script>
@@ -131,21 +131,31 @@
     const what = params.get('what') || '';
     const where = params.get('where') || '';
     const sub = params.get('sub') || '';
+    // ?region= aggregaat (europa / azie / bergen / afrika /
+    // scandinavie). Wanneer gezet wordt de region het primaire WAAR-
+    // segment i.p.v. een individueel land. "Hotels in Europa",
+    // "Hotels nabij de bergen" — geen verkeerde Niveau 1 Continent-
+    // pagina of toevallig-land fallback meer.
+    const region = params.get('region') || '';
 
     renderHeader('');
 
     const whatLabel = what ? DATA.label('what', what) : null;
     const whereLabel = where ? DATA.label('where', where) : null;
+    const regionLabel = region ? DATA.regionLabel(region) : '';
+    const regionPrep  = region ? DATA.regionPreposition(region) : 'in';
+    // destinationLabel = primary WAAR-identity. Region wint van
+    // individueel land wanneer beide gezet zijn.
+    const destinationLabel = regionLabel || whereLabel;
     // safeSubLabel (fallback uit sub-context.js) zodat stale site-
     // data.js zonder DATA.subLabel niet de sub-as-primary breekt.
     const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
-    console.log('[Niveau3-WaarWat]', { what, where, sub, whatLabel, whereLabel, subLabel });
+    console.log('[Niveau3-WaarWat]', { what, where, sub, region, whatLabel, whereLabel, regionLabel, subLabel });
     const displayWatLabel = subLabel || whatLabel;
 
-    // Bij sub-context wordt het sub-label de primaire WAT-identiteit;
-    // breadcrumb-current en chips tonen alleen de sub (geen Hotel +
-    // Wellness Hotels stapeling).
-    const crumbCurrent = `${whereLabel || 'Alle bestemmingen'} · ${displayWatLabel || 'Alle types'}`;
+    // Breadcrumb: toont primaire WAAR-identity (region of land) +
+    // primaire WAT-identity (sub of what).
+    const crumbCurrent = `${destinationLabel || 'Alle bestemmingen'} · ${displayWatLabel || 'Alle types'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
@@ -153,35 +163,45 @@
         `<span class="current">${crumbCurrent}</span>`
     ].join('');
 
-    if (displayWatLabel && whereLabel) {
-        document.getElementById('page-title').textContent = `${displayWatLabel} in ${whereLabel}`;
-        document.title = `${displayWatLabel} in ${whereLabel} · Urlaubspotter`;
+    if (displayWatLabel && destinationLabel) {
+        // "Hotels in Europa" / "Hotels nabij de bergen" / "Hotels in
+        // Italië" — preposition komt uit de region-config of valt
+        // terug op "in" voor individuele landen.
+        const titlePrep = region ? regionPrep : 'in';
+        document.getElementById('page-title').textContent = `${displayWatLabel} ${titlePrep} ${destinationLabel}`;
+        document.title = `${displayWatLabel} ${titlePrep} ${destinationLabel} · Urlaubspotter`;
     }
 
     const chips = [];
-    if (whereLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
+    if (destinationLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where || region)} ${destinationLabel}</span>`);
     if (displayWatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
     chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
     chips.push(`<a class="chip" href="Niveau2-Wat.html${what ? `?what=${what}` : ''}">+ Verander type</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
-    // Sub-context propageren naar Niveau 4 doorklikken zodat
+    // Sub + region propageren naar Niveau 4 doorklikken zodat
     // "Boutique Hotels in Italië" + Wie-keuze niet ineens degenereert
-    // tot "Hotel in Italië voor X".
+    // tot "Hotel in Italië voor X". Voor region geven we ipv where
+    // de region als URL-param mee zodat de Niveau 4 page (wanneer
+    // die region-aware wordt gemaakt) hetzelfde aggregaat kan tonen.
     const subParam = sub ? `&sub=${sub}` : '';
+    const destQuery = region ? `region=${region}` : `where=${where}`;
     renderCategoryTiles('who-tiles', DATA.who(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&where=${where}${subParam}`,
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&${destQuery}${subParam}`,
         gradient: SITE_DATA.gradients.who
     });
 
     // Sub-aware filtering: "Boutique Hotels in Italië" toont alleen
     // boutique-hotels (via tag-match) i.p.v. alle hotels in Italië.
-    const filtered = DATA.filterWithSub({ what, where, sub });
+    // Region wordt meegegeven zodat europa/bergen aggregaten matchen.
+    const filtered = DATA.filterWithSub({ what, where, sub, region });
     renderListingPreview('listing', filtered, { limit: 9 });
     document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
-    document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({what, where}).toString()}`;
+    document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams(
+        Object.fromEntries(Object.entries({ what, where, region, sub }).filter(([_,v]) => v))
+    ).toString()}`;
 
-    renderBlogPreview('blog-preview', `${whatLabel || ''} ${whereLabel || ''}`.trim() || 'Vakantie');
+    renderBlogPreview('blog-preview', `${whatLabel || ''} ${destinationLabel || ''}`.trim() || 'Vakantie');
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
