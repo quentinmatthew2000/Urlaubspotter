@@ -53,38 +53,47 @@ const accommodations = [
       match: ["glamping", "luxe", "relax", "nature", "couples", "adult-only", "italie", "villa"] }
 ];
 
-// Labels voor de chips in de selection-summary
+// Labels voor de chips in de selection-summary. Gesynchroniseerd met
+// de nieuwe Keuzehulp-flow (Volwassenen toegevoegd, Hotels/Campings/
+// Vakantieparken/Weekendjes weg/Zonvakanties/Wintervakanties als meer-
+// voud, sub-types als zelfstandige vakantietypes, simpelere bestemming-
+// lijst, ligging-stap met "In de buurt van het centrum", uitgebreide
+// faciliteiten).
 const valueLabels = {
-    // Reisgezelschap (match met homepage + navigatie)
+    // Reisgezelschap
     'families-babies': "Gezinnen met baby's", 'families-kids': 'Gezinnen met kinderen',
-    'families-teens': 'Gezinnen met tieners', 'couples': 'Koppels', 'friends': 'Vrienden',
-    'seniors': 'Senioren', 'pets': 'Met huisdieren', 'solo': 'Alleen reizend',
-    // Vakantietype
-    'camping': 'Kamperen', 'hotel': 'Hotel', 'holiday-park': 'Vakantiepark', 'glamping': 'Glamping',
-    'wellness': 'Wellness', 'adventure-trip': 'Actief / Avontuur', 'city-trip': 'Weekendje weg',
-    'sun': 'Zonvakantie', 'winter': 'Wintervakantie',
-    // Budget
+    'families-teens': 'Gezinnen met tieners', 'volwassenen': 'Volwassenen',
+    'seniors': 'Senioren', 'couples': 'Koppels', 'friends': 'Vrienden',
+    'solo': 'Alleen reizend', 'pets': 'Met huisdieren',
+    // Vakantietype — meervouden + nieuwe sub-types als zelfstandige optie
+    'hotel': 'Hotels', 'camping': 'Campings', 'holiday-park': 'Vakantieparken',
+    'city-trip': 'Weekendjes weg', 'sun': 'Zonvakanties', 'winter': 'Wintervakanties',
+    'adult-only-trip': 'Adult Only', 'ontspanning-vakantie': 'Ontspanning',
+    'actief-vakantie': 'Actief',
+    // Budget — ongewijzigd
     'budget': 'Budget (€ – €€)', 'comfort': 'Comfort (€€ – €€€)', 'luxe': 'Luxe (€€€ – €€€€)',
     'last-minute': 'Last Minutes', 'aanbiedingen': 'Aanbiedingen', 'pakketreizen': 'Pakketreizen',
-    // Bestemming
-    'drenthe': 'Drenthe', 'gelderland': 'Gelderland', 'limburg': 'Limburg', 'zeeland': 'Zeeland',
-    'noord-holland': 'Noord-Holland', 'overijssel': 'Overijssel', 'flevoland': 'Flevoland',
-    'friesland': 'Friesland', 'groningen': 'Groningen', 'noord-brabant': 'Noord-Brabant',
-    'zuid-holland': 'Zuid-Holland', 'utrecht': 'Utrecht',
-    'belgie': 'België', 'duitsland': 'Duitsland', 'frankrijk': 'Frankrijk', 'spanje': 'Spanje',
-    'italie': 'Italië', 'oostenrijk': 'Oostenrijk', 'portugal': 'Portugal', 'kroatie': 'Kroatië',
-    // Verblijfstype
+    // Bestemming — simpeler: 5 landen + 4 continenten
+    'duitsland': 'Duitsland', 'netherlands': 'Nederland',
+    'frankrijk': 'Frankrijk', 'italie': 'Italië', 'spanje': 'Spanje',
+    'europa': 'In Europa', 'azie': 'In Azië', 'afrika': 'In Afrika', 'amerika': 'In Amerika',
+    // Ligging — Step 5 (was Step 6)
+    'aan-zee': 'Aan Zee', 'in-bergen': 'In de bergen', 'aan-meer': 'Aan een meer',
+    'natuur': 'Nabij natuur', 'centrum': 'In de buurt van het centrum',
+    'afgelegen': 'Afgelegen',
+    // Verblijfstype — Step 6 (was Step 5) — ongewijzigd
     'tent': 'Tent', 'caravan': 'Caravan', 'mobile-home': 'Mobile Home', 'bungalow': 'Bungalow',
     'chalet': 'Chalet', 'safari-tent': 'Safaritent', 'villa': 'Villa',
     'hotel-kamer': 'Hotelkamer', 'appartement': 'Appartement',
-    // Ligging
-    'aan-zee': 'Aan zee', 'aan-meer': 'Aan een meer', 'in-bergen': 'In de bergen',
-    'natuur': 'Nabij natuur', 'stad': 'In de stad', 'afgelegen': 'Afgelegen',
-    // Faciliteiten — exact de 11 uit de navigatie
-    'water': 'Wateractiviteiten', 'kids-fun': 'Kinderpret', 'all-inclusive': 'All inclusive',
-    'sports-games': 'Sport en spel', 'adventure': 'Avontuur', 'relax': 'Ontspanning',
-    'pet-friendly': 'Diervriendelijk', 'adult-only': 'Adult Only', 'facility-luxe': 'Luxe',
-    'nature': 'Natuur', 'festive': 'Feestelijk',
+    // Faciliteiten — Step 7 (uitgebreid)
+    'binnenzwembad': 'Binnenzwembad', 'glijbanen': 'Glijbanen', 'kids-fun': 'Kinderpret',
+    'all-inclusive': 'All-inclusive', 'sports-games': 'Sport & Spel',
+    'outdoor': 'Outdoor activiteiten', 'relax': 'Ontspanning',
+    'bezienswaardigheden': 'Bezienswaardigheden', 'fietsroutes': 'Fietsroutes',
+    'looproutes': 'Looproutes', 'pet-friendly': 'Diervriendelijk', 'facility-luxe': 'Luxe',
+    'entertainment': 'Entertainment', 'open-bar': 'Open bar', 'live-muziek': 'Live muziek',
+    'aan-strand': 'Aan het strand',
+    // Generiek
     'geen-voorkeur': 'Geen voorkeur'
 };
 
@@ -100,8 +109,12 @@ function attachEventListeners() {
 }
 
 function getStepKey(step) {
+    // Step 5 en 6 zijn omgedraaid: eerst de LIGGING (waar wil je
+    // verblijven — aan zee, in de bergen, etc.) en daarna pas het
+    // VERBLIJFSTYPE. De setting bepaalt de keuze van type, niet
+    // andersom.
     return ({ 1: 'reisgezelschap', 2: 'vakantietype', 3: 'budget', 4: 'bestemming',
-             5: 'verblijfstype', 6: 'ligging', 7: 'faciliteiten' })[step];
+             5: 'ligging', 6: 'verblijfstype', 7: 'faciliteiten' })[step];
 }
 
 function handleCardClick(card) {
