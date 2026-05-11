@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wie + Wat · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
 </head>
@@ -148,6 +151,7 @@
 </footer>
 
 <script src="site-data.js?v=8"></script>
+<script src="sub-context.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -160,10 +164,10 @@
     // Breadcrumb + title
     const whoLabel = who ? DATA.label('who', who) : null;
     const whatLabel = what ? DATA.label('what', what) : null;
-    // Sub-type label (bv. "Wellness Hotels", "Glamping") wordt
-    // toegevoegd aan titels en chips zodat de WAT-context behouden
-    // blijft i.p.v. te degenereren tot het generieke WAT.
-    const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
+    // Sub-type label via safeSubLabel (fallback uit sub-context.js).
+    // Beschermt tegen stale site-data.js zonder DATA.subLabel.
+    const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
+    console.log('[Niveau3-WieWat]', { who, what, sub, whoLabel, whatLabel, subLabel });
     // Display-WAT: bij sub overschrijven we het label zodat de
     // pagina "Wellness Hotels voor koppels" toont i.p.v.
     // "Hotel voor koppels".

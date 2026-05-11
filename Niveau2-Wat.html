@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- no-cache: voorkomt dat een browser/CDN deze HTML pagina blijft
+         serveren met een verouderde inline-script (waardoor sub-context
+         rendering verloren ging op cached visits). Assets blijven via
+         ?v=N gebuste, alleen de HTML zelf moet altijd vers zijn. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wat voor vakantie? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
@@ -173,6 +180,7 @@
 </footer>
 
 <script src="site-data.js?v=8"></script>
+<script src="sub-context.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script src="inspiration-tabs.js?v=12"></script>
 <script>
@@ -182,12 +190,7 @@
     const whatPre = params.get('what') || '';
     const subPre  = params.get('sub') || '';
     const whatLabel = whatPre ? DATA.label('what', whatPre) : '';
-
-    // Sub-type label resolution via DATA.subLabel(what, sub). Wanneer
-    // sub gezet is wordt het sub-label de PRIMAIRE PAGINA-IDENTITEIT —
-    // niet meer een filter bovenop Hotel/Camping/Vakantiepark, maar
-    // een eigen single-context landing page ("Wellness Hotels").
-    const subLabel = (whatPre && subPre) ? DATA.subLabel(whatPre, subPre) : '';
+    const subLabel = safeSubLabel(whatPre, subPre);
 
     // mainLabel = het LABEL DAT DE PAGINA IDENTIFICEERT. Bij sub-
     // context is dat het sub-label, anders het WAT-label. Wordt
@@ -195,6 +198,10 @@
     // document.title zodat de pagina overal als zichzelf presenteert
     // i.p.v. als generieke Hotel/Camping/Vakantiepark-pagina.
     const mainLabel = subLabel || whatLabel;
+    // Diagnose-log (zichtbaar in DevTools). Maakt het mogelijk om in
+    // 1 oogopslag te zien of de sub-as-primary code daadwerkelijk
+    // geladen is door deze pagina-render.
+    console.log('[Niveau2-Wat]', { whatPre, subPre, whatLabel, subLabel, mainLabel });
 
     // Breadcrumb: Home › Wat voor vakantie? › <mainLabel>. Geen
     // tussenstap voor de WAT-parent — de pagina ís Wellness Hotels,

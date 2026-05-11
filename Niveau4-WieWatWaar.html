@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wie + Wat + Waar · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
     <style>
@@ -105,6 +108,7 @@
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
 <script src="site-data.js?v=8"></script>
+<script src="sub-context.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -119,11 +123,10 @@
     const whoLabel = who ? DATA.label('who', who) : '';
     const whatLabel = what ? DATA.label('what', what) : '';
     const whereLabel = where ? DATA.label('where', where) : '';
-    // Sub-label voor refinements (Wellness Hotels / Glamping / etc.).
-    // Overschrijft het generieke WAT-label in titels en breadcrumb
-    // zodat "Wellness Hotels voor koppels in Italië" gerendered wordt
-    // i.p.v. te degenereren tot "Hotel voor koppels in Italië".
-    const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
+    // safeSubLabel (fallback uit sub-context.js) zodat stale site-
+    // data.js niet de sub-as-primary breekt.
+    const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
+    console.log('[Niveau4-WieWatWaar]', { who, what, where, sub, whoLabel, whatLabel, whereLabel, subLabel });
     const displayWatLabel = subLabel || whatLabel;
 
     // Sub-as-primary: breadcrumb + chips tonen alleen het sub-label

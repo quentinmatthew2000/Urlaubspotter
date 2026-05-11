@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Waar + Wat · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
 </head>
@@ -121,6 +124,7 @@
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
 <script src="site-data.js?v=8"></script>
+<script src="sub-context.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -132,11 +136,10 @@
 
     const whatLabel = what ? DATA.label('what', what) : null;
     const whereLabel = where ? DATA.label('where', where) : null;
-    // Sub-label (Boutique Hotels / Glamping / etc.) overschrijft het
-    // generieke WAT-label in titels en breadcrumbs zodat de
-    // gebruiker "Boutique Hotels in Italië" leest i.p.v.
-    // "Hotel in Italië".
-    const subLabel = (what && sub) ? DATA.subLabel(what, sub) : '';
+    // safeSubLabel (fallback uit sub-context.js) zodat stale site-
+    // data.js zonder DATA.subLabel niet de sub-as-primary breekt.
+    const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
+    console.log('[Niveau3-WaarWat]', { what, where, sub, whatLabel, whereLabel, subLabel });
     const displayWatLabel = subLabel || whatLabel;
 
     // Bij sub-context wordt het sub-label de primaire WAT-identiteit;
