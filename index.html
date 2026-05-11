@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=17">
+    <link rel="stylesheet" href="site.css?v=18">
     <link rel="stylesheet" href="search-navigation.css?v=9">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
@@ -20,12 +20,13 @@
 <div id="hero-searchbar"></div>
 
 <!-- MAIN DISCOVERY BANNER — premium homepage hoofd-hero met
-     geïntegreerde "Begin je zoektocht" pill. Compacte editorial
-     module i.p.v. full landing-page hero. -->
+     geïntegreerde "Begin je zoektocht" pill. Editorial layered
+     compositie met sunset/ocean accent-gradients en
+     destination-chips als discovery-hints. -->
 <section class="hp-discovery" aria-label="Vind jouw vakantie">
     <div class="hp-discovery-inner">
         <span class="hp-discovery-eyebrow">Jouw volgende reis</span>
-        <h1 class="hp-discovery-title">Vind vakanties die écht bij je passen</h1>
+        <h1 class="hp-discovery-title">Vind vakanties die <em>écht</em> bij je passen</h1>
         <p class="hp-discovery-lead">Slim zoeken op reisgezelschap, vakantietype en bestemming — gepersonaliseerd door onze redactie.</p>
         <div class="hp-discovery-search">
             <button type="button" class="hp-discovery-pill" data-sn-open aria-haspopup="dialog">
@@ -38,6 +39,26 @@
                 </span>
                 <span class="hp-discovery-pill-cta">Start →</span>
             </button>
+        </div>
+        <!-- Discovery-hints: 5 destination/sub chips als warm
+             travel-atmosphere. Klikbaar — koppelen aan bestaande
+             Niveau 2 contextpagina's. -->
+        <div class="hp-discovery-chips">
+            <a class="hp-discovery-chip" href="Niveau2-Waar.html?where=italie">
+                <span class="hp-discovery-chip-emoji" aria-hidden="true">🍝</span>Italië
+            </a>
+            <a class="hp-discovery-chip" href="Niveau2-Waar.html?region=bergen">
+                <span class="hp-discovery-chip-emoji" aria-hidden="true">⛰️</span>Bergen
+            </a>
+            <a class="hp-discovery-chip" href="Niveau2-Waar.html?region=aan-zee">
+                <span class="hp-discovery-chip-emoji" aria-hidden="true">🏖️</span>Aan zee
+            </a>
+            <a class="hp-discovery-chip" href="Niveau2-Wat.html?what=hotel&amp;sub=wellness">
+                <span class="hp-discovery-chip-emoji" aria-hidden="true">💆</span>Wellness
+            </a>
+            <a class="hp-discovery-chip" href="Niveau2-Wat.html?what=hotel&amp;sub=boutique">
+                <span class="hp-discovery-chip-emoji" aria-hidden="true">🛎️</span>Boutique hotels
+            </a>
         </div>
     </div>
 </section>
