@@ -125,6 +125,7 @@
 
 <script src="site-data.js?v=9"></script>
 <script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -170,13 +171,19 @@
         const titlePrep = region ? regionPrep : 'in';
         document.getElementById('page-title').textContent = `${displayWatLabel} ${titlePrep} ${destinationLabel}`;
         document.title = `${displayWatLabel} ${titlePrep} ${destinationLabel} · Urlaubspotter`;
+        // Contextuele intro-copy via context-copy.js — sub × where
+        // matrix. Valt terug op de bestaande static lead in de HTML.
+        const _lead = (typeof window.buildContextLead === 'function'
+            ? window.buildContextLead({ what, sub, where, region })
+            : '');
+        if (_lead) document.getElementById('page-lead').textContent = _lead;
     }
 
+    // Active filters: alleen WAAR + WAT (primair label, sub als
+    // dominant). Geen "Verander X" navigatie-chips meer.
     const chips = [];
     if (destinationLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where || region)} ${destinationLabel}</span>`);
     if (displayWatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
-    chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
-    chips.push(`<a class="chip" href="Niveau2-Wat.html${what ? `?what=${what}` : ''}">+ Verander type</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
     // Sub + region propageren naar Niveau 4 doorklikken zodat

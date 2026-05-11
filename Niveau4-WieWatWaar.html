@@ -109,6 +109,7 @@
 
 <script src="site-data.js?v=9"></script>
 <script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script>
     const params = new URLSearchParams(location.search);
@@ -142,22 +143,25 @@
 
     if (whoLabel && displayWatLabel && whereLabel) {
         document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel} in ${whereLabel}`;
-        document.getElementById('page-lead').textContent = `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
+        // Contextuele intro-copy: per sub × WIE (where dient als
+        // sfeer-modifier in de copy). Valt terug op de strakke
+        // "Precies gefilterd"-zin wanneer de helper geen template
+        // matched.
+        const _lead = (typeof window.buildContextLead === 'function'
+            ? window.buildContextLead({ what, sub, who, where })
+            : '');
+        document.getElementById('page-lead').textContent = _lead
+            || `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
         document.title = `${displayWatLabel} voor ${whoLabel} in ${whereLabel} · Urlaubspotter`;
     }
 
+    // Active filters: alleen actieve context (WIE / WAT-primary /
+    // WAAR). Geen "Wijzig X" navigatie-chips meer; de breadcrumb
+    // geeft al de terugweg.
     const activeChips = [];
     if (who)        activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel}</span>`);
-    // Eén WAT-chip die het primaire label toont (sub overschrijft het
-    // generieke WAT-label wanneer aanwezig).
     if (what)       activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
     if (where)      activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
-    // Sub blijft staan in de "wijzig X" deeplinks zodat de gebruiker
-    // niet z'n refinement verliest bij het wisselen van een dimensie.
-    const subParam = sub ? `&sub=${sub}` : '';
-    activeChips.push(`<a class="chip" href="Niveau3-WieWat.html?who=${who}&what=${what}${subParam}">+ Wijzig bestemming</a>`);
-    activeChips.push(`<a class="chip" href="Niveau3-WieWaar.html?who=${who}&where=${where}">+ Wijzig type</a>`);
-    activeChips.push(`<a class="chip" href="Niveau3-WaarWat.html?where=${where}&what=${what}${subParam}">+ Wijzig gezelschap</a>`);
     document.getElementById('active-filters').innerHTML = activeChips.join('');
 
     document.getElementById('to-nav').href = `Navigatie.html?${new URLSearchParams({who, what, where}).toString()}`;

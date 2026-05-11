@@ -181,6 +181,7 @@
 
 <script src="site-data.js?v=9"></script>
 <script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
 <script src="inspiration-tabs.js?v=14"></script>
 <script>
@@ -218,9 +219,14 @@
         document.getElementById('page-title').textContent = mainLabel;
         // Document.title bumpen voor browser-tab + share-previews.
         document.title = `${mainLabel} · Urlaubspotter`;
-        document.getElementById('page-lead').textContent = subLabel
-            ? `Bekijk onze selectie ${subLabel.toLowerCase()}. Verfijn met reisgezelschap of bestemming.`
-            : `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
+        // Contextuele intro-copy via context-copy.js. Per sub × WIE
+        // een eigen NL-zin (zie context-copy.js voor de matrix).
+        // Valt terug op een korte zin wanneer de helper onverhoopt
+        // niet geladen is.
+        const lead = (typeof window.buildContextLead === 'function'
+            ? window.buildContextLead({ what: whatPre, sub: subPre })
+            : '') || `Bekijk onze selectie ${(subLabel || whatLabel).toLowerCase()}.`;
+        document.getElementById('page-lead').textContent = lead;
         // Eyebrow: één primair segment na "Niveau 2 — Wat". Geen
         // ouder-WAT meer wanneer er een sub-context is.
         document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${mainLabel}`;
@@ -228,13 +234,11 @@
         document.getElementById('what-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
-        // Active filters: ÉÉN main-chip (sub OF parent-WAT, niet
-        // beide). Bij sub-context blijft de parent-WAT bereikbaar
-        // via de "Andere keuze" link.
-        document.getElementById('active-filters').innerHTML = [
-            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${mainLabel}</span>`,
-            `<a class="chip" href="${subLabel ? `Niveau2-Wat.html?what=${whatPre}` : 'Niveau2-Wat.html'}">✕ Andere keuze</a>`,
-        ].join('');
+        // Active filters: alleen het actieve context-chip. Geen
+        // "Andere keuze" / "Verander type" meer — de breadcrumb biedt
+        // de terugweg naar de parent WAT.
+        document.getElementById('active-filters').innerHTML =
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${mainLabel}</span>`;
 
         // Geschikte accommodaties — sub-aware filtering zodat de
         // listing matcht met de paginatitel.
