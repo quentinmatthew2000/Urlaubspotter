@@ -488,11 +488,17 @@
         }
 
         function bindBarEvents() {
-            container.querySelectorAll("[data-sn-open]").forEach(b => {
+            // Zowel buttons binnen #hero-searchbar (de oorspronkelijke
+            // .sn-bar pill) als externe `[data-sn-open]` buttons (bv.
+            // op de homepage discovery banner) openen dezelfde modal.
+            // We dedupliceren met dataset.snBarBound zodat re-renders
+            // niet stapelen.
+            document.querySelectorAll("[data-sn-open]").forEach(b => {
+                if (b.dataset.snBarBound === '1') return;
+                b.dataset.snBarBound = '1';
                 b.addEventListener("click", openModal);
             });
             // Bar tabs zijn <a> met href — browser-navigatie regelt zich zelf.
-            // Geen JS-handler nodig.
         }
 
         function bindModalEvents() {

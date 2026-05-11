@@ -4,20 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=16">
-    <link rel="stylesheet" href="search-navigation.css?v=8">
+    <link rel="stylesheet" href="site.css?v=17">
+    <link rel="stylesheet" href="search-navigation.css?v=9">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
-<body>
+<body class="hp-home">
 
 <header class="site-header"><div class="inner"></div></header>
 
-<!-- Nieuwe homepage zoeknavigatie (collapsed bar + Wie/Wat/Waar/Wanneer modal) -->
+<!-- Search-navigation mount. Op .hp-home wordt de oude "Begin je
+     zoektocht"-pill verborgen (zie site.css); wat zichtbaar blijft
+     zijn de sticky category-tabs (Resorts & Hotels / Campings /
+     Vakantieparken). De pill leeft nu in de discovery-banner
+     hieronder met dezelfde data-sn-open trigger. -->
 <div id="hero-searchbar"></div>
 
-<!-- KEUZEHULP HERO — grote emotionele instapsectie. Wordt gevuld
-     door renderKeuzehulpHero('keuzehulp-block') (zie site.js). -->
-<div id="keuzehulp-block"></div>
+<!-- MAIN DISCOVERY BANNER — premium homepage hoofd-hero met
+     geïntegreerde "Begin je zoektocht" pill. Compacte editorial
+     module i.p.v. full landing-page hero. -->
+<section class="hp-discovery" aria-label="Vind jouw vakantie">
+    <div class="hp-discovery-inner">
+        <span class="hp-discovery-eyebrow">Jouw volgende reis</span>
+        <h1 class="hp-discovery-title">Vind vakanties die écht bij je passen</h1>
+        <p class="hp-discovery-lead">Slim zoeken op reisgezelschap, vakantietype en bestemming — gepersonaliseerd door onze redactie.</p>
+        <div class="hp-discovery-search">
+            <button type="button" class="hp-discovery-pill" data-sn-open aria-haspopup="dialog">
+                <span class="hp-discovery-pill-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </span>
+                <span class="hp-discovery-pill-text">
+                    <strong>Begin je zoektocht</strong>
+                    <span>Wie · Wat · Waar · Wanneer</span>
+                </span>
+                <span class="hp-discovery-pill-cta">Start →</span>
+            </button>
+        </div>
+    </div>
+</section>
 
 <!-- Inspiratie-tabs (Populair / Reisgezelschap / Vakantietype / Bestemmingen) -->
 <div id="inspiration-tabs"></div>
@@ -36,6 +59,11 @@
     </div>
     <div class="blog-grid" id="blog-preview" data-rail="260"></div>
 </section>
+
+<!-- COMPACT KEUZEHULP CTA — emotionele conversion-module ONDER
+     Blogs & Tips. Lichtgewicht onboarding-blok midden-pagina.
+     Wordt gevuld door renderKeuzehulpHero('keuzehulp-block'). -->
+<div id="keuzehulp-block"></div>
 
 <!-- 5. POPULAIRE ACCOMMODATIES (sleepbaar) -->
 <section class="section">
@@ -289,7 +317,7 @@
 
 <script src="site-data.js?v=13"></script>
 <script src="site.js?v=18"></script>
-<script src="search-navigation.js?v=8"></script>
+<script src="search-navigation.js?v=9"></script>
 <script src="inspiration-tabs.js?v=20"></script>
 <script>
     renderHeader('home');

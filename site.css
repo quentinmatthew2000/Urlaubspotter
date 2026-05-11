@@ -1440,3 +1440,185 @@ button { font-family: inherit; cursor: pointer; }
     }
     .kh-hero-eyebrow { margin-bottom: 6px; }
 }
+
+/* ============================================================
+   HP DISCOVERY BANNER — homepage hoofd-hero met geïntegreerde
+   "Begin je zoektocht" pill. Compacte premium discovery-module
+   onder de sticky category-nav. Op niet-homepage pagina's blijft
+   de oude bar gewoon werken; pas wanneer body.hp-home gezet is
+   verbergen we de oorspronkelijke .sn-bar (de pill leeft dan
+   in deze banner) en strakken we de wrap-padding aan.
+   ============================================================ */
+.hp-discovery {
+    position: relative;
+    max-width: 1280px;
+    margin: 4px auto 24px;
+    padding: 36px 24px 30px;
+    background:
+        radial-gradient(ellipse 70% 90% at 85% 18%, rgba(165, 215, 250, 0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 75% at 8% 88%, rgba(255, 209, 168, 0.18) 0%, transparent 65%),
+        linear-gradient(135deg, #f4f8fc 0%, #e8f0f9 100%);
+    border-radius: 22px;
+    overflow: hidden;
+    isolation: isolate;
+}
+.hp-discovery::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: 12%; right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(30, 111, 255, 0.25) 50%, transparent 100%);
+    pointer-events: none;
+}
+.hp-discovery-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+}
+.hp-discovery-eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.hp-discovery-title {
+    font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+    font-weight: 800;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    color: #131825;
+    margin: 0 0 10px;
+    text-wrap: balance;
+}
+.hp-discovery-lead {
+    font-size: clamp(0.92rem, 1.05vw, 1rem);
+    line-height: 1.55;
+    color: #4d5466;
+    margin: 0 auto 22px;
+    max-width: 560px;
+}
+/* Geïntegreerde glasscontainer rond de search-pill — geeft het
+   gevoel van een soft layered card. Op grote schermen 720px breed
+   zodat de pill als ankerpunt centraal in de banner valt. */
+.hp-discovery-search {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    box-shadow:
+        0 14px 36px rgba(30, 50, 90, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+.hp-discovery-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 999px;
+    padding: 14px 22px;
+    color: #131825;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(30, 50, 90, 0.06);
+    transition: box-shadow 0.18s ease, transform 0.14s ease, border-color 0.18s ease;
+    font-family: inherit;
+}
+.hp-discovery-pill:hover {
+    box-shadow: 0 10px 28px rgba(30, 50, 90, 0.12);
+    transform: translateY(-1px);
+    border-color: rgba(30, 111, 255, 0.20);
+}
+.hp-discovery-pill:active { transform: translateY(0); }
+.hp-discovery-pill-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.hp-discovery-pill-icon svg { width: 18px; height: 18px; }
+.hp-discovery-pill-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+.hp-discovery-pill-text strong {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #131825;
+    letter-spacing: -0.01em;
+}
+.hp-discovery-pill-text span {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #6c757d;
+    margin-top: 2px;
+}
+.hp-discovery-pill-cta {
+    background: var(--primary);
+    color: white;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Homepage-only: verberg de oorspronkelijke "Begin je zoektocht"
+   pill in #hero-searchbar zodat hij niet dubbel naast de banner
+   verschijnt. De .sn-tabs (Resorts / Camping / Vakantiepark)
+   blijven zichtbaar — die zijn de sticky cat-nav bovenin. */
+body.hp-home #hero-searchbar .sn-bar { display: none; }
+body.hp-home #hero-searchbar .sn-bar-wrap {
+    padding-top: 14px;
+    padding-bottom: 6px;
+    gap: 0;
+}
+@media (min-width: 720px) {
+    body.hp-home #hero-searchbar .sn-bar-wrap { padding-top: 18px; padding-bottom: 8px; }
+}
+
+@media (max-width: 720px) {
+    .hp-discovery {
+        margin: 4px 14px 18px;
+        padding: 26px 18px 22px;
+        border-radius: 18px;
+    }
+    .hp-discovery-lead { margin-bottom: 16px; }
+    .hp-discovery-search { padding: 8px; border-radius: 16px; }
+    .hp-discovery-pill {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        gap: 10px;
+    }
+    .hp-discovery-pill-text { flex: 1 1 auto; min-width: 140px; }
+    .hp-discovery-pill-cta {
+        flex: 1 1 100%;
+        text-align: center;
+        padding: 11px 18px;
+        order: 3;
+        margin-top: 4px;
+    }
+}
+@media (max-width: 380px) {
+    .hp-discovery { margin: 4px 10px 16px; padding: 22px 14px 20px; }
+}
