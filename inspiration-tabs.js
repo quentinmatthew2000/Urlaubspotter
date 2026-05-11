@@ -284,10 +284,14 @@
             id: "vakantietype",
             label: "Vakantietype",
             items: [
-                { icon: "⛺",     title: "Op vakantie naar de Camping",         sub: "Vakantietype", href: "campings.html" },
-                { icon: "🌴",     title: "Op vakantie in een resort",           sub: "Vakantietype", href: "hotels.html" },
+                // Iedere keuze landt op de NIEUWE Niveau 2 — Wat pagina
+                // (eventueel met ?sub= voor refinements). Geen routing
+                // meer naar de oude Niveau 1 hotels/campings/
+                // vakantieparken landings — die zijn legacy.
+                { icon: "⛺",     title: "Op vakantie naar de Camping",         sub: "Vakantietype", href: NIVWAT("camping") },
+                { icon: "🌴",     title: "Op vakantie in een resort",           sub: "Vakantietype", href: NIVWAT_SUB("hotel", "resort") },
                 { icon: "🏨",     title: "Op vakantie in een hotel",            sub: "Vakantietype", href: NIVWAT("hotel") },
-                { icon: "🎡",     title: "Op vakantie in een vakantiepark",     sub: "Vakantietype", href: "vakantieparken.html" },
+                { icon: "🎡",     title: "Op vakantie in een vakantiepark",     sub: "Vakantietype", href: NIVWAT("holiday-park") },
                 { icon: "✨",     title: "Op vakantie in een glamping",         sub: "Vakantietype", href: NIVWAT("glamping") },
                 { icon: "🌲",     title: "Op vakantie in de natuur",            sub: "Vakantietype", href: NIVWAT("adventure-trip") },
                 { icon: "☀️",     title: "De leukste zonvakanties",             sub: "Vakantietype", href: NIVWAT("sun") },

@@ -512,16 +512,64 @@
 
     // ---------- KEUZEHULP REPOSITIONING ----------
     // "De ultieme zoektool" hoort als logische volgende stap NA
-    // de accommodatie-suggesties te staan. Op alle premium-paginas
-    // verplaatsen we hem dus naar direct onder het matches-blok.
-    function repositionKeuzehulp() {
+    // de accommodatie-suggesties te staan.
+    //   • Niveau 2 (1 dim): keuzehulp DIRECT onder het matches-blok
+    //     — de zoektool is daar de natuurlijke vervolgstap.
+    //   • Niveau 3 (2 dims): keuzehulp NA de stories-rail — de
+    //     bezoeker krijgt eerst zijn aanbevelingen + inspiratie en
+    //     daarna pas de verfijning-CTA.
+    function repositionKeuzehulp(layout) {
         const keuzehulpBlock = document.getElementById('keuzehulp-block');
         if (!keuzehulpBlock) return;
-        // Probeer in volgorde: Niveau 2 matches-listing, Niveau 3/4 listing.
+        if (layout === 'niveau3') {
+            const stories = document.querySelector('.ph-stories');
+            if (stories) { stories.insertAdjacentElement('afterend', keuzehulpBlock); return; }
+        }
         const listing = document.getElementById('matches-listing')
             || document.getElementById('listing');
         const section = listing ? listing.closest('section') : null;
         if (section) section.insertAdjacentElement('afterend', keuzehulpBlock);
+    }
+
+    // ---------- NIVEAU 3 LAYOUT REORDER ----------
+    // Telt actieve dimensies — (WIE, WAT+sub, WAAR+region) elk
+    // tellen als 1. Op een Niveau 3 pagina staan er precies 2 aan;
+    // Niveau 2 = 1, Niveau 4 = 3.
+    function activeDimensionCount(ctx) {
+        let n = 0;
+        if (ctx.who) n++;
+        if (ctx.what || ctx.sub) n++;
+        if (ctx.where || ctx.region) n++;
+        return n;
+    }
+
+    // Op Niveau 3 (2 actieve dimensies) wil de gebruiker eerst de
+    // aanbevelingen zien, dán pas de Inspiratie-tabs. We verplaatsen
+    // daarom het accommodatie-listing-blok naar DIRECT onder de hero,
+    // en de inspiratie-mount erónder. ph-tips / ph-stories volgen
+    // automatisch omdat die na #inspiration-tabs worden geïnjecteerd.
+    //
+    // Doel-volgorde op Niveau 3 (na deze reorder):
+    //   1. Hero
+    //   2. Voor jou geselecteerd (listing)
+    //   3. Inspiratie voor jou (#inspiration-tabs)
+    //   4. Tips per vakantietype (.ph-tips — later injected)
+    //   5. Reisverslagen (.ph-stories — later injected)
+    //   6. De ultieme zoektool (#keuzehulp-block — later moved)
+    //   7. Rest van de pagina (Wie/Waar carousels etc.)
+    function applyNiveau3Layout() {
+        const hero = document.querySelector('.ph-hero');
+        if (!hero) return;
+        const listing = document.getElementById('listing')
+            || document.getElementById('matches-listing');
+        const listingSection = listing ? listing.closest('section') : null;
+        if (!listingSection) return;
+        // 1. Listing direct na de hero
+        hero.insertAdjacentElement('afterend', listingSection);
+        // 2. Inspiration-tabs mount NA de listing (zodat ph-tips en
+        //    ph-stories straks op de juiste plek terechtkomen)
+        const insp = document.getElementById('inspiration-tabs');
+        if (insp) listingSection.insertAdjacentElement('afterend', insp);
     }
 
     // ---------- ORCHESTRATOR ----------
@@ -536,13 +584,21 @@
     function applyPremiumPage(ctx) {
         ctx = ctx || {};
         const theme = themeForContext(ctx);
+        // 2 actieve dimensies = Niveau 3. Daar krijgt de bezoeker
+        // eerst de "Voor jou geselecteerd" listing, dán pas Inspiratie
+        // (zie applyNiveau3Layout). Op Niveau 2 (1 dim) blijft de
+        // volgorde Inspiratie → Tips → Stories → Matches → Zoektool.
+        const dims = activeDimensionCount(ctx);
+        const layout = dims >= 2 ? 'niveau3' : 'niveau2';
 
         // Body classes: ph-premium-page voor de generieke styling
         // (sticky tabs, hidden search-pill, tight hero spacing).
         // Backwards-compat: hotel-thema houdt z'n eigen body-class
-        // zodat oude selectors blijven werken.
+        // zodat oude selectors blijven werken. Layout-class maakt
+        // CSS-tweaks per niveau mogelijk zonder JS-werk.
         document.body.classList.add('ph-premium-page');
         document.body.classList.add(`ph-theme-${theme}`);
+        document.body.classList.add(`ph-layout-${layout}`);
         if (theme === 'hotel') document.body.classList.add('ph-hotel-page');
 
         const copy       = heroCopyForContext(ctx);
@@ -557,6 +613,14 @@
             breadcrumb,
             chips,
         });
+
+        // Niveau 3 reorder: listing direct onder de hero, dan
+        // inspiration-tabs. Doen we VOORDAT we de tabs renderen +
+        // tips/stories injecteren zodat alle volgende inserties
+        // automatisch op de juiste plek landen.
+        if (layout === 'niveau3') {
+            applyNiveau3Layout();
+        }
 
         // Inspiration-tabs (optioneel). Alleen mounten als we WAT-
         // of sub-context hebben — anders levert het een lege div op.
@@ -592,7 +656,9 @@
             stories:  storiesForContext(ctx, 5),
         });
 
-        repositionKeuzehulp();
+        // Keuzehulp-positionering hangt af van het layout-niveau —
+        // zie repositionKeuzehulp() voor de regels.
+        repositionKeuzehulp(layout);
     }
 
     // ---------- EXPORT ----------

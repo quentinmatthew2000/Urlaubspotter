@@ -8,11 +8,11 @@
     <meta http-equiv="Expires" content="0">
     <title>Waar wil je heen? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
-    <!-- Premium category hero — overlay'd op deze Waar-pagina via
-         applyPremiumPage(). Theme komt uit de destination (Italië,
-         Frankrijk, Bergen, Aan-Zee, Europa, ...) of valt terug op
-         'generic'. -->
-    <link rel="stylesheet" href="premium-hero.css?v=5">
+    <!-- Bewust GEEN premium-hero overlay op deze pagina. Niveau 2 — Waar
+         is een selector / navigatie-pagina (kies een bestemming → ga
+         door naar Niveau 3). Een premium content-hero zou de pagina
+         laten voelen als een oude "Vakantie in Europa" Niveau 1
+         landing. Premium hero leeft op Niveau 2 — Wat en op Niveau 3. -->
 </head>
 <body>
 
@@ -164,10 +164,7 @@
 </footer>
 
 <script src="site-data.js?v=12"></script>
-<script src="sub-context.js?v=1"></script>
-<script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
-<script src="premium-page.js?v=1"></script>
 <script>
     renderHeader('waar');
 
@@ -251,22 +248,6 @@
     renderFooter();
     bindCarousel('nl-carousel');
     bindCarousel('eu-carousel');
-
-    // ---- PREMIUM CATEGORY PAGE ----
-    // Alleen activeren bij een gekozen bestemming (where of region) —
-    // zonder context blijft de vanilla overzichts-pagina ("Waar wil
-    // je heen?" + EU/NL carousels) staan. Theme adapteert zich aan
-    // de destination (Italië, Frankrijk, Bergen, Aan-Zee, Europa, ...).
-    if ((wherePre || regionPre) && typeof window.applyPremiumPage === 'function') {
-        window.applyPremiumPage({
-            where:  wherePre  || null,
-            region: regionPre || null,
-            root: [
-                { href: 'Homepagina.html',   text: 'Home' },
-                { href: 'Niveau2-Waar.html', text: 'Waar wil je heen?' },
-            ],
-        });
-    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

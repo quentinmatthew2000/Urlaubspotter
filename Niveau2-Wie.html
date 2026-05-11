@@ -8,11 +8,12 @@
     <meta http-equiv="Expires" content="0">
     <title>Vakantie voor wie? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
-    <!-- Premium category hero — applyPremiumPage() overlay'd op deze
-         Wie-pagina. Zonder WAT-context worden de inspiratie-tabs
-         niet gemount; het generic-thema voorziet de hero van een
-         neutraal premium-uitstraling. -->
-    <link rel="stylesheet" href="premium-hero.css?v=5">
+    <!-- Bewust GEEN premium-hero overlay op deze pagina. Niveau 2 — Wie
+         is een selector / navigatie-pagina (kies een gezelschap → ga
+         door naar Niveau 3). Een premium content-hero zou de pagina
+         laten voelen als een oude Niveau 1 audience-landing en zo de
+         hiërarchie verstoren. Premium hero leeft op Niveau 2 — Wat en
+         op Niveau 3 (waar de bezoeker al ≥1 dimensie heeft gekozen). -->
 </head>
 <body>
 
@@ -173,10 +174,7 @@
 </footer>
 
 <script src="site-data.js?v=12"></script>
-<script src="sub-context.js?v=1"></script>
-<script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
-<script src="premium-page.js?v=1"></script>
 <script>
     renderHeader('wie');
 
@@ -242,20 +240,6 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('who-carousel');
-
-    // ---- PREMIUM CATEGORY PAGE ----
-    // Alleen activeren bij een gekozen WIE — zonder context blijft
-    // de vanilla overzichts-pagina staan zodat de WIE-keuze-carousel
-    // de primaire interactie is.
-    if (whoPre && typeof window.applyPremiumPage === 'function') {
-        window.applyPremiumPage({
-            who: whoPre,
-            root: [
-                { href: 'Homepagina.html',  text: 'Home' },
-                { href: 'Niveau2-Wie.html', text: 'Wie gaat er mee?' },
-            ],
-        });
-    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {
