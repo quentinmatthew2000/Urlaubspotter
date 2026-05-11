@@ -155,7 +155,7 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=9"></script>
+<script src="site-data.js?v=10"></script>
 <script src="site.js?v=16"></script>
 <script>
     renderHeader('waar');
@@ -163,35 +163,62 @@
     const params = new URLSearchParams(location.search);
     const wherePre = params.get('where') || '';
     const whereLabel = wherePre ? DATA.label('where', wherePre) : '';
+    // ?region= aggregaat (europa / azie / afrika / scandinavie /
+    // bergen / aan-zee). Wanneer gezet wordt de region het primaire
+    // WAAR-identity i.p.v. een individueel land.
+    const regionPre = params.get('region') || '';
+    const regionDisplay = regionPre ? DATA.regionDisplayName(regionPre) : '';
+    const regionTitleLabel = regionPre ? DATA.regionLabel(regionPre) : '';
+    const regionPrep = regionPre ? DATA.regionPreposition(regionPre) : '';
+    // Display destination = sub-aware identity (region OF land).
+    const destinationDisplay = regionDisplay || whereLabel;
+    const isContextPage = wherePre || regionPre;
 
-    document.getElementById('bc').innerHTML = wherePre
+    console.log('[Niveau2-Waar]', { wherePre, whereLabel, regionPre, regionDisplay, destinationDisplay });
+
+    document.getElementById('bc').innerHTML = isContextPage
         ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<a href="Niveau2-Waar.html">Waar wil je heen?</a>`, `<span class="sep">›</span>`,
-           `<span class="current">${whereLabel}</span>`].join('')
+           `<span class="current">${destinationDisplay}</span>`].join('')
         : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<span class="current">Waar wil je heen?</span>`].join('');
 
-    if (wherePre) {
-        document.getElementById('page-title').textContent = `Vakantie in ${whereLabel}`;
-        document.getElementById('page-lead').textContent = `Je kiest ${whereLabel}. Kies nu een vakantietype of je reisgezelschap.`;
-        document.getElementById('eyebrow').textContent = `Niveau 2 — Waar › ${whereLabel}`;
+    if (isContextPage) {
+        // Page-title gebruikt regionLabel + preposition voor natuurlijke
+        // NL-zin ("Vakantie in Europa", "Vakantie aan zee",
+        // "Vakantie in de bergen"). Bij individueel land: "Vakantie
+        // in Italië".
+        const titlePhrase = regionPre
+            ? `${regionPrep} ${regionTitleLabel}`
+            : `in ${whereLabel}`;
+        document.getElementById('page-title').textContent = `Vakantie ${titlePhrase}`;
+        document.title = `Vakantie ${titlePhrase} · Urlaubspotter`;
+        document.getElementById('page-lead').textContent =
+            `Je kiest ${destinationDisplay}. Kies nu een vakantietype of je reisgezelschap.`;
+        document.getElementById('eyebrow').textContent = `Niveau 2 — Waar › ${destinationDisplay}`;
         document.getElementById('what-section').style.display = '';
         document.querySelectorAll('.preset-only').forEach(el => el.style.display = '');
-        document.getElementById('active-filters').innerHTML = [
-            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(wherePre)} ${whereLabel}</span>`,
-            `<a class="chip" href="Niveau2-Waar.html">✕ Andere keuze</a>`
-        ].join('');
+        // Active filters: alleen het ACTIEVE WAAR-chip (geen "Andere
+        // keuze" navigatie meer; breadcrumb biedt de terugweg).
+        const chipIcon = wherePre ? DATA.icon(wherePre) : '🌍';
+        document.getElementById('active-filters').innerHTML =
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${chipIcon} ${destinationDisplay}</span>`;
 
-        // Geschikte accommodaties (filter op where)
-        const matches = DATA.filter({ where: wherePre });
+        // Geschikte accommodaties — sub-aware filter ondersteunt nu
+        // ook region (DATA.filter expanded region naar zijn wheres).
+        const matches = DATA.filterWithSub({ where: wherePre, region: regionPre });
         document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
-        document.getElementById('matches-lead').textContent = `Accommodaties in ${whereLabel}.`;
-        document.getElementById('matches-all-link').href = `Navigatie.html?where=${wherePre}`;
+        document.getElementById('matches-lead').textContent = `Accommodaties ${titlePhrase}.`;
+        const allLinkQuery = regionPre ? `region=${regionPre}` : `where=${wherePre}`;
+        document.getElementById('matches-all-link').href = `Navigatie.html?${allLinkQuery}`;
         renderListingPreview('matches-listing', matches, { limit: 6 });
     } else {
         document.getElementById('active-filters').style.display = 'none';
     }
 
+    // Carry-forward: deeper navigatie (Niveau 3) behoudt region OF
+    // where zodat de identity niet wegvalt.
+    const destinationCarry = regionPre ? `region=${regionPre}` : (wherePre ? `where=${wherePre}` : '');
     renderCategoryTiles('nl-tiles', DATA.whereNL(), {
         linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
         gradient: SITE_DATA.gradients.where
@@ -201,11 +228,13 @@
         gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
     });
     renderCategoryTiles('what-tiles', DATA.what(), {
-        linkBuilder: (v) => `Niveau3-WaarWat.html?where=${wherePre}&what=${v}`,
+        linkBuilder: (v) => destinationCarry
+            ? `Niveau3-WaarWat.html?${destinationCarry}&what=${v}`
+            : `Niveau3-WaarWat.html?what=${v}`,
         gradient: SITE_DATA.gradients.what
     });
 
-    renderBlogPreview('blog-preview', whereLabel || 'Bestemming');
+    renderBlogPreview('blog-preview', destinationDisplay || 'Bestemming');
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();

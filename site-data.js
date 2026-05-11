@@ -67,13 +67,23 @@ const SITE_DATA = {
         // "Hotels nabij de bergen" laten renderen i.p.v. een
         // generieke continent-pagina of het verkeerde land.
         regions: {
-            'europa':     { label: 'Europa',      preposition: 'in',    wheres: ['belgie','duitsland','frankrijk','spanje','italie','oostenrijk','portugal','kroatie'] },
-            'azie':       { label: 'Azië',        preposition: 'in',    wheres: [] },
-            'afrika':     { label: 'Afrika',      preposition: 'in',    wheres: [] },
-            'scandinavie': { label: 'Scandinavië', preposition: 'in',    wheres: [] },
-            // Bergen = bergachtige bestemmingen — "Hotels nabij de bergen".
-            // De preposition is afwijkend (nabij i.p.v. in).
-            'bergen':     { label: 'de bergen',   preposition: 'nabij', wheres: ['oostenrijk','italie','duitsland'] },
+            // displayName = wat in chips, eyebrow en breadcrumb staat.
+            // label + preposition = wat in pagina-titels gerendeerd wordt
+            //   (bv. "Vakantie in Europa", "Vakantie aan zee",
+            //   "Hotels in de bergen").
+            // wheres = welke individuele where-keys onder deze region
+            //   vallen (gebruikt door DATA.filter voor de listing).
+            'europa':      { label: 'Europa',      displayName: 'Europa',      preposition: 'in',  wheres: ['belgie','duitsland','frankrijk','spanje','italie','oostenrijk','portugal','kroatie'] },
+            'azie':        { label: 'Azië',        displayName: 'Azië',        preposition: 'in',  wheres: [] },
+            'afrika':      { label: 'Afrika',      displayName: 'Afrika',      preposition: 'in',  wheres: [] },
+            'scandinavie': { label: 'Scandinavië', displayName: 'Scandinavië', preposition: 'in',  wheres: [] },
+            // Bergen = bergachtige bestemmingen. Chip toont "Bergen",
+            // title gebruikt "in de bergen" voor natuurlijke NL-zin.
+            'bergen':      { label: 'de bergen',   displayName: 'Bergen',      preposition: 'in',  wheres: ['oostenrijk','italie','duitsland'] },
+            // "Aan Zee" = NL/EU kustbestemmingen. Title: "Vakantie aan
+            // zee" / "Hotels aan zee" — preposition+label match de
+            // natuurlijke Nederlandse formulering.
+            'aan-zee':     { label: 'zee',         displayName: 'Aan Zee',     preposition: 'aan', wheres: ['zeeland','noord-holland','friesland','zuid-holland','spanje','italie','kroatie','portugal'] },
         },
 
         // Sub-type labels per WAT-key — sturen Niveau 2/3/4 paginas
@@ -462,6 +472,9 @@ const DATA = {
     // verkeerd land.
     region(key)            { return key ? (SITE_DATA.regions?.[key]) : null; },
     regionLabel(key)       { return this.region(key)?.label || ''; },
+    // displayName = chip/breadcrumb-vorm (bijv. "Bergen", "Aan Zee");
+    // valt terug op label wanneer geen displayName gezet is.
+    regionDisplayName(key) { return this.region(key)?.displayName || this.region(key)?.label || ''; },
     regionPreposition(key) { return this.region(key)?.preposition || 'in'; },
     filter({ who, what, where, sub, region } = {}) {
         // Sub-niveau (bijv. wellness / boutique / glamping / waterpark)

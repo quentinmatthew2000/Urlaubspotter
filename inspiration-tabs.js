@@ -298,16 +298,19 @@
             id: "bestemmingen",
             label: "Bestemmingen",
             items: [
-                // Continenten zonder eigen pagina linken naar de generieke
-                // Niveau2-Waar-pagina; geen 404's.
-                { icon: "🌍",     title: "Op vakantie in Europa",              sub: "Bestemming", href: NIVWAAR_ALL },
-                { icon: "🌏",     title: "Op vakantie in Azië",                sub: "Bestemming", href: NIVWAAR_ALL },
-                { icon: "🏡",     title: "Op vakantie in eigen land",          sub: "Bestemming", href: NIVWAAR_ALL },
-                { icon: "🇳🇱",     title: "Op vakantie in Nederland",           sub: "Bestemming", href: "nederland.html" },
-                { icon: "🦁",     title: "Op vakantie in Afrika",              sub: "Bestemming", href: NIVWAAR_ALL },
-                { icon: "🏖️",     title: "Vakanties aan zee",                  sub: "Bestemming", href: NIVWAAR("zeeland") },
-                { icon: "⛰️",     title: "Vakantie in de bergen",              sub: "Bestemming", href: NIVWAAR("oostenrijk") },
-                { icon: "❄️",     title: "Op vakantie in Scandinavië",         sub: "Bestemming", href: NIVWAAR_ALL },
+                // Continenten + "aan zee" / "bergen" routen naar
+                // Niveau2-Waar.html?region=<aggregaat> zodat de
+                // destination als zichzelf gerendeerd wordt (Europa,
+                // Azië, Bergen, Aan Zee) i.p.v. de generieke WHERE-
+                // overzicht of een toevallig land.
+                { icon: "🌍",     title: "Op vakantie in Europa",              sub: "Bestemming", href: "Niveau2-Waar.html?region=europa" },
+                { icon: "🌏",     title: "Op vakantie in Azië",                sub: "Bestemming", href: "Niveau2-Waar.html?region=azie" },
+                { icon: "🏡",     title: "Op vakantie in eigen land",          sub: "Bestemming", href: "Niveau2-Waar.html?where=netherlands" },
+                { icon: "🇳🇱",     title: "Op vakantie in Nederland",           sub: "Bestemming", href: "Niveau2-Waar.html?where=netherlands" },
+                { icon: "🦁",     title: "Op vakantie in Afrika",              sub: "Bestemming", href: "Niveau2-Waar.html?region=afrika" },
+                { icon: "🏖️",     title: "Vakanties aan zee",                  sub: "Bestemming", href: "Niveau2-Waar.html?region=aan-zee" },
+                { icon: "⛰️",     title: "Vakantie in de bergen",              sub: "Bestemming", href: "Niveau2-Waar.html?region=bergen" },
+                { icon: "❄️",     title: "Op vakantie in Scandinavië",         sub: "Bestemming", href: "Niveau2-Waar.html?region=scandinavie" },
             ],
         },
     ];
@@ -366,10 +369,30 @@
             resolverUsed: (typeof window !== 'undefined' && typeof window.safeSubLabel === 'function') ? 'safeSubLabel' : 'DATA.subLabel',
         });
 
-        let activeTab = TABS[0].id;
+        // Tab-volgorde + label-override per context. Op Niveau 2 — Wat
+        // pagina's (contextWhat gezet) staat Vakantietype eerst — de
+        // gebruiker is daar primair geïnteresseerd in sub-refinements
+        // van de huidige WAT. Populair wordt hernoemd naar "Populaire
+        // zoekcombinaties" om duidelijk te maken dat het 2-dim combo's
+        // zijn binnen de huidige WAT-context.
+        const orderedTabIds = contextWhat
+            ? ["vakantietype", "reisgezelschap", "bestemmingen", "populair"]
+            : TABS.map(t => t.id);
+        const TAB_LABEL_OVERRIDES = contextWhat
+            ? { populair: "Populaire zoekcombinaties" }
+            : {};
+        function tabsInOrder() {
+            return orderedTabIds.map(id => {
+                const base = TABS.find(t => t.id === id) || { id, label: id };
+                const label = TAB_LABEL_OVERRIDES[id] || base.label;
+                return Object.assign({}, base, { label });
+            });
+        }
+
+        let activeTab = orderedTabIds[0];
 
         function tabsHTML() {
-            return TABS.map(t => `
+            return tabsInOrder().map(t => `
                 <button type="button"
                         class="it-tab${t.id === activeTab ? ' active' : ''}"
                         data-it-tab="${t.id}"
