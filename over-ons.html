@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>Over ons · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=14">
+    <style>
+        .over-hero {
+            background: linear-gradient(135deg, #faf3e6 0%, #ede0c5 100%);
+            padding: 64px 24px 72px;
+            text-align: center;
+        }
+        .over-hero h1 {
+            font-size: clamp(2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0 0 16px;
+            color: #2a2417;
+        }
+        .over-hero p {
+            font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+            color: #6f624a;
+            max-width: 680px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .over-section { max-width: 880px; margin: 0 auto; padding: 56px 24px; }
+        .over-section h2 { font-size: 1.6rem; margin: 0 0 14px; font-weight: 800; }
+        .over-section p { font-size: 1.05rem; line-height: 1.7; color: var(--text); margin-bottom: 14px; }
+        .over-pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px; margin-top: 28px; }
+        .over-pillar { padding: 22px; background: #fff; border: 1px solid var(--border); border-radius: 14px; }
+        .over-pillar h3 { margin: 0 0 8px; font-size: 1.05rem; }
+        .over-pillar p { font-size: 0.95rem; color: var(--secondary); margin: 0; }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc">
+    <a href="Homepagina.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Over ons</span>
+</nav>
+
+<section class="over-hero">
+    <span class="eyebrow" style="color:#8b6914;">Wie we zijn</span>
+    <h1>Onafhankelijke vakantiegids</h1>
+    <p>Urlaubspotter is dé onafhankelijke gids voor jouw perfecte vakantie. Geen affiliate-sturing, geen ge­sponsorde rankings — alleen eerlijke vergelijking en redactie-tested aanbevelingen.</p>
+</section>
+
+<section class="over-section">
+    <h2>Onze missie</h2>
+    <p>We helpen Nederlanders sneller de juiste vakantie vinden. Of je nu zoekt naar een boutique hotel in Italië, een rustige camping in Drenthe of een wellness-weekend op de Veluwe — bij Urlaubspotter krijg je de informatie die je nodig hebt zonder commerciële ruis.</p>
+    <p>Onze redactie test jaarlijks honderden accommodaties. We publiceren wat we vinden, ook als het minder leuk is. We werken niet met commissies per boeking en onze rankings zijn niet te kopen.</p>
+
+    <h2 style="margin-top:40px;">Onze pijlers</h2>
+    <div class="over-pillars">
+        <div class="over-pillar">
+            <h3>Eerlijk</h3>
+            <p>Reviews komen van echte gasten en geverifieerde redactie-bezoeken. Geen fake testimonials.</p>
+        </div>
+        <div class="over-pillar">
+            <h3>Onafhankelijk</h3>
+            <p>Geen affiliate-sturing. Wat we aanbevelen baseren we op kwaliteit, niet op commissies.</p>
+        </div>
+        <div class="over-pillar">
+            <h3>Praktisch</h3>
+            <p>Concrete tips, eerlijke prijsindicaties, en filters die werken zoals je verwacht.</p>
+        </div>
+        <div class="over-pillar">
+            <h3>Onderzoekend</h3>
+            <p>We bezoeken accommodaties zelf, vergelijken systematisch en delen wat we leren.</p>
+        </div>
+    </div>
+
+    <h2 style="margin-top:40px;">Contact</h2>
+    <p>Vragen, tips of feedback? Mail ons op <a href="mailto:hallo@urlaubspotter.nl">hallo@urlaubspotter.nl</a> — we reageren binnen 24 uur op werkdagen.</p>
+</section>
+
+<section class="section">
+    <div class="news-social" id="news-social"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=13"></script>
+<script src="site.js?v=17"></script>
+<script>
+    renderHeader('over');
+    renderNewsSocial('news-social');
+    renderFooter();
+</script>
+</body>
+</html>

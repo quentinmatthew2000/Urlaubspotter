@@ -411,68 +411,94 @@ function renderHeader(activePage = '') {
         </div>
         <nav class="site-nav">
             <a href="Homepagina.html" ${activePage === 'home' ? 'class="active"' : ''}>Home</a>
+            <a href="Keuzehulp.html" ${activePage === 'keuzehulp' ? 'class="active"' : ''}>Keuzehulp</a>
+            <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
             <span class="has-dropdown">
                 <a href="Niveau2-Wat.html" ${activePage === 'wat' ? 'class="active"' : ''}>Vakantietypen</a>
                 <div class="nav-dropdown wide">
                     <div class="nav-dd-col">
                         <h5>🏨 Hotels</h5>
-                        <a href="Navigatie.html?what=hotel">Alle hotels</a>
-                        <a href="Navigatie.html?what=hotel&sub=boutique">Boutique hotels</a>
-                        <a href="Navigatie.html?what=wellness">Wellness hotels</a>
-                        <a href="Navigatie.html?what=hotel&sub=all-inclusive">All-inclusive hotels</a>
-                        <a href="Navigatie.html?what=hotel&sub=design">Design hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel">Alle hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=boutique">Boutique hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=wellness">Wellness hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=adult-only">Adult Only hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=all-inclusive">All-inclusive hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=design">Design hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=city">Centrumgelegen hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=resort">Resorts</a>
                     </div>
                     <div class="nav-dd-col">
                         <h5>🏕️ Kamperen</h5>
-                        <a href="Navigatie.html?what=camping">Alle campings</a>
-                        <a href="Navigatie.html?what=glamping">Glampings</a>
-                        <a href="Navigatie.html?what=camping&sub=waterpark">Campings met waterpark</a>
-                        <a href="Navigatie.html?what=camping&sub=natuur">Camping in de natuur</a>
-                        <a href="Navigatie.html?what=camping&sub=kids">Kindercampings</a>
+                        <a href="Niveau2-Wat.html?what=camping">Alle campings</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=glamping">Glamping</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=waterpark">Camping met waterpark</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=natuur">Camping in de natuur</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=kids">Kindercampings</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=honden">Hondvriendelijke campings</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=zee">Campings aan zee</a>
                     </div>
                     <div class="nav-dd-col">
                         <h5>🏡 Vakantieparken</h5>
-                        <a href="Navigatie.html?what=holiday-park">Alle vakantieparken</a>
-                        <a href="Navigatie.html?what=holiday-park&sub=attractie">Met attractiepark</a>
-                        <a href="Navigatie.html?what=holiday-park&sub=zwemparadijs">Met zwemparadijs</a>
-                        <a href="Navigatie.html?what=holiday-park&sub=luxe">Luxe parken</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park">Alle vakantieparken</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=zwemparadijs">Met zwemparadijs</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=attractiepark">Met attractiepark</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=luxe">Luxe parken</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=kids">Kindvriendelijk</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=natuur">In de natuur</a>
                     </div>
                     <div class="nav-dd-col">
-                        <h5>🗓️ Weekendjes weg</h5>
-                        <a href="Navigatie.html?what=weekend">Alle weekendjes</a>
-                        <a href="Navigatie.html?what=weekend&sub=nl">In eigen land</a>
-                        <a href="Navigatie.html?what=weekend&sub=buurlanden">In buurlanden</a>
-                        <a href="Navigatie.html?what=weekend&sub=europa">In Europa</a>
-                    </div>
-                    <div class="nav-dd-col">
-                        <h5>☀️ Zonvakanties</h5>
-                        <a href="Navigatie.html?what=zon">Alle zonvakanties</a>
-                        <a href="Navigatie.html?what=zon&sub=middellandse-zee">Middellandse Zee</a>
-                        <a href="Navigatie.html?what=zon&sub=strand">Strandvakanties</a>
-                    </div>
-                    <div class="nav-dd-col">
-                        <h5>❄️ Wintervakanties</h5>
-                        <a href="Navigatie.html?what=winter">Alle wintersport</a>
-                        <a href="Navigatie.html?what=winter&sub=ski">Skivakanties</a>
-                        <a href="Navigatie.html?what=winter&sub=kerst">Kerstvakantie</a>
+                        <h5>🗓️ Andere types</h5>
+                        <a href="Niveau2-Wat.html?what=glamping">Glamping</a>
+                        <a href="Niveau2-Wat.html?what=wellness">Wellness</a>
+                        <a href="Niveau2-Wat.html?what=city-trip">Weekendje weg</a>
+                        <a href="Niveau2-Wat.html?what=sun">Zonvakantie</a>
+                        <a href="Niveau2-Wat.html?what=winter">Wintersport</a>
+                        <a href="Niveau2-Wat.html?what=adventure-trip">Actief / Avontuur</a>
                     </div>
                 </div>
             </span>
             <span class="has-dropdown">
                 <a href="Niveau2-Waar.html" ${activePage === 'waar' ? 'class="active"' : ''}>Bestemmingen</a>
-                <div class="nav-dropdown">
+                <div class="nav-dropdown wide">
                     <div class="nav-dd-col">
-                        <h5>🇳🇱 Nederland</h5>
-                        ${DATA.whereNL().map(([v,l]) => `<a href="Navigatie.html?where=${v}">${l}</a>`).join('')}
+                        <h5>🌍 Continenten & regio's</h5>
+                        <a href="Niveau2-Waar.html?region=europa">Europa</a>
+                        <a href="Niveau2-Waar.html?region=azie">Azië</a>
+                        <a href="Niveau2-Waar.html?region=afrika">Afrika</a>
+                        <a href="Niveau2-Waar.html?region=scandinavie">Scandinavië</a>
+                        <a href="Niveau2-Waar.html?region=bergen">Bergen</a>
+                        <a href="Niveau2-Waar.html?region=aan-zee">Aan zee</a>
                     </div>
                     <div class="nav-dd-col">
-                        <h5>🌍 Europa</h5>
-                        ${DATA.whereEU().map(([v,l]) => `<a href="Navigatie.html?where=${v}">${l}</a>`).join('')}
+                        <h5>🇳🇱 Nederland</h5>
+                        ${DATA.whereNL().map(([v,l]) => `<a href="Niveau2-Waar.html?where=${v}">${l}</a>`).join('')}
+                    </div>
+                    <div class="nav-dd-col">
+                        <h5>🇪🇺 Europese landen</h5>
+                        ${DATA.whereEU().map(([v,l]) => `<a href="Niveau2-Waar.html?where=${v}">${l}</a>`).join('')}
                     </div>
                 </div>
             </span>
-            <a href="Keuzehulp.html" ${activePage === 'keuzehulp' ? 'class="active"' : ''}>Keuzehulp</a>
-            <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
+            <span class="has-dropdown">
+                <a href="Niveau2-Wie.html" ${activePage === 'wie' ? 'class="active"' : ''}>Reisgezelschap</a>
+                <div class="nav-dropdown">
+                    <div class="nav-dd-col">
+                        <h5>👨‍👩‍👧 Gezinnen</h5>
+                        <a href="Niveau2-Wie.html?who=families-babies">Gezinnen met baby's</a>
+                        <a href="Niveau2-Wie.html?who=families-kids">Gezinnen met kinderen</a>
+                        <a href="Niveau2-Wie.html?who=families-teens">Gezinnen met tieners</a>
+                    </div>
+                    <div class="nav-dd-col">
+                        <h5>🥂 Volwassenen</h5>
+                        <a href="Niveau2-Wie.html?who=couples">Koppels</a>
+                        <a href="Niveau2-Wie.html?who=friends">Vrienden</a>
+                        <a href="Niveau2-Wie.html?who=seniors">Senioren</a>
+                        <a href="Niveau2-Wie.html?who=solo">Alleen reizend</a>
+                        <a href="Niveau2-Wie.html?who=pets">Met huisdieren</a>
+                    </div>
+                </div>
+            </span>
+            <a href="over-ons.html" ${activePage === 'over' ? 'class="active"' : ''}>Over ons</a>
         </nav>
     `;
     bindMobileNav(header);

@@ -13,6 +13,92 @@
 (function () {
     "use strict";
 
+    // ============================================================
+    //  TAG-STYLE LABELS
+    // ============================================================
+    //  Inspiratie-buttons gebruiken nu een compacte "X + Y + Z"
+    //  vorm i.p.v. volzinnen. De maps hieronder mappen elke
+    //  dimensie naar een korte, scanbare tag — DATA-labels zijn
+    //  vaak te lang voor visueel compacte cards.
+    //
+    //  Conventie tag-volgorde:
+    //    1. WAT of sub (de "wat zoek ik"-tag)
+    //    2. WAAR (de "waar"-tag)
+    //    3. WIE (de "voor wie"-tag)
+    //  Niet alle items hebben alle drie — _tagJoin filtert lege uit.
+    // ============================================================
+    const TAG_WHO = {
+        'couples':         'Koppels',
+        'friends':         'Vrienden',
+        'seniors':         'Senioren',
+        'solo':            'Solo',
+        'pets':            'Huisdier',
+        'families-kids':   'Familie',
+        'families-babies': "Baby's",
+        'families-teens':  'Tieners',
+    };
+    const TAG_WHAT = {
+        'hotel':          'Hotel',
+        'camping':        'Camping',
+        'holiday-park':   'Vakantiepark',
+        'glamping':       'Glamping',
+        'wellness':       'Wellness',
+        'sun':            'Zonvakantie',
+        'winter':         'Wintersport',
+        'city-trip':      'Citytrip',
+        'adventure-trip': 'Avontuur',
+    };
+    const TAG_SUB = {
+        hotel: {
+            'boutique':      'Boutique',
+            'adult-only':    'Adult Only',
+            'wellness':      'Wellness',
+            'all-inclusive': 'All-inclusive',
+            'design':        'Design',
+            'city':          'Centrum',
+            'resort':        'Resort',
+        },
+        camping: {
+            'glamping':      'Glamping',
+            'waterpark':     'Waterpark',
+            'natuur':        'Natuur',
+            'kids':          'Kindercamping',
+            'honden':        'Hondvriendelijk',
+            'zee':           'Aan zee',
+        },
+        'holiday-park': {
+            'zwemparadijs':  'Zwemparadijs',
+            'attractiepark': 'Attractiepark',
+            'luxe':          'Luxe',
+            'kids':          'Kindvriendelijk',
+            'natuur':        'Natuur',
+            'themaparken':   'Themaparken',
+        },
+    };
+    const TAG_REGION = {
+        'europa':      'Europa',
+        'azie':        'Azië',
+        'afrika':      'Afrika',
+        'scandinavie': 'Scandinavië',
+        'bergen':      'Bergen',
+        'aan-zee':     'Aan zee',
+    };
+    function tagWho(who)      { return TAG_WHO[who]  || (typeof DATA !== 'undefined' ? DATA.label('who', who) : who) || who; }
+    function tagWhat(what)    { return TAG_WHAT[what] || (typeof DATA !== 'undefined' ? DATA.label('what', what) : what) || what; }
+    function tagWhere(whereKey, regionKey) {
+        if (regionKey) return TAG_REGION[regionKey] || (typeof DATA !== 'undefined' ? DATA.regionDisplayName(regionKey) : regionKey) || regionKey;
+        if (whereKey)  return (typeof DATA !== 'undefined' ? DATA.label('where', whereKey) : whereKey) || whereKey;
+        return '';
+    }
+    function tagSub(what, sub) {
+        if (!what || !sub) return '';
+        if (TAG_SUB[what] && TAG_SUB[what][sub]) return TAG_SUB[what][sub];
+        if (typeof window !== 'undefined' && typeof window.safeSubLabel === 'function') return window.safeSubLabel(what, sub) || '';
+        if (typeof DATA !== 'undefined' && typeof DATA.subLabel === 'function')          return DATA.subLabel(what, sub) || '';
+        return '';
+    }
+    function _tagJoin(parts) { return parts.filter(Boolean).join(' + '); }
+
     // Routing-helpers — alle URL's hieronder bestaan al in de site.
     // Wie+Wat combinaties (Tab "Populair") landen op de Niveau 3
     // pagina (Wie+Wat); single-dimensie items op Niveau 2.
@@ -77,23 +163,22 @@
     //     (de bergachtige bestemming in de dataset)
     //   • Continenten → eigen continent-landing (europa.html / azie.html)
     //     met ?what= zodat de pagina kan filteren op het huidige type.
-    function bestemmingenForWat(what, articleLabel) {
-        // Concrete landen → Niveau3-WaarWat met ?where=. Aggregaten
-        // (continenten + "bergen") → Niveau3-WaarWat met ?region=
-        // zodat de WAT-context behouden blijft (Hotels in Europa,
-        // Hotels nabij de bergen) i.p.v. te degenereren naar een
-        // generieke Niveau 1 continentpagina of een toevallig land.
+    function bestemmingenForWat(what /*, articleLabel */) {
+        // Tag-style: "<WAT-tag> + <Bestemming>". Concrete landen →
+        // Niveau3-WaarWat met ?where=; aggregaten (continenten +
+        // bergen + aan-zee) → ?region=.
         const N3  = (where)  => `Niveau3-WaarWat.html?what=${what}&where=${where}`;
         const N3R = (region) => `Niveau3-WaarWat.html?what=${what}&region=${region}`;
+        const w = tagWhat(what);
         return [
-            { icon: "🌍",  title: `Naar ${articleLabel} in Europa`,     href: N3R("europa") },
-            { icon: "🌏",  title: `Naar ${articleLabel} in Azië`,       href: N3R("azie") },
-            { icon: "🍺",  title: `Naar ${articleLabel} in Duitsland`,  href: N3("duitsland") },
-            { icon: "🇳🇱",  title: `Naar ${articleLabel} in Nederland`,  href: N3("netherlands") },
-            { icon: "⛰️",  title: `Naar ${articleLabel} bij de bergen`, href: N3R("bergen") },
-            { icon: "🗼",  title: `Naar ${articleLabel} in Frankrijk`,  href: N3("frankrijk") },
-            { icon: "⛵",  title: `Naar ${articleLabel} in Kroatië`,    href: N3("kroatie") },
-            { icon: "🍝",  title: `Naar ${articleLabel} in Italië`,     href: N3("italie") },
+            { icon: "🌍",  title: _tagJoin([w, "Europa"]),     href: N3R("europa") },
+            { icon: "🌏",  title: _tagJoin([w, "Azië"]),       href: N3R("azie") },
+            { icon: "🍺",  title: _tagJoin([w, "Duitsland"]),  href: N3("duitsland") },
+            { icon: "🇳🇱",  title: _tagJoin([w, "Nederland"]),  href: N3("netherlands") },
+            { icon: "⛰️",  title: _tagJoin([w, "Bergen"]),     href: N3R("bergen") },
+            { icon: "🗼",  title: _tagJoin([w, "Frankrijk"]),  href: N3("frankrijk") },
+            { icon: "⛵",  title: _tagJoin([w, "Kroatië"]),    href: N3("kroatie") },
+            { icon: "🍝",  title: _tagJoin([w, "Italië"]),     href: N3("italie") },
         ];
     }
 
@@ -107,19 +192,25 @@
     // "Naar een hotel met tieners" / "Met vrienden naar een camping"
     // i.p.v. de generieke "Op vakantie met tieners". Iedere item link
     // naar Niveau3-WieWat met who+what.
-    function reisgezelschapForWat(what, articleLabel) {
-        // articleLabel = bv. "een hotel" / "een camping" / "een vakantiepark"
+    function reisgezelschapForWat(what /*, articleLabel */) {
+        // Tag-style: "<WIE-fullLabel> + <WAT-tag>".
+        // Voorbeeld: "Gezinnen met tieners + Hotel".
+        const w = tagWhat(what);
         return [
-            { who: "families-teens",  icon: "🧑",      title: `Naar ${articleLabel} met tieners` },
-            { who: "couples",         icon: "💑",      title: `Naar ${articleLabel} als koppel` },
-            { who: "friends",         icon: "👫",      title: `Met vrienden naar ${articleLabel}` },
-            { who: "families-kids",   icon: "👨‍👩‍👧", title: `Met familie naar ${articleLabel}` },
-            { who: "solo",            icon: "🚶",      title: `Alleen naar ${articleLabel}` },
-            { who: "pets",            icon: "🐕",      title: `Met huisdieren naar ${articleLabel}` },
-            { who: "seniors",         icon: "👴",      title: `Met senioren naar ${articleLabel}` },
-            { who: "families-babies", icon: "👶",      title: `Met baby's naar ${articleLabel}` },
-            { who: "families-kids",   icon: "👧",      title: `Met jonge kinderen naar ${articleLabel}` },
-        ].map(it => ({ ...it, href: LVL3_WIEWAT(it.who, what) }));
+            { who: "families-teens",  icon: "🧑",      whoLabel: "Gezinnen met tieners" },
+            { who: "couples",         icon: "💑",      whoLabel: "Koppels" },
+            { who: "friends",         icon: "👫",      whoLabel: "Vrienden" },
+            { who: "families-kids",   icon: "👨‍👩‍👧", whoLabel: "Gezinnen met kinderen" },
+            { who: "solo",            icon: "🚶",      whoLabel: "Alleen reizend" },
+            { who: "pets",            icon: "🐕",      whoLabel: "Met huisdier" },
+            { who: "seniors",         icon: "👴",      whoLabel: "Senioren" },
+            { who: "families-babies", icon: "👶",      whoLabel: "Gezinnen met baby's" },
+            { who: "families-kids",   icon: "👧",      whoLabel: "Gezinnen met jonge kinderen" },
+        ].map(it => ({
+            icon: it.icon,
+            title: _tagJoin([it.whoLabel, w]),
+            href: LVL3_WIEWAT(it.who, what),
+        }));
     }
 
     const REISGEZELSCHAP_BY_WAT = {
@@ -138,61 +229,65 @@
     // bijvoorbeeld "Wellness Hotels voor koppels" wordt i.p.v.
     // "Hotels voor koppels".
 
-    function reisgezelschapForSubContext(what, sub, subLabel) {
+    function reisgezelschapForSubContext(what, sub /*, subLabel */) {
+        // Tag-style: "<sub-tag> + <WIE-fullLabel>"
+        // Voorbeeld: "Wellness + Koppels", "Boutique + Senioren"
+        const subTag = tagSub(what, sub);
         const items = [
-            { who: "families-teens",  icon: "🧑",      label: `${subLabel} voor tieners` },
-            { who: "couples",         icon: "💑",      label: `${subLabel} voor koppels` },
-            { who: "friends",         icon: "👫",      label: `${subLabel} met vrienden` },
-            { who: "families-kids",   icon: "👨‍👩‍👧", label: `${subLabel} voor families` },
-            { who: "solo",            icon: "🚶",      label: `${subLabel} voor solo-reizigers` },
-            { who: "pets",            icon: "🐕",      label: `${subLabel} met huisdier` },
-            { who: "seniors",         icon: "👴",      label: `${subLabel} voor senioren` },
-            { who: "families-babies", icon: "👶",      label: `${subLabel} met baby's` },
-            { who: "families-kids",   icon: "👧",      label: `${subLabel} voor jonge kinderen` },
+            { who: "families-teens",  icon: "🧑",      whoLabel: "Gezinnen met tieners" },
+            { who: "couples",         icon: "💑",      whoLabel: "Koppels" },
+            { who: "friends",         icon: "👫",      whoLabel: "Vrienden" },
+            { who: "families-kids",   icon: "👨‍👩‍👧", whoLabel: "Gezinnen met kinderen" },
+            { who: "solo",            icon: "🚶",      whoLabel: "Alleen reizend" },
+            { who: "pets",            icon: "🐕",      whoLabel: "Met huisdier" },
+            { who: "seniors",         icon: "👴",      whoLabel: "Senioren" },
+            { who: "families-babies", icon: "👶",      whoLabel: "Gezinnen met baby's" },
+            { who: "families-kids",   icon: "👧",      whoLabel: "Gezinnen met jonge kinderen" },
         ];
         return items.map(it => ({
             icon: it.icon,
-            title: it.label,
+            title: _tagJoin([subTag, it.whoLabel]),
             href: `Niveau3-WieWat.html?who=${it.who}&what=${what}&sub=${sub}`,
         }));
     }
 
-    function bestemmingenForSubContext(what, sub, subLabel) {
-        // Idem als bestemmingenForWat maar met &sub= meegekoppeld
-        // zodat we niet alleen Hotels in Europa zien maar
-        // Wellness Hotels in Europa / Boutique Hotels nabij de
-        // bergen / etc. Region wint van land voor aggregaten.
+    function bestemmingenForSubContext(what, sub /*, subLabel */) {
+        // Tag-style: "<sub-tag> + <Bestemming>"
+        // Voorbeeld: "Wellness + Italië", "Boutique + Bergen"
         const N3  = (where)  => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&where=${where}`;
         const N3R = (region) => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&region=${region}`;
+        const s = tagSub(what, sub);
         return [
-            { icon: "🌍",  title: `${subLabel} in Europa`,     href: N3R("europa") },
-            { icon: "🌏",  title: `${subLabel} in Azië`,       href: N3R("azie") },
-            { icon: "🍺",  title: `${subLabel} in Duitsland`,  href: N3("duitsland") },
-            { icon: "🇳🇱",  title: `${subLabel} in Nederland`,  href: N3("netherlands") },
-            { icon: "⛰️",  title: `${subLabel} bij de bergen`, href: N3R("bergen") },
-            { icon: "🗼",  title: `${subLabel} in Frankrijk`,  href: N3("frankrijk") },
-            { icon: "⛵",  title: `${subLabel} in Kroatië`,    href: N3("kroatie") },
-            { icon: "🍝",  title: `${subLabel} in Italië`,     href: N3("italie") },
+            { icon: "🌍",  title: _tagJoin([s, "Europa"]),     href: N3R("europa") },
+            { icon: "🌏",  title: _tagJoin([s, "Azië"]),       href: N3R("azie") },
+            { icon: "🍺",  title: _tagJoin([s, "Duitsland"]),  href: N3("duitsland") },
+            { icon: "🇳🇱",  title: _tagJoin([s, "Nederland"]),  href: N3("netherlands") },
+            { icon: "⛰️",  title: _tagJoin([s, "Bergen"]),     href: N3R("bergen") },
+            { icon: "🗼",  title: _tagJoin([s, "Frankrijk"]),  href: N3("frankrijk") },
+            { icon: "⛵",  title: _tagJoin([s, "Kroatië"]),    href: N3("kroatie") },
+            { icon: "🍝",  title: _tagJoin([s, "Italië"]),     href: N3("italie") },
         ];
     }
 
-    function populairForSubContext(what, sub, subLabel) {
+    function populairForSubContext(what, sub /*, subLabel */) {
+        // 9 curated combos. 2-dim items: "<sub> + <WIE>" of "<sub> +
+        // <WAAR>". 3-dim items (Niveau 4): "<sub> + <WAAR> + <WIE-short>".
+        // Voorbeeld: "Wellness + Italië + Koppels".
         const N3WIE  = (who)   => `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${sub}`;
         const N3WAAR = (where) => `Niveau3-WaarWat.html?what=${what}&sub=${sub}&where=${where}`;
         const N4     = (who, where) =>
             `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${where}&sub=${sub}`;
-        // 9 items: 3× sub+WIE, 3× sub+WAAR, 3× sub+WIE+WAAR. Iedere
-        // route houdt &sub= bij — geen verlies van het sub-niveau.
+        const s = tagSub(what, sub);
         return [
-            { icon: "💑",      title: `${subLabel} voor koppels`,               href: N3WIE("couples") },
-            { icon: "👨‍👩‍👧", title: `${subLabel} voor gezinnen`,              href: N3WIE("families-kids") },
-            { icon: "👴",      title: `${subLabel} voor senioren`,              href: N3WIE("seniors") },
-            { icon: "🍝",      title: `${subLabel} in Italië`,                  href: N3WAAR("italie") },
-            { icon: "🗼",      title: `${subLabel} in Frankrijk`,               href: N3WAAR("frankrijk") },
-            { icon: "🇳🇱",      title: `${subLabel} in Nederland`,               href: N3WAAR("netherlands") },
-            { icon: "💑",      title: `${subLabel} voor koppels in Italië`,     href: N4("couples",        "italie") },
-            { icon: "👨‍👩‍👧", title: `${subLabel} voor gezinnen in Frankrijk`, href: N4("families-kids",  "frankrijk") },
-            { icon: "👴",      title: `${subLabel} voor senioren in Spanje`,    href: N4("seniors",        "spanje") },
+            { icon: "💑",      title: _tagJoin([s, "Koppels"]),                 href: N3WIE("couples") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([s, "Familie"]),                 href: N3WIE("families-kids") },
+            { icon: "👴",      title: _tagJoin([s, "Senioren"]),                href: N3WIE("seniors") },
+            { icon: "🍝",      title: _tagJoin([s, "Italië"]),                  href: N3WAAR("italie") },
+            { icon: "🗼",      title: _tagJoin([s, "Frankrijk"]),               href: N3WAAR("frankrijk") },
+            { icon: "🇳🇱",      title: _tagJoin([s, "Nederland"]),               href: N3WAAR("netherlands") },
+            { icon: "💑",      title: _tagJoin([s, "Italië", "Koppels"]),       href: N4("couples",       "italie") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([s, "Frankrijk", "Familie"]),    href: N4("families-kids", "frankrijk") },
+            { icon: "👴",      title: _tagJoin([s, "Spanje", "Senioren"]),      href: N4("seniors",       "spanje") },
         ];
     }
 
@@ -208,54 +303,60 @@
     }
 
     function vakantietypeForWieContext(who, whoLabel) {
+        // Tag-style: "<WAT-tag> + <WIE-fullLabel>"
         const N3 = (what) => `Niveau3-WieWat.html?who=${who}&what=${what}`;
-        const lo = _whoLowerLabel(whoLabel);
+        const wL = whoLabel || tagWho(who);
         return [
-            { icon: "🏨",   title: `Hotels voor ${lo}`,                href: N3("hotel") },
-            { icon: "⛺",   title: `Camping voor ${lo}`,               href: N3("camping") },
-            { icon: "🎡",   title: `Vakantieparken voor ${lo}`,        href: N3("holiday-park") },
-            { icon: "✨",   title: `Glamping voor ${lo}`,              href: N3("glamping") },
-            { icon: "💆",   title: `Wellness voor ${lo}`,              href: N3("wellness") },
-            { icon: "☀️",   title: `Zonvakanties voor ${lo}`,          href: N3("sun") },
-            { icon: "⛷️",   title: `Wintersport voor ${lo}`,           href: N3("winter") },
-            { icon: "🧗",   title: `Avontuur voor ${lo}`,              href: N3("adventure-trip") },
-            { icon: "🏙️",   title: `Weekendje weg voor ${lo}`,         href: N3("city-trip") },
+            { icon: "🏨",   title: _tagJoin(["Hotel",        wL]), href: N3("hotel") },
+            { icon: "⛺",   title: _tagJoin(["Camping",      wL]), href: N3("camping") },
+            { icon: "🎡",   title: _tagJoin(["Vakantiepark", wL]), href: N3("holiday-park") },
+            { icon: "✨",   title: _tagJoin(["Glamping",     wL]), href: N3("glamping") },
+            { icon: "💆",   title: _tagJoin(["Wellness",     wL]), href: N3("wellness") },
+            { icon: "☀️",   title: _tagJoin(["Zonvakantie",  wL]), href: N3("sun") },
+            { icon: "⛷️",   title: _tagJoin(["Wintersport",  wL]), href: N3("winter") },
+            { icon: "🧗",   title: _tagJoin(["Avontuur",     wL]), href: N3("adventure-trip") },
+            { icon: "🏙️",   title: _tagJoin(["Citytrip",     wL]), href: N3("city-trip") },
         ];
     }
 
     function bestemmingenForWieContext(who, whoLabel) {
+        // Tag-style: "<Bestemming> + <WIE-fullLabel>"
         const N3W = (where)  => `Niveau3-WieWaar.html?who=${who}&where=${where}`;
         const N3R = (region) => `Niveau3-WieWaar.html?who=${who}&region=${region}`;
-        const lo = _whoLowerLabel(whoLabel);
+        const wL = whoLabel || tagWho(who);
         return [
-            { icon: "🌍",   title: `Europa met ${lo}`,                 href: N3R("europa") },
-            { icon: "🇳🇱",   title: `Nederland met ${lo}`,              href: N3W("netherlands") },
-            { icon: "🍝",   title: `Italië met ${lo}`,                 href: N3W("italie") },
-            { icon: "🗼",   title: `Frankrijk met ${lo}`,              href: N3W("frankrijk") },
-            { icon: "🥘",   title: `Spanje met ${lo}`,                 href: N3W("spanje") },
-            { icon: "🍺",   title: `Duitsland met ${lo}`,              href: N3W("duitsland") },
-            { icon: "⛰️",   title: `Bergen met ${lo}`,                 href: N3R("bergen") },
-            { icon: "🏖️",   title: `Aan zee met ${lo}`,                href: N3R("aan-zee") },
+            { icon: "🌍",   title: _tagJoin(["Europa",     wL]), href: N3R("europa") },
+            { icon: "🇳🇱",   title: _tagJoin(["Nederland",  wL]), href: N3W("netherlands") },
+            { icon: "🍝",   title: _tagJoin(["Italië",     wL]), href: N3W("italie") },
+            { icon: "🗼",   title: _tagJoin(["Frankrijk",  wL]), href: N3W("frankrijk") },
+            { icon: "🥘",   title: _tagJoin(["Spanje",     wL]), href: N3W("spanje") },
+            { icon: "🍺",   title: _tagJoin(["Duitsland",  wL]), href: N3W("duitsland") },
+            { icon: "⛰️",   title: _tagJoin(["Bergen",     wL]), href: N3R("bergen") },
+            { icon: "🏖️",   title: _tagJoin(["Aan zee",    wL]), href: N3R("aan-zee") },
         ];
     }
 
     function populairForWieContext(who, whoLabel) {
+        // 2-dim items gebruiken WIE-fullLabel; 3-dim items gebruiken
+        // WIE-short tag voor compactheid. Voorbeeld 3-dim: "Hotel +
+        // Italië + Senioren".
         const N3WIE  = (what)  => `Niveau3-WieWat.html?who=${who}&what=${what}`;
         const N3WAAR = (where) => `Niveau3-WieWaar.html?who=${who}&where=${where}`;
         const N3REG  = (region)=> `Niveau3-WieWaar.html?who=${who}&region=${region}`;
         const N4     = (what, where) =>
             `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${where}`;
-        const lo = _whoLowerLabel(whoLabel);
+        const wL = whoLabel || tagWho(who);
+        const wS = tagWho(who);
         return [
-            { icon: "🏨", title: `Hotels voor ${lo}`,                href: N3WIE("hotel") },
-            { icon: "⛺", title: `Camping met ${lo}`,                href: N3WIE("camping") },
-            { icon: "💆", title: `Wellness voor ${lo}`,              href: N3WIE("wellness") },
-            { icon: "🍝", title: `Italië met ${lo}`,                 href: N3WAAR("italie") },
-            { icon: "🇳🇱", title: `Nederland met ${lo}`,              href: N3WAAR("netherlands") },
-            { icon: "🌍", title: `Europa met ${lo}`,                 href: N3REG("europa") },
-            { icon: "🏨", title: `Hotel in Italië voor ${lo}`,       href: N4("hotel",   "italie") },
-            { icon: "🎡", title: `Vakantiepark in Nederland voor ${lo}`, href: N4("holiday-park", "netherlands") },
-            { icon: "⛺", title: `Camping in Frankrijk met ${lo}`,   href: N4("camping", "frankrijk") },
+            { icon: "🏨", title: _tagJoin(["Hotel",        wL]),               href: N3WIE("hotel") },
+            { icon: "⛺", title: _tagJoin(["Camping",      wL]),               href: N3WIE("camping") },
+            { icon: "💆", title: _tagJoin(["Wellness",     wL]),               href: N3WIE("wellness") },
+            { icon: "🍝", title: _tagJoin(["Italië",       wL]),               href: N3WAAR("italie") },
+            { icon: "🇳🇱", title: _tagJoin(["Nederland",    wL]),               href: N3WAAR("netherlands") },
+            { icon: "🌍", title: _tagJoin(["Europa",       wL]),               href: N3REG("europa") },
+            { icon: "🏨", title: _tagJoin(["Hotel",        "Italië", wS]),     href: N4("hotel",        "italie") },
+            { icon: "🎡", title: _tagJoin(["Vakantiepark", "Nederland", wS]),  href: N4("holiday-park", "netherlands") },
+            { icon: "⛺", title: _tagJoin(["Camping",      "Frankrijk", wS]),  href: N4("camping",      "frankrijk") },
         ];
     }
 
@@ -288,64 +389,65 @@
     }
 
     function vakantietypeForWaarContext(whereKey, regionKey) {
+        // Tag-style: "<WAT-tag> + <Bestemming>"
         const base = 'Niveau3-WaarWat.html';
         const params = regionKey ? `region=${regionKey}` : `where=${whereKey}`;
         const N3 = (what) => `${base}?what=${what}&${params}`;
-        const suf = _destSuffix(whereKey, regionKey);
+        const dest = tagWhere(whereKey, regionKey);
         return [
-            { icon: "🏨",   title: `Hotels${suf}`,             href: N3("hotel") },
-            { icon: "⛺",   title: `Camping${suf}`,            href: N3("camping") },
-            { icon: "🎡",   title: `Vakantieparken${suf}`,     href: N3("holiday-park") },
-            { icon: "✨",   title: `Glamping${suf}`,           href: N3("glamping") },
-            { icon: "💆",   title: `Wellness${suf}`,           href: N3("wellness") },
-            { icon: "☀️",   title: `Zonvakanties${suf}`,       href: N3("sun") },
-            { icon: "⛷️",   title: `Wintersport${suf}`,        href: N3("winter") },
-            { icon: "🧗",   title: `Avontuur${suf}`,           href: N3("adventure-trip") },
-            { icon: "🏙️",   title: `Weekendje weg${suf}`,      href: N3("city-trip") },
+            { icon: "🏨",   title: _tagJoin(["Hotel",        dest]), href: N3("hotel") },
+            { icon: "⛺",   title: _tagJoin(["Camping",      dest]), href: N3("camping") },
+            { icon: "🎡",   title: _tagJoin(["Vakantiepark", dest]), href: N3("holiday-park") },
+            { icon: "✨",   title: _tagJoin(["Glamping",     dest]), href: N3("glamping") },
+            { icon: "💆",   title: _tagJoin(["Wellness",     dest]), href: N3("wellness") },
+            { icon: "☀️",   title: _tagJoin(["Zonvakantie",  dest]), href: N3("sun") },
+            { icon: "⛷️",   title: _tagJoin(["Wintersport",  dest]), href: N3("winter") },
+            { icon: "🧗",   title: _tagJoin(["Avontuur",     dest]), href: N3("adventure-trip") },
+            { icon: "🏙️",   title: _tagJoin(["Citytrip",     dest]), href: N3("city-trip") },
         ];
     }
 
     function reisgezelschapForWaarContext(whereKey, regionKey) {
+        // Tag-style: "<Bestemming> + <WIE-fullLabel>"
         const base = 'Niveau3-WieWaar.html';
         const params = regionKey ? `region=${regionKey}` : `where=${whereKey}`;
         const N3 = (who) => `${base}?who=${who}&${params}`;
-        const suf = _destSuffix(whereKey, regionKey);
+        const dest = tagWhere(whereKey, regionKey);
         return [
-            { icon: "💑",      title: `Voor koppels${suf}`,                href: N3("couples") },
-            { icon: "👨‍👩‍👧", title: `Voor gezinnen met kinderen${suf}`,  href: N3("families-kids") },
-            { icon: "👶",      title: `Voor gezinnen met baby's${suf}`,    href: N3("families-babies") },
-            { icon: "🧑",      title: `Voor gezinnen met tieners${suf}`,   href: N3("families-teens") },
-            { icon: "👫",      title: `Met vrienden${suf}`,                href: N3("friends") },
-            { icon: "👴",      title: `Voor senioren${suf}`,               href: N3("seniors") },
-            { icon: "🚶",      title: `Alleen reizend${suf}`,              href: N3("solo") },
-            { icon: "🐕",      title: `Met huisdier${suf}`,                href: N3("pets") },
+            { icon: "💑",      title: _tagJoin([dest, "Koppels"]),                    href: N3("couples") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([dest, "Gezinnen met kinderen"]),     href: N3("families-kids") },
+            { icon: "👶",      title: _tagJoin([dest, "Gezinnen met baby's"]),       href: N3("families-babies") },
+            { icon: "🧑",      title: _tagJoin([dest, "Gezinnen met tieners"]),      href: N3("families-teens") },
+            { icon: "👫",      title: _tagJoin([dest, "Vrienden"]),                   href: N3("friends") },
+            { icon: "👴",      title: _tagJoin([dest, "Senioren"]),                   href: N3("seniors") },
+            { icon: "🚶",      title: _tagJoin([dest, "Alleen reizend"]),            href: N3("solo") },
+            { icon: "🐕",      title: _tagJoin([dest, "Met huisdier"]),              href: N3("pets") },
         ];
     }
 
     function populairForWaarContext(whereKey, regionKey) {
+        // 2-dim items: "<WAT> + <Bestemming>" of "<Bestemming> + <WIE>".
+        // 3-dim items: "<WAT> + <Bestemming> + <WIE-short>".
         const baseW = 'Niveau3-WaarWat.html';
         const baseE = 'Niveau3-WieWaar.html';
         const params = regionKey ? `region=${regionKey}` : `where=${whereKey}`;
         const N3WAT = (what) => `${baseW}?what=${what}&${params}`;
         const N3WIE = (who)  => `${baseE}?who=${who}&${params}`;
         const N4    = (who, what) => {
-            // Niveau 4 ondersteunt nog geen region-aggregaat in de
-            // listing. Voor region context vallen we terug op de
-            // Niveau 3 — WaarWat met &sub-less filtering.
             if (regionKey) return `${baseW}?what=${what}&region=${regionKey}`;
             return `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${whereKey}`;
         };
-        const suf = _destSuffix(whereKey, regionKey);
+        const dest = tagWhere(whereKey, regionKey);
         return [
-            { icon: "🏨",      title: `Hotels${suf}`,                       href: N3WAT("hotel") },
-            { icon: "⛺",      title: `Camping${suf}`,                      href: N3WAT("camping") },
-            { icon: "🎡",      title: `Vakantieparken${suf}`,               href: N3WAT("holiday-park") },
-            { icon: "💑",      title: `Voor koppels${suf}`,                 href: N3WIE("couples") },
-            { icon: "👨‍👩‍👧", title: `Voor gezinnen${suf}`,                href: N3WIE("families-kids") },
-            { icon: "👴",      title: `Voor senioren${suf}`,                href: N3WIE("seniors") },
-            { icon: "🏨",      title: `Hotels voor koppels${suf}`,          href: N4("couples",       "hotel") },
-            { icon: "⛺",      title: `Camping voor gezinnen${suf}`,        href: N4("families-kids", "camping") },
-            { icon: "💆",      title: `Wellness voor koppels${suf}`,        href: N4("couples",       "wellness") },
+            { icon: "🏨",      title: _tagJoin(["Hotel",        dest]),                  href: N3WAT("hotel") },
+            { icon: "⛺",      title: _tagJoin(["Camping",      dest]),                  href: N3WAT("camping") },
+            { icon: "🎡",      title: _tagJoin(["Vakantiepark", dest]),                  href: N3WAT("holiday-park") },
+            { icon: "💑",      title: _tagJoin([dest, "Koppels"]),                       href: N3WIE("couples") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([dest, "Familie"]),                       href: N3WIE("families-kids") },
+            { icon: "👴",      title: _tagJoin([dest, "Senioren"]),                      href: N3WIE("seniors") },
+            { icon: "🏨",      title: _tagJoin(["Hotel",        dest, "Koppels"]),       href: N4("couples",       "hotel") },
+            { icon: "⛺",      title: _tagJoin(["Camping",      dest, "Familie"]),       href: N4("families-kids", "camping") },
+            { icon: "💆",      title: _tagJoin(["Wellness",     dest, "Koppels"]),       href: N4("couples",       "wellness") },
         ];
     }
 
@@ -359,45 +461,42 @@
     //   WAT-ref + WIE          → Niveau3-WieWat.html?who=&what= (of &sub=)
     //   WAT-ref + WAAR         → Niveau3-WaarWat.html?what=&where=&sub=
     //   WIE + WAAR (page WAT)  → Niveau4-WieWatWaar.html?who=&what=&where=
+    // POPULAIR_BY_WAT — curated 9-item lijst per WAT-categorie.
+    // Tag-style labels: "<sub-of-WAT-tag> + <Bestemming-of-WIE>".
+    // 3-dim combinaties: "<sub> + <Bestemming> + <WIE-short>".
     const POPULAIR_BY_WAT = {
         hotel: [
-            // WAT-parent (hotel) blijft staan; wellness komt als sub mee
-            // zodat de pagina "Wellness hotels voor koppels" rendert
-            // i.p.v. te degenereren tot "Wellness voor koppels".
-            { icon: "💆",     title: "Wellness hotels voor koppels",          href: "Niveau3-WieWat.html?who=couples&what=hotel&sub=wellness" },
-            { icon: "🍝",     title: "Hotel in Italië met kinderen",          href: LVL4("families-kids", "hotel", "italie") },
-            { icon: "🛎️",     title: "Boutique hotels in Frankrijk",          href: "Niveau3-WaarWat.html?what=hotel&where=frankrijk&sub=boutique" },
-            { icon: "🍽️",     title: "All-inclusive hotels in Spanje",        href: "Niveau3-WaarWat.html?what=hotel&where=spanje&sub=all-inclusive" },
-            { icon: "🥂",     title: "Adult Only hotels voor koppels",        href: "Niveau3-WieWat.html?who=couples&what=hotel&sub=adult-only" },
-            { icon: "🏙️",     title: "Centrumgelegen Hotels voor vrienden",   href: "Niveau3-WieWat.html?who=friends&what=hotel&sub=city" },
-            { icon: "🎨",     title: "Design hotels in Nederland",            href: "Niveau3-WaarWat.html?what=hotel&where=netherlands&sub=design" },
-            { icon: "👴",     title: "Hotel in Kroatië voor senioren",        href: LVL4("seniors", "hotel", "kroatie") },
-            { icon: "🌴",     title: "Resorts voor families",                 href: "Niveau3-WieWat.html?who=families-kids&what=hotel&sub=resort" },
+            { icon: "💆",     title: _tagJoin(["Wellness",  "Koppels"]),                href: "Niveau3-WieWat.html?who=couples&what=hotel&sub=wellness" },
+            { icon: "🍝",     title: _tagJoin(["Hotel",     "Italië", "Familie"]),      href: LVL4("families-kids", "hotel", "italie") },
+            { icon: "🛎️",     title: _tagJoin(["Boutique",  "Frankrijk"]),              href: "Niveau3-WaarWat.html?what=hotel&where=frankrijk&sub=boutique" },
+            { icon: "🍽️",     title: _tagJoin(["All-inclusive", "Spanje"]),             href: "Niveau3-WaarWat.html?what=hotel&where=spanje&sub=all-inclusive" },
+            { icon: "🥂",     title: _tagJoin(["Adult Only", "Koppels"]),               href: "Niveau3-WieWat.html?who=couples&what=hotel&sub=adult-only" },
+            { icon: "🏙️",     title: _tagJoin(["Centrum",   "Vrienden"]),               href: "Niveau3-WieWat.html?who=friends&what=hotel&sub=city" },
+            { icon: "🎨",     title: _tagJoin(["Design",    "Nederland"]),              href: "Niveau3-WaarWat.html?what=hotel&where=netherlands&sub=design" },
+            { icon: "👴",     title: _tagJoin(["Hotel",     "Kroatië", "Senioren"]),    href: LVL4("seniors", "hotel", "kroatie") },
+            { icon: "🌴",     title: _tagJoin(["Resort",    "Familie"]),                href: "Niveau3-WieWat.html?who=families-kids&what=hotel&sub=resort" },
         ],
         camping: [
-            // Camping-parent behouden; glamping komt als sub mee zodat
-            // de pagina "Glamping voor koppels (op camping)" toont
-            // i.p.v. te degenereren tot een Glamping-only resultaat.
-            { icon: "✨",     title: "Glamping met koppels",                       href: "Niveau3-WieWat.html?who=couples&what=camping&sub=glamping" },
-            { icon: "🍝",     title: "Camping in Italië met kinderen",             href: LVL4("families-kids", "camping", "italie") },
-            { icon: "🐕",     title: "Hondvriendelijke campings in Frankrijk",     href: "Niveau3-WaarWat.html?what=camping&where=frankrijk&sub=honden" },
-            { icon: "🌲",     title: "Camping in de natuur met vrienden",          href: "Niveau3-WieWat.html?who=friends&what=camping&sub=natuur" },
-            { icon: "🎠",     title: "Kindercamping in Nederland",                 href: "Niveau3-WaarWat.html?what=camping&where=netherlands&sub=kids" },
-            { icon: "🏖️",     title: "Camping aan zee met gezinnen",               href: "Niveau3-WieWat.html?who=families-kids&what=camping&sub=zee" },
-            { icon: "⛵",     title: "Glamping in Kroatië",                        href: "Niveau3-WaarWat.html?what=camping&where=kroatie&sub=glamping" },
-            { icon: "🏊",     title: "Camping met waterpark voor tieners",         href: "Niveau3-WieWat.html?who=families-teens&what=camping&sub=waterpark" },
-            { icon: "🍺",     title: "Camping in Duitsland met familie",           href: LVL4("families-kids", "camping", "duitsland") },
+            { icon: "✨",     title: _tagJoin(["Glamping",        "Koppels"]),               href: "Niveau3-WieWat.html?who=couples&what=camping&sub=glamping" },
+            { icon: "🍝",     title: _tagJoin(["Camping",         "Italië", "Familie"]),     href: LVL4("families-kids", "camping", "italie") },
+            { icon: "🐕",     title: _tagJoin(["Hondvriendelijk", "Frankrijk"]),             href: "Niveau3-WaarWat.html?what=camping&where=frankrijk&sub=honden" },
+            { icon: "🌲",     title: _tagJoin(["Natuur",          "Vrienden"]),              href: "Niveau3-WieWat.html?who=friends&what=camping&sub=natuur" },
+            { icon: "🎠",     title: _tagJoin(["Kindercamping",   "Nederland"]),             href: "Niveau3-WaarWat.html?what=camping&where=netherlands&sub=kids" },
+            { icon: "🏖️",     title: _tagJoin(["Aan zee",         "Familie"]),               href: "Niveau3-WieWat.html?who=families-kids&what=camping&sub=zee" },
+            { icon: "⛵",     title: _tagJoin(["Glamping",        "Kroatië"]),                href: "Niveau3-WaarWat.html?what=camping&where=kroatie&sub=glamping" },
+            { icon: "🏊",     title: _tagJoin(["Waterpark",       "Tieners"]),               href: "Niveau3-WieWat.html?who=families-teens&what=camping&sub=waterpark" },
+            { icon: "🍺",     title: _tagJoin(["Camping",         "Duitsland", "Familie"]),  href: LVL4("families-kids", "camping", "duitsland") },
         ],
         "holiday-park": [
-            { icon: "🏊",     title: "Vakantieparken met zwemparadijs voor gezinnen",   href: "Niveau3-WieWat.html?who=families-kids&what=holiday-park&sub=zwemparadijs" },
-            { icon: "🇳🇱",     title: "Vakantieparken in Nederland met kinderen",        href: LVL4("families-kids", "holiday-park", "netherlands") },
-            { icon: "✨",     title: "Luxe vakantieparken voor koppels",                 href: "Niveau3-WieWat.html?who=couples&what=holiday-park&sub=luxe" },
-            { icon: "🎡",     title: "Vakantieparken met attractiepark voor tieners",    href: "Niveau3-WieWat.html?who=families-teens&what=holiday-park&sub=attractiepark" },
-            { icon: "👶",     title: "Kindvriendelijke vakantieparken in Duitsland",     href: "Niveau3-WaarWat.html?what=holiday-park&where=duitsland&sub=kids" },
-            { icon: "🌲",     title: "Vakantieparken in de natuur voor senioren",        href: "Niveau3-WieWat.html?who=seniors&what=holiday-park&sub=natuur" },
-            { icon: "🍫",     title: "Vakantieparken in België met familie",             href: LVL4("families-kids", "holiday-park", "belgie") },
-            { icon: "🎢",     title: "Themaparken voor gezinnen",                        href: "Niveau3-WieWat.html?who=families-kids&what=holiday-park&sub=themaparken" },
-            { icon: "🗼",     title: "Vakantieparken in Frankrijk voor families",        href: LVL4("families-kids", "holiday-park", "frankrijk") },
+            { icon: "🏊",     title: _tagJoin(["Zwemparadijs",    "Familie"]),                  href: "Niveau3-WieWat.html?who=families-kids&what=holiday-park&sub=zwemparadijs" },
+            { icon: "🇳🇱",     title: _tagJoin(["Vakantiepark",    "Nederland", "Familie"]),    href: LVL4("families-kids", "holiday-park", "netherlands") },
+            { icon: "✨",     title: _tagJoin(["Luxe",            "Koppels"]),                  href: "Niveau3-WieWat.html?who=couples&what=holiday-park&sub=luxe" },
+            { icon: "🎡",     title: _tagJoin(["Attractiepark",   "Tieners"]),                  href: "Niveau3-WieWat.html?who=families-teens&what=holiday-park&sub=attractiepark" },
+            { icon: "👶",     title: _tagJoin(["Kindvriendelijk", "Duitsland"]),                href: "Niveau3-WaarWat.html?what=holiday-park&where=duitsland&sub=kids" },
+            { icon: "🌲",     title: _tagJoin(["Natuur",          "Senioren"]),                 href: "Niveau3-WieWat.html?who=seniors&what=holiday-park&sub=natuur" },
+            { icon: "🍫",     title: _tagJoin(["Vakantiepark",    "België", "Familie"]),       href: LVL4("families-kids", "holiday-park", "belgie") },
+            { icon: "🎢",     title: _tagJoin(["Themaparken",     "Familie"]),                  href: "Niveau3-WieWat.html?who=families-kids&what=holiday-park&sub=themaparken" },
+            { icon: "🗼",     title: _tagJoin(["Vakantiepark",    "Frankrijk", "Familie"]),    href: LVL4("families-kids", "holiday-park", "frankrijk") },
         ],
     };
 
@@ -521,139 +620,137 @@
 
     // ---- WIE + WAT dual-context (Niveau 3 — WieWat) ----
     function populairForWieWatContext(who, whoLabel, what, whatLabel, sub, subLabel) {
-        const baseLabel = subLabel || whatLabel; // bv. "Boutique Hotels" of "Hotels"
-        const lo = (whoLabel || '').toLowerCase();
+        // Tag-style. Primary tag = sub (kort, bv. "Boutique") of WAT
+        // ("Hotel"). 3-dim items gebruiken WIE-short. Voorbeeld:
+        // "Boutique + Italië + Solo".
+        const primary = sub ? tagSub(what, sub) : tagWhat(what);
+        const wS = tagWho(who);
         const sp = _subParam(sub);
         const N4    = (w) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${w}${sp}`;
         const N3R   = (r) => `Niveau3-WaarWat.html?what=${what}&region=${r}${sp}`;
         const N3SUB = (s) => `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${s}`;
-        // 3 sub-varianten binnen huidige WAT (curated max)
+        // 3 sub-varianten binnen huidige WAT (verander sub, hou WIE)
         const subItems = _safeSubKeys(what).filter(k => k !== sub).slice(0, 3).map(k => {
-            const lbl = _resolveSubLabelGlobal(what, k);
-            return lbl ? { icon: _whatIcon(what), title: `${lbl} voor ${lo}`, href: N3SUB(k) } : null;
+            const t = tagSub(what, k);
+            return t ? { icon: _whatIcon(what), title: _tagJoin([t, wS]), href: N3SUB(k) } : null;
         }).filter(Boolean);
-        // 6 bestemming-uitbreidingen + 3 sub-varianten = 9 items
         return [
-            { icon: "🍝", title: `${baseLabel} voor ${lo} in Italië`,     href: N4("italie") },
-            { icon: "🗼", title: `${baseLabel} voor ${lo} in Frankrijk`,  href: N4("frankrijk") },
-            { icon: "🇳🇱", title: `${baseLabel} voor ${lo} in Nederland`,  href: N4("netherlands") },
-            { icon: "🥘", title: `${baseLabel} voor ${lo} in Spanje`,     href: N4("spanje") },
-            { icon: "🏖️", title: `${baseLabel} voor ${lo} aan zee`,       href: N3R("aan-zee") },
-            { icon: "⛰️", title: `${baseLabel} voor ${lo} bij de bergen`, href: N3R("bergen") },
+            { icon: "🍝", title: _tagJoin([primary, "Italië",    wS]),  href: N4("italie") },
+            { icon: "🗼", title: _tagJoin([primary, "Frankrijk", wS]),  href: N4("frankrijk") },
+            { icon: "🇳🇱", title: _tagJoin([primary, "Nederland", wS]),  href: N4("netherlands") },
+            { icon: "🥘", title: _tagJoin([primary, "Spanje",    wS]),  href: N4("spanje") },
+            { icon: "🏖️", title: _tagJoin([primary, "Aan zee",   wS]),  href: N3R("aan-zee") },
+            { icon: "⛰️", title: _tagJoin([primary, "Bergen",    wS]),  href: N3R("bergen") },
             ...subItems,
         ].slice(0, 9);
     }
     function reisgezelschapForWieWatContext(who, what, whatLabel, sub, subLabel) {
-        // Alternatieve WIE-keuzes voor dezelfde WAT+sub.
-        const baseLabel = subLabel || whatLabel;
+        // Tag-style: "<sub-of-WAT> + <WIE-fullLabel>". Excludes huidige WIE.
+        const primary = sub ? tagSub(what, sub) : tagWhat(what);
         const sp = _subParam(sub);
         const N3 = (otherWho) => `Niveau3-WieWat.html?who=${otherWho}&what=${what}${sp}`;
         const allWho = [
-            { who: "couples",         icon: "💑",      lbl: "voor koppels" },
-            { who: "families-kids",   icon: "👨‍👩‍👧", lbl: "voor families" },
-            { who: "families-teens",  icon: "🧑",      lbl: "voor tieners" },
-            { who: "families-babies", icon: "👶",      lbl: "met baby's" },
-            { who: "friends",         icon: "👫",      lbl: "met vrienden" },
-            { who: "seniors",         icon: "👴",      lbl: "voor senioren" },
-            { who: "solo",            icon: "🚶",      lbl: "voor alleen reizenden" },
-            { who: "pets",            icon: "🐕",      lbl: "met huisdier" },
+            { who: "couples",         icon: "💑",      lbl: "Koppels" },
+            { who: "families-kids",   icon: "👨‍👩‍👧", lbl: "Gezinnen met kinderen" },
+            { who: "families-teens",  icon: "🧑",      lbl: "Gezinnen met tieners" },
+            { who: "families-babies", icon: "👶",      lbl: "Gezinnen met baby's" },
+            { who: "friends",         icon: "👫",      lbl: "Vrienden" },
+            { who: "seniors",         icon: "👴",      lbl: "Senioren" },
+            { who: "solo",            icon: "🚶",      lbl: "Alleen reizend" },
+            { who: "pets",            icon: "🐕",      lbl: "Met huisdier" },
         ].filter(w => w.who !== who);
         return allWho.slice(0, 9).map(w => ({
-            icon: w.icon, title: `${baseLabel} ${w.lbl}`, href: N3(w.who),
+            icon: w.icon, title: _tagJoin([primary, w.lbl]), href: N3(w.who),
         }));
     }
     function bestemmingenForWieWatContext(who, whoLabel, what, sub, subLabel) {
-        // Bestemming-toevoeging met huidige WIE+WAT+sub → Niveau 4
-        // (concrete landen) of Niveau 3 met region= (aggregaten).
-        const baseLabel = subLabel || DATA.label('what', what);
-        const lo = (whoLabel || '').toLowerCase();
+        // Tag-style 3-dim: "<sub-of-WAT> + <Bestemming> + <WIE-short>"
+        const primary = sub ? tagSub(what, sub) : tagWhat(what);
+        const wS = tagWho(who);
         const sp = _subParam(sub);
         const N4  = (w) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${w}${sp}`;
         const N3R = (r) => `Niveau3-WaarWat.html?what=${what}&region=${r}${sp}`;
         return [
-            { icon: "🌍", title: `${baseLabel} voor ${lo} in Europa`,     href: N3R("europa") },
-            { icon: "🍝", title: `${baseLabel} voor ${lo} in Italië`,     href: N4("italie") },
-            { icon: "🗼", title: `${baseLabel} voor ${lo} in Frankrijk`,  href: N4("frankrijk") },
-            { icon: "🥘", title: `${baseLabel} voor ${lo} in Spanje`,     href: N4("spanje") },
-            { icon: "🍺", title: `${baseLabel} voor ${lo} in Duitsland`,  href: N4("duitsland") },
-            { icon: "🇳🇱", title: `${baseLabel} voor ${lo} in Nederland`,  href: N4("netherlands") },
-            { icon: "⛵", title: `${baseLabel} voor ${lo} in Kroatië`,    href: N4("kroatie") },
-            { icon: "🏖️", title: `${baseLabel} voor ${lo} aan zee`,       href: N3R("aan-zee") },
-            { icon: "⛰️", title: `${baseLabel} voor ${lo} bij de bergen`, href: N3R("bergen") },
+            { icon: "🌍", title: _tagJoin([primary, "Europa",    wS]), href: N3R("europa") },
+            { icon: "🍝", title: _tagJoin([primary, "Italië",    wS]), href: N4("italie") },
+            { icon: "🗼", title: _tagJoin([primary, "Frankrijk", wS]), href: N4("frankrijk") },
+            { icon: "🥘", title: _tagJoin([primary, "Spanje",    wS]), href: N4("spanje") },
+            { icon: "🍺", title: _tagJoin([primary, "Duitsland", wS]), href: N4("duitsland") },
+            { icon: "🇳🇱", title: _tagJoin([primary, "Nederland", wS]), href: N4("netherlands") },
+            { icon: "⛵", title: _tagJoin([primary, "Kroatië",   wS]), href: N4("kroatie") },
+            { icon: "🏖️", title: _tagJoin([primary, "Aan zee",   wS]), href: N3R("aan-zee") },
+            { icon: "⛰️", title: _tagJoin([primary, "Bergen",    wS]), href: N3R("bergen") },
         ];
     }
     function vakantietypeForWieWatContext(who, whoLabel, what) {
-        // Sub-refinements binnen huidige WAT (preserveert WIE). Wanneer
-        // de WAT geen sub-map heeft (bv. sun/winter) val je terug op
-        // andere WAT-types voor dezelfde WIE.
+        // Sub-varianten met huidige WIE preserved.
+        // Tag-style: "<sub-tag> + <WIE-fullLabel>"
         const subs = (typeof SITE_DATA !== 'undefined' && SITE_DATA.subLabels && SITE_DATA.subLabels[what]) || null;
-        const lo = (whoLabel || '').toLowerCase();
+        const wL = whoLabel || tagWho(who);
         if (subs) {
-            return Object.entries(subs).map(([k, lbl]) => ({
-                icon: _whatIcon(what),
-                title: `${lbl} voor ${lo}`,
-                href: `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${k}`,
-            })).slice(0, 9);
+            return Object.entries(subs).map(([k]) => {
+                const t = tagSub(what, k);
+                return {
+                    icon: _whatIcon(what),
+                    title: _tagJoin([t, wL]),
+                    href: `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${k}`,
+                };
+            }).slice(0, 9);
         }
-        // Geen subs voor deze WAT → toon alternatieve WAT-types
         return vakantietypeForWieContext(who, whoLabel);
     }
 
     // ---- WAT + WAAR dual-context (Niveau 3 — WaarWat) ----
     function populairForWatWaarContext(what, whatLabel, sub, subLabel, whereKey, regionKey) {
-        const baseLabel = subLabel || whatLabel;
-        const suf = _destSuffixDual(whereKey, regionKey);
+        // Tag-style: primary tag = sub of WAT. 3-dim: "<primary> +
+        // <Bestemming> + <WIE-short>". 2-dim sub-varianten:
+        // "<sub-variant> + <Bestemming>". Cross-pollination drops
+        // WAAR: "<primary> + <WIE-full>".
+        const primary = sub ? tagSub(what, sub) : tagWhat(what);
+        const dest = tagWhere(whereKey, regionKey);
         const sp = _subParam(sub);
         const destParam = whereKey ? `where=${whereKey}` : `region=${regionKey}`;
-        // Niveau 4 ondersteunt alleen where=, niet region=. Voor region-
-        // aggregaten vallen we terug op Niveau 3 — WaarWat.
         const N4   = (w) => whereKey
             ? `Niveau4-WieWatWaar.html?who=${w}&what=${what}&where=${whereKey}${sp}`
             : `Niveau3-WaarWat.html?who=${w}&what=${what}&region=${regionKey}${sp}`;
         const N3SUB = (s) => `Niveau3-WaarWat.html?what=${what}&${destParam}&sub=${s}`;
         const N3WIE = (w) => `Niveau3-WieWat.html?who=${w}&what=${what}${sp}`;
         const subItems = _safeSubKeys(what).filter(k => k !== sub).slice(0, 3).map(k => {
-            const lbl = _resolveSubLabelGlobal(what, k);
-            return lbl ? { icon: _whatIcon(what), title: `${lbl}${suf}`, href: N3SUB(k) } : null;
+            const t = tagSub(what, k);
+            return t ? { icon: _whatIcon(what), title: _tagJoin([t, dest]), href: N3SUB(k) } : null;
         }).filter(Boolean);
-        // 3 WIE-uitbreidingen (preserveert WAT+sub+WAAR) +
-        // 3 sub-varianten (preserveert WAT+WAAR) +
-        // 3 cross-pollination (drop WAAR, voeg WIE toe) = 9 items
         return [
-            { icon: "💑",      title: `${baseLabel}${suf} voor koppels`,      href: N4("couples") },
-            { icon: "👨‍👩‍👧", title: `${baseLabel}${suf} voor gezinnen`,     href: N4("families-kids") },
-            { icon: "👴",      title: `${baseLabel}${suf} voor senioren`,     href: N4("seniors") },
+            { icon: "💑",      title: _tagJoin([primary, dest, "Koppels"]),     href: N4("couples") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([primary, dest, "Familie"]),     href: N4("families-kids") },
+            { icon: "👴",      title: _tagJoin([primary, dest, "Senioren"]),    href: N4("seniors") },
             ...subItems,
-            { icon: "👫", title: `${baseLabel} met vrienden`,            href: N3WIE("friends") },
-            { icon: "🚶", title: `${baseLabel} voor alleen reizenden`,   href: N3WIE("solo") },
-            { icon: "🐕", title: `${baseLabel} met huisdier`,            href: N3WIE("pets") },
+            { icon: "👫", title: _tagJoin([primary, "Vrienden"]),        href: N3WIE("friends") },
+            { icon: "🚶", title: _tagJoin([primary, "Alleen reizend"]),  href: N3WIE("solo") },
+            { icon: "🐕", title: _tagJoin([primary, "Met huisdier"]),    href: N3WIE("pets") },
         ].slice(0, 9);
     }
     function reisgezelschapForWatWaarContext(what, whatLabel, sub, subLabel, whereKey, regionKey) {
-        // 8 WIE-opties met huidige WAT+sub+WAAR → Niveau 4 (concrete
-        // landen) of Niveau 3 met who+region (aggregaten).
-        const baseLabel = subLabel || whatLabel;
-        const suf = _destSuffixDual(whereKey, regionKey);
+        // Tag-style 3-dim: "<primary> + <Bestemming> + <WIE-fullLabel>"
+        const primary = sub ? tagSub(what, sub) : tagWhat(what);
+        const dest = tagWhere(whereKey, regionKey);
         const sp = _subParam(sub);
         const N4 = (w) => whereKey
             ? `Niveau4-WieWatWaar.html?who=${w}&what=${what}&where=${whereKey}${sp}`
             : `Niveau3-WaarWat.html?who=${w}&what=${what}&region=${regionKey}${sp}`;
         return [
-            { icon: "💑",      title: `${baseLabel}${suf} voor koppels`,                href: N4("couples") },
-            { icon: "👨‍👩‍👧", title: `${baseLabel}${suf} voor gezinnen met kinderen`,  href: N4("families-kids") },
-            { icon: "🧑",      title: `${baseLabel}${suf} voor gezinnen met tieners`,   href: N4("families-teens") },
-            { icon: "👶",      title: `${baseLabel}${suf} met baby's`,                  href: N4("families-babies") },
-            { icon: "👫",      title: `${baseLabel}${suf} met vrienden`,                href: N4("friends") },
-            { icon: "👴",      title: `${baseLabel}${suf} voor senioren`,               href: N4("seniors") },
-            { icon: "🚶",      title: `${baseLabel}${suf} voor alleen reizenden`,       href: N4("solo") },
-            { icon: "🐕",      title: `${baseLabel}${suf} met huisdier`,                href: N4("pets") },
+            { icon: "💑",      title: _tagJoin([primary, dest, "Koppels"]),                    href: N4("couples") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([primary, dest, "Gezinnen met kinderen"]),     href: N4("families-kids") },
+            { icon: "🧑",      title: _tagJoin([primary, dest, "Gezinnen met tieners"]),      href: N4("families-teens") },
+            { icon: "👶",      title: _tagJoin([primary, dest, "Gezinnen met baby's"]),       href: N4("families-babies") },
+            { icon: "👫",      title: _tagJoin([primary, dest, "Vrienden"]),                   href: N4("friends") },
+            { icon: "👴",      title: _tagJoin([primary, dest, "Senioren"]),                   href: N4("seniors") },
+            { icon: "🚶",      title: _tagJoin([primary, dest, "Alleen reizend"]),            href: N4("solo") },
+            { icon: "🐕",      title: _tagJoin([primary, dest, "Met huisdier"]),              href: N4("pets") },
         ];
     }
     function bestemmingenForWatWaarContext(what, whatLabel, sub, subLabel, whereKey, regionKey) {
-        // Alternatieve WAAR-keuzes met huidige WAT+sub. We tonen alle
-        // landen behalve de huidige, plus de region-aggregaten die
-        // sterk genoeg zijn (Europa, Bergen, Aan zee).
-        const baseLabel = subLabel || whatLabel;
+        // Tag-style: "<primary> + <Andere bestemming>"
+        const primary = sub ? tagSub(what, sub) : tagWhat(what);
         const sp = _subParam(sub);
         const N3 = (w) => `Niveau3-WaarWat.html?what=${what}&where=${w}${sp}`;
         const N3R = (r) => `Niveau3-WaarWat.html?what=${what}&region=${r}${sp}`;
@@ -668,76 +765,83 @@
             { key: "portugal",    icon: "🏖️",  label: "Portugal" },
         ].filter(w => w.key !== whereKey).slice(0, 6);
         const regionItems = [
-            { key: "europa",  icon: "🌍",  label: "in Europa",     prep: "in" },
-            { key: "bergen",  icon: "⛰️",  label: "bij de bergen", prep: "bij" },
-            { key: "aan-zee", icon: "🏖️",  label: "aan zee",       prep: "aan" },
+            { key: "europa",  icon: "🌍",  label: "Europa" },
+            { key: "bergen",  icon: "⛰️",  label: "Bergen" },
+            { key: "aan-zee", icon: "🏖️",  label: "Aan zee" },
         ].filter(r => r.key !== regionKey).slice(0, 3);
         return [
             ...allWhere.map(w => ({
-                icon: w.icon, title: `${baseLabel} in ${w.label}`, href: N3(w.key),
+                icon: w.icon, title: _tagJoin([primary, w.label]), href: N3(w.key),
             })),
             ...regionItems.map(r => ({
-                icon: r.icon, title: `${baseLabel} ${r.label}`, href: N3R(r.key),
+                icon: r.icon, title: _tagJoin([primary, r.label]), href: N3R(r.key),
             })),
         ].slice(0, 9);
     }
     function vakantietypeForWatWaarContext(what, whereKey, regionKey) {
-        // Sub-refinements binnen huidige WAT (preserveert WAAR).
+        // Tag-style: "<sub-tag> + <Bestemming>"
         const subs = (typeof SITE_DATA !== 'undefined' && SITE_DATA.subLabels && SITE_DATA.subLabels[what]) || null;
-        const suf = _destSuffixDual(whereKey, regionKey);
+        const dest = tagWhere(whereKey, regionKey);
         const destParam = whereKey ? `where=${whereKey}` : `region=${regionKey}`;
         if (subs) {
-            return Object.entries(subs).map(([k, lbl]) => ({
-                icon: _whatIcon(what),
-                title: `${lbl}${suf}`,
-                href: `Niveau3-WaarWat.html?what=${what}&${destParam}&sub=${k}`,
-            })).slice(0, 9);
+            return Object.entries(subs).map(([k]) => {
+                const t = tagSub(what, k);
+                return {
+                    icon: _whatIcon(what),
+                    title: _tagJoin([t, dest]),
+                    href: `Niveau3-WaarWat.html?what=${what}&${destParam}&sub=${k}`,
+                };
+            }).slice(0, 9);
         }
         return vakantietypeForWaarContext(whereKey, regionKey);
     }
 
     // ---- WIE + WAAR dual-context (Niveau 3 — WieWaar) ----
     function populairForWieWaarContext(who, whoLabel, whereKey, regionKey) {
-        const lo = (whoLabel || '').toLowerCase();
-        const suf = _destSuffixDual(whereKey, regionKey);
+        // 3-dim items: "<WAT> + <Bestemming> + <WIE-short>".
+        // 2-dim items (drop WIE): "<WAT> + <Bestemming>".
+        const dest = tagWhere(whereKey, regionKey);
+        const wS = tagWho(who);
         const destParam = whereKey ? `where=${whereKey}` : `region=${regionKey}`;
         const N4 = (what) => whereKey
             ? `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${whereKey}`
             : `Niveau3-WaarWat.html?who=${who}&what=${what}&region=${regionKey}`;
         const N3WAARWAT = (what) => `Niveau3-WaarWat.html?what=${what}&${destParam}`;
         return [
-            { icon: "🏨", title: `Hotel${suf} voor ${lo}`,         href: N4("hotel") },
-            { icon: "⛺", title: `Camping${suf} met ${lo}`,        href: N4("camping") },
-            { icon: "🎡", title: `Vakantiepark${suf} voor ${lo}`,  href: N4("holiday-park") },
-            { icon: "💆", title: `Wellness${suf} voor ${lo}`,      href: N4("wellness") },
-            { icon: "✨", title: `Glamping${suf} voor ${lo}`,      href: N4("glamping") },
-            { icon: "☀️", title: `Zonvakantie${suf} voor ${lo}`,   href: N4("sun") },
-            { icon: "🏨", title: `Hotels${suf}`,                   href: N3WAARWAT("hotel") },
-            { icon: "⛺", title: `Camping${suf}`,                  href: N3WAARWAT("camping") },
-            { icon: "🎡", title: `Vakantieparken${suf}`,           href: N3WAARWAT("holiday-park") },
+            { icon: "🏨", title: _tagJoin(["Hotel",        dest, wS]), href: N4("hotel") },
+            { icon: "⛺", title: _tagJoin(["Camping",      dest, wS]), href: N4("camping") },
+            { icon: "🎡", title: _tagJoin(["Vakantiepark", dest, wS]), href: N4("holiday-park") },
+            { icon: "💆", title: _tagJoin(["Wellness",     dest, wS]), href: N4("wellness") },
+            { icon: "✨", title: _tagJoin(["Glamping",     dest, wS]), href: N4("glamping") },
+            { icon: "☀️", title: _tagJoin(["Zonvakantie",  dest, wS]), href: N4("sun") },
+            { icon: "🏨", title: _tagJoin(["Hotel",        dest]),     href: N3WAARWAT("hotel") },
+            { icon: "⛺", title: _tagJoin(["Camping",      dest]),     href: N3WAARWAT("camping") },
+            { icon: "🎡", title: _tagJoin(["Vakantiepark", dest]),     href: N3WAARWAT("holiday-park") },
         ];
     }
     function reisgezelschapForWieWaarContext(who, whereKey, regionKey) {
-        // Alternatieve WIE-keuzes met huidige WAAR.
+        // Tag-style: "<Bestemming> + <Andere WIE-fullLabel>". Excludes huidige WIE.
         const N3 = (otherWho) => whereKey
             ? `Niveau3-WieWaar.html?who=${otherWho}&where=${whereKey}`
             : `Niveau3-WieWaar.html?who=${otherWho}&region=${regionKey}`;
-        const suf = _destSuffixDual(whereKey, regionKey);
+        const dest = tagWhere(whereKey, regionKey);
         const all = [
-            { who: "couples",         icon: "💑",      lbl: `Voor koppels${suf}` },
-            { who: "families-kids",   icon: "👨‍👩‍👧", lbl: `Voor gezinnen${suf}` },
-            { who: "families-teens",  icon: "🧑",      lbl: `Voor tieners${suf}` },
-            { who: "families-babies", icon: "👶",      lbl: `Met baby's${suf}` },
-            { who: "friends",         icon: "👫",      lbl: `Met vrienden${suf}` },
-            { who: "seniors",         icon: "👴",      lbl: `Voor senioren${suf}` },
-            { who: "solo",            icon: "🚶",      lbl: `Alleen reizend${suf}` },
-            { who: "pets",            icon: "🐕",      lbl: `Met huisdier${suf}` },
+            { who: "couples",         icon: "💑",      lbl: "Koppels" },
+            { who: "families-kids",   icon: "👨‍👩‍👧", lbl: "Gezinnen met kinderen" },
+            { who: "families-teens",  icon: "🧑",      lbl: "Gezinnen met tieners" },
+            { who: "families-babies", icon: "👶",      lbl: "Gezinnen met baby's" },
+            { who: "friends",         icon: "👫",      lbl: "Vrienden" },
+            { who: "seniors",         icon: "👴",      lbl: "Senioren" },
+            { who: "solo",            icon: "🚶",      lbl: "Alleen reizend" },
+            { who: "pets",            icon: "🐕",      lbl: "Met huisdier" },
         ].filter(w => w.who !== who);
-        return all.slice(0, 9).map(w => ({ icon: w.icon, title: w.lbl, href: N3(w.who) }));
+        return all.slice(0, 9).map(w => ({
+            icon: w.icon, title: _tagJoin([dest, w.lbl]), href: N3(w.who),
+        }));
     }
     function bestemmingenForWieWaarContext(who, whoLabel, whereKey, regionKey) {
-        // Alternatieve WAAR-keuzes met huidige WIE → Niveau 3 — WieWaar.
-        const lo = (whoLabel || '').toLowerCase();
+        // Tag-style: "<Andere bestemming> + <WIE-fullLabel>"
+        const wL = whoLabel || tagWho(who);
         const N3W = (w)  => `Niveau3-WieWaar.html?who=${who}&where=${w}`;
         const N3R = (r)  => `Niveau3-WieWaar.html?who=${who}&region=${r}`;
         const allWhere = [
@@ -749,36 +853,36 @@
             { key: "netherlands", icon: "🇳🇱",  label: "Nederland" },
         ].filter(w => w.key !== whereKey).slice(0, 6);
         const regionItems = [
-            { key: "europa",  icon: "🌍",  label: "Europa met",     pref: "" },
-            { key: "bergen",  icon: "⛰️",  label: "de bergen met",  pref: "" },
-            { key: "aan-zee", icon: "🏖️",  label: "Aan zee met",    pref: "" },
+            { key: "europa",  icon: "🌍",  label: "Europa" },
+            { key: "bergen",  icon: "⛰️",  label: "Bergen" },
+            { key: "aan-zee", icon: "🏖️",  label: "Aan zee" },
         ].filter(r => r.key !== regionKey).slice(0, 3);
         return [
             ...allWhere.map(w => ({
-                icon: w.icon, title: `${w.label} met ${lo}`, href: N3W(w.key),
+                icon: w.icon, title: _tagJoin([w.label, wL]), href: N3W(w.key),
             })),
             ...regionItems.map(r => ({
-                icon: r.icon, title: `${r.label} ${lo}`, href: N3R(r.key),
+                icon: r.icon, title: _tagJoin([r.label, wL]), href: N3R(r.key),
             })),
         ].slice(0, 9);
     }
     function vakantietypeForWieWaarContext(who, whoLabel, whereKey, regionKey) {
-        // WAT-toevoegingen met huidige WIE+WAAR → Niveau 4.
-        const lo = (whoLabel || '').toLowerCase();
-        const suf = _destSuffixDual(whereKey, regionKey);
+        // Tag-style 3-dim: "<WAT> + <Bestemming> + <WIE-fullLabel>"
+        const wL = whoLabel || tagWho(who);
+        const dest = tagWhere(whereKey, regionKey);
         const N4 = (what) => whereKey
             ? `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${whereKey}`
             : `Niveau3-WaarWat.html?who=${who}&what=${what}&region=${regionKey}`;
         return [
-            { icon: "🏨", title: `Hotels${suf} voor ${lo}`,         href: N4("hotel") },
-            { icon: "⛺", title: `Camping${suf} voor ${lo}`,        href: N4("camping") },
-            { icon: "🎡", title: `Vakantieparken${suf} voor ${lo}`, href: N4("holiday-park") },
-            { icon: "✨", title: `Glamping${suf} voor ${lo}`,       href: N4("glamping") },
-            { icon: "💆", title: `Wellness${suf} voor ${lo}`,       href: N4("wellness") },
-            { icon: "☀️", title: `Zonvakantie${suf} voor ${lo}`,    href: N4("sun") },
-            { icon: "⛷️", title: `Wintersport${suf} voor ${lo}`,    href: N4("winter") },
-            { icon: "🧗", title: `Avontuur${suf} voor ${lo}`,       href: N4("adventure-trip") },
-            { icon: "🏙️", title: `Weekendje weg${suf} voor ${lo}`,  href: N4("city-trip") },
+            { icon: "🏨", title: _tagJoin(["Hotel",        dest, wL]), href: N4("hotel") },
+            { icon: "⛺", title: _tagJoin(["Camping",      dest, wL]), href: N4("camping") },
+            { icon: "🎡", title: _tagJoin(["Vakantiepark", dest, wL]), href: N4("holiday-park") },
+            { icon: "✨", title: _tagJoin(["Glamping",     dest, wL]), href: N4("glamping") },
+            { icon: "💆", title: _tagJoin(["Wellness",     dest, wL]), href: N4("wellness") },
+            { icon: "☀️", title: _tagJoin(["Zonvakantie",  dest, wL]), href: N4("sun") },
+            { icon: "⛷️", title: _tagJoin(["Wintersport",  dest, wL]), href: N4("winter") },
+            { icon: "🧗", title: _tagJoin(["Avontuur",     dest, wL]), href: N4("adventure-trip") },
+            { icon: "🏙️", title: _tagJoin(["Citytrip",     dest, wL]), href: N4("city-trip") },
         ];
     }
 
@@ -888,7 +992,17 @@
         if (isDual) {
             // Niveau 3 — Populair first (discovery-driven)
             orderedTabIds = ["populair", "reisgezelschap", "bestemmingen", "vakantietype"];
+        } else if (isSingleWat && contextSub) {
+            // Niveau 2 — Wat met sub (bv. Boutique Hotels, Glamping,
+            // Kindercampings): zelfde discovery-driven volgorde als
+            // Niveau 3. Vakantietype gaat naar achteren — de bezoeker
+            // heeft de sub al gekozen, dus refinement-tab is minder
+            // primair dan combinatie-exploration.
+            orderedTabIds = ["populair", "reisgezelschap", "bestemmingen", "vakantietype"];
         } else if (isSingleWat) {
+            // Niveau 2 — Wat zonder sub (Alle hotels / Alle campings /
+            // Alle vakantieparken): Vakantietype eerst zodat de bezoeker
+            // direct naar een sub kan verfijnen.
             orderedTabIds = ["vakantietype", "reisgezelschap", "bestemmingen", "populair"];
         } else if (isSingleWie) {
             orderedTabIds = ["vakantietype", "bestemmingen", "populair"];

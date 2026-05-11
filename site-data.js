@@ -166,7 +166,7 @@ const SITE_DATA = {
           tags: ['Aan zee','Comfort'], emoji: '🏖️' },
         { id: 2, name: 'Family Camping Paradise', location: 'Drenthe', price: 68, rating: 8.4, reviews: 287,
           who: ['families-kids','families-babies'], what: ['camping'], where: 'drenthe',
-          tags: ['Camping','Kinderpret'], emoji: '⛺' },
+          tags: ['Camping','Kinderpret'], emoji: '⛺', deals: ['aanbieding'] },
         { id: 3, name: 'Alpine Mountain Lodge', location: 'Oostenrijk', price: 210, rating: 9.1, reviews: 198,
           who: ['couples','friends'], what: ['winter','adventure-trip'], where: 'oostenrijk',
           tags: ['Bergen','Luxe'], emoji: '⛰️' },
@@ -175,7 +175,7 @@ const SITE_DATA = {
           tags: ['Glamping','Adult Only'], emoji: '✨' },
         { id: 5, name: 'Pet-Friendly Cottage', location: 'Noord-Holland', price: 98, rating: 8.6, reviews: 176,
           who: ['pets','couples','families-kids'], what: ['holiday-park'], where: 'noord-holland',
-          tags: ['Diervriendelijk','Natuur'], emoji: '🏡' },
+          tags: ['Diervriendelijk','Natuur'], emoji: '🏡', deals: ['aanbieding','lastminute'] },
         { id: 6, name: 'Water Sports Haven', location: 'Friesland', price: 112, rating: 8.9, reviews: 231,
           who: ['friends','families-teens'], what: ['adventure-trip'], where: 'friesland',
           tags: ['Water','Sport'], emoji: '🏄' },
@@ -184,7 +184,7 @@ const SITE_DATA = {
           tags: ['Stad','Cultuur'], emoji: '🗼' },
         { id: 8, name: 'All-Inclusive Family Park', location: 'Noord-Brabant', price: 175, rating: 8.5, reviews: 489,
           who: ['families-kids','families-babies'], what: ['holiday-park'], where: 'noord-brabant',
-          tags: ['All-in','Kinderpret'], emoji: '🎡' },
+          tags: ['All-in','Kinderpret'], emoji: '🎡', deals: ['aanbieding'] },
         { id: 9, name: 'Winter Ski Lodge', location: 'Oostenrijk', price: 245, rating: 9.2, reviews: 167,
           who: ['friends','couples'], what: ['winter','adventure-trip'], where: 'oostenrijk',
           tags: ['Wintersport','Bergen'], emoji: '⛷️' },
@@ -193,7 +193,7 @@ const SITE_DATA = {
           tags: ['Natuur','Rust'], emoji: '🌲' },
         { id: 11, name: 'Costa Brava Beach Camping', location: 'Spanje', price: 82, rating: 8.3, reviews: 523,
           who: ['families-kids','families-teens'], what: ['camping','sun'], where: 'spanje',
-          tags: ['Camping','Zee'], emoji: '🏕️' },
+          tags: ['Camping','Zee'], emoji: '🏕️', deals: ['aanbieding','lastminute'] },
         { id: 12, name: 'Toscaanse Luxe Glamping', location: 'Italië', price: 220, rating: 9.3, reviews: 184,
           who: ['couples'], what: ['glamping','wellness'], where: 'italie',
           tags: ['Glamping','Luxe'], emoji: '🍷' },
@@ -205,13 +205,13 @@ const SITE_DATA = {
           tags: ['Bergen','Natuur'], emoji: '🌲' },
         { id: 15, name: 'Algarve Beachfront', location: 'Portugal', price: 168, rating: 9.0, reviews: 342,
           who: ['couples','families-teens'], what: ['sun','hotel'], where: 'portugal',
-          tags: ['Zee','Zon'], emoji: '🌊' },
+          tags: ['Zee','Zon'], emoji: '🌊', deals: ['lastminute'] },
         { id: 16, name: 'Kroatische Kust-Villa', location: 'Kroatië', price: 195, rating: 9.1, reviews: 178,
           who: ['friends','couples'], what: ['sun'], where: 'kroatie',
           tags: ['Zee','Villa'], emoji: '⛵' },
         { id: 17, name: 'Veluwe Bungalow Park', location: 'Gelderland', price: 95, rating: 8.4, reviews: 298,
           who: ['families-kids','families-babies','pets'], what: ['holiday-park'], where: 'gelderland',
-          tags: ['Bos','Bungalow'], emoji: '🌳' },
+          tags: ['Bos','Bungalow'], emoji: '🌳', deals: ['lastminute'] },
         { id: 18, name: 'Utrechtse Stadsapartement', location: 'Utrecht', price: 110, rating: 8.5, reviews: 189,
           who: ['couples','solo','friends'], what: ['city-trip'], where: 'utrecht',
           tags: ['Stad','Cultuur'], emoji: '🏰' },
@@ -231,7 +231,7 @@ const SITE_DATA = {
           tags: ['Camping','Natuur'], emoji: '⛺' },
         { id: 21, name: 'Maastricht Stadshotel', location: 'Limburg', price: 128, rating: 8.7, reviews: 267,
           who: ['couples','solo','friends'], what: ['city-trip','hotel'], where: 'limburg',
-          tags: ['Stad','Cultuur'], emoji: '🏙️' },
+          tags: ['Stad','Cultuur'], emoji: '🏙️', deals: ['lastminute'] },
 
         // Overijssel
         { id: 22, name: 'Twentse Natuurcamping', location: 'Overijssel', price: 65, rating: 8.4, reviews: 196,
@@ -255,7 +255,7 @@ const SITE_DATA = {
           tags: ['Fietsen','Erfgoed'], emoji: '🚴' },
         { id: 27, name: 'Scheveningen Beachhouse', location: 'Zuid-Holland', price: 155, rating: 8.5, reviews: 298,
           who: ['families-kids','couples','families-teens'], what: ['hotel','sun'], where: 'zuid-holland',
-          tags: ['Aan zee','Gezinnen'], emoji: '🏖️' },
+          tags: ['Aan zee','Gezinnen'], emoji: '🏖️', deals: ['aanbieding','lastminute'] },
         { id: 28, name: 'Rotterdam Design Hotel', location: 'Zuid-Holland', price: 148, rating: 8.8, reviews: 341,
           who: ['couples','solo','friends'], what: ['city-trip','hotel'], where: 'zuid-holland',
           tags: ['Stad','Design'], emoji: '🏙️' },
@@ -309,12 +309,12 @@ const SITE_DATA = {
         // België (extra)
         { id: 39, name: 'Antwerpen Boutique B&B', location: 'België', price: 122, rating: 8.7, reviews: 248,
           who: ['couples','solo','friends'], what: ['city-trip','hotel'], where: 'belgie',
-          tags: ['Stad','Boutique'], emoji: '🍫' },
+          tags: ['Stad','Boutique'], emoji: '🍫', deals: ['lastminute'] },
 
         // Duitsland (extra)
         { id: 40, name: 'Berlijn Design Loft', location: 'Duitsland', price: 138, rating: 8.8, reviews: 387,
           who: ['friends','solo','couples'], what: ['city-trip','hotel'], where: 'duitsland',
-          tags: ['Stad','Design'], emoji: '🍺' },
+          tags: ['Stad','Design'], emoji: '🍺', deals: ['aanbieding'] },
 
         // Frankrijk (extra)
         { id: 41, name: 'Provence Wellness Gîte', location: 'Frankrijk', price: 192, rating: 9.2, reviews: 156,
@@ -334,7 +334,7 @@ const SITE_DATA = {
         // Portugal (extra)
         { id: 44, name: 'Porto Surf Hostel', location: 'Portugal', price: 58, rating: 8.4, reviews: 512,
           who: ['friends','solo','families-teens'], what: ['adventure-trip','sun'], where: 'portugal',
-          tags: ['Surf','Backpack'], emoji: '🏄' },
+          tags: ['Surf','Backpack'], emoji: '🏄', deals: ['aanbieding','lastminute'] },
 
         // Kroatië (extra)
         { id: 45, name: 'Plitvice Wandel Lodge', location: 'Kroatië', price: 148, rating: 9.0, reviews: 187,
@@ -571,7 +571,7 @@ const DATA = {
     // valt terug op label wanneer geen displayName gezet is.
     regionDisplayName(key) { return this.region(key)?.displayName || this.region(key)?.label || ''; },
     regionPreposition(key) { return this.region(key)?.preposition || 'in'; },
-    filter({ who, what, where, sub, region } = {}) {
+    filter({ who, what, where, sub, region, deal } = {}) {
         // Sub-niveau (bijv. wellness / boutique / glamping / waterpark)
         // bewaart de subtype-context op Niveau 3/4 paginas zodat de
         // listing daadwerkelijk overeenstemt met de paginatitel.
@@ -611,6 +611,11 @@ const DATA = {
                 if (!regionWheres.includes(a.where)) return false;
             }
             if (subIsWat && !a.what.includes(subKey)) return false;
+            // Deal-filter (homepage CTA "Bekijk alle aanbiedingen" /
+            // "Bekijk alle last minutes"): match wanneer de accommodatie
+            // een 'deals' array bevat met de gevraagde key. Geen 'deals'
+            // veld = niet getoond bij actieve deal-filter.
+            if (deal && !(Array.isArray(a.deals) && a.deals.includes(deal))) return false;
             return true;
         });
     },
