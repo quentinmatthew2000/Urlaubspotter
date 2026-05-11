@@ -877,63 +877,35 @@ function renderKeuzehulpCTA(containerId) {
 }
 
 // ============ KEUZEHULP HERO BANNER (homepage) ============
+// Single-column dark premium discovery-blok (geen illustratie meer).
 // Vervangt de oude functionele Keuzehulp-kaart op de homepage door
-// een grote emotionele banner: atmospheric travel-visual links (CSS-
-// only mountain-silhouet + lake gradient — geen image-asset), tekst
-// rechts met aspirational headline + supporting copy + één primaire
-// CTA "Start de keuzehulp" die naar Keuzehulp.html linkt.
+// een compact emotioneel CTA-blok: deep-night gradient achtergrond,
+// editorial copy en één primaire CTA "Start de keuzehulp" die naar
+// Keuzehulp.html linkt.
+//
+// De vorige iteratie had ook een CSS+SVG mountain-scene aan de
+// linkerkant; die maakte het blok te hero-achtig en visueel zwaar.
+// Nu alleen het content-paneel — strakker, premium, content-eerst.
 function renderKeuzehulpHero(containerId) {
     const el = document.getElementById(containerId);
     if (!el) return;
     el.innerHTML = `
         <section class="kh-hero" aria-label="Start de keuzehulp">
-            <div class="kh-hero-visual" aria-hidden="true">
-                <!-- Atmospheric travel scene, volledig CSS+SVG. Twee
-                     berg-silhouetten, een meer, en een wandelaar als
-                     compositie-anker. Geen externe image-asset. -->
-                <div class="kh-hero-sky"></div>
-                <div class="kh-hero-sun"></div>
-                <svg class="kh-hero-mountains" viewBox="0 0 800 480" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="khMtA" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"  stop-color="#3a6c91"/>
-                            <stop offset="100%" stop-color="#1c3a55"/>
-                        </linearGradient>
-                        <linearGradient id="khMtB" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"  stop-color="#264861"/>
-                            <stop offset="100%" stop-color="#0e2235"/>
-                        </linearGradient>
-                        <linearGradient id="khLake" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"  stop-color="#2f6688"/>
-                            <stop offset="60%" stop-color="#0f3554"/>
-                            <stop offset="100%" stop-color="#072234"/>
-                        </linearGradient>
-                    </defs>
-                    <!-- Verre bergen -->
-                    <path d="M0 290 L120 200 L210 250 L320 170 L430 240 L560 180 L680 250 L800 200 L800 480 L0 480 Z" fill="url(#khMtA)" opacity="0.85"/>
-                    <!-- Voorste bergrug -->
-                    <path d="M0 360 L90 290 L160 330 L260 250 L350 320 L450 280 L560 340 L660 290 L800 340 L800 480 L0 480 Z" fill="url(#khMtB)"/>
-                    <!-- Meer + reflectie -->
-                    <rect x="0" y="380" width="800" height="100" fill="url(#khLake)"/>
-                    <!-- Wandelaar-silhouet rechts vooraan -->
-                    <g transform="translate(630 320)" fill="#0a1c2b">
-                        <circle cx="0" cy="-10" r="6"/>
-                        <rect x="-4" y="-4" width="8" height="22" rx="2"/>
-                        <rect x="-7" y="18" width="5" height="22" rx="2"/>
-                        <rect x="2" y="18" width="5" height="22" rx="2"/>
-                        <rect x="-12" y="-2" width="10" height="14" rx="3"/>
-                    </g>
-                </svg>
-                <!-- Wolken — abstracte witte ovalen -->
-                <span class="kh-hero-cloud kh-hero-cloud--a"></span>
-                <span class="kh-hero-cloud kh-hero-cloud--b"></span>
-            </div>
             <div class="kh-hero-content">
                 <span class="kh-hero-eyebrow">Jouw volgende ontdekking</span>
                 <h2 class="kh-hero-title">Jouw reisgenoot voor de mooiste plekken ter wereld.</h2>
                 <p class="kh-hero-lead">Vind in zeven slimme vragen de vakantie die écht bij jou past — gebaseerd op je reisgezelschap, sfeer en bestemming.</p>
                 <a class="kh-hero-cta" href="Keuzehulp.html">
-                    <span class="kh-hero-cta-icon" aria-hidden="true">📍</span>
+                    <!-- Sparkles-icon (lucide-style) — past bij "slimme
+                         personalisatie / guided discovery" beter dan
+                         de oude location-pin. -->
+                    <span class="kh-hero-cta-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3.5L13.5 8.2 18.2 9.7 13.5 11.2 12 15.9 10.5 11.2 5.8 9.7 10.5 8.2z"/>
+                            <path d="M19 14.5 L19.6 16.4 21.5 17 19.6 17.6 19 19.5 18.4 17.6 16.5 17 18.4 16.4z"/>
+                            <path d="M6 16 L6.5 17.5 8 18 6.5 18.5 6 20 5.5 18.5 4 18 5.5 17.5z"/>
+                        </svg>
+                    </span>
                     <span>Start de keuzehulp</span>
                 </a>
                 <div class="kh-hero-meta">
