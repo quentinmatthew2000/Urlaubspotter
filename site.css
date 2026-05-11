@@ -224,39 +224,57 @@ button { font-family: inherit; cursor: pointer; }
 .ss-meta { font-size: 0.78rem; color: var(--secondary); }
 .ss-empty { padding: 16px; color: var(--secondary); text-align: center; font-size: 0.9rem; }
 
-/* Navigatie-drawer: standaard ingeklapt, klapt open via hamburger op alle
-   breakpoints (3-koloms header = mobile-first ontwerp).
-   BELANGRIJK: wanneer gesloten gebruiken we display:none, zodat dit element
-   géén flex-rij of gap claimt in de header — anders zou er onder de header
-   een zichtbare witte strook staan (max-height:0 neutraliseert alleen de
-   content-hoogte, niet de flex-row/gap/margin/padding/border). */
+/* ============ NAV DRAWER — premium mobile UX ============
+   Standaard ingeklapt; klapt open via hamburger op alle breakpoints.
+   BELANGRIJK: wanneer gesloten gebruiken we display:none zodat het
+   element géén flex-rij of gap claimt in de header. */
 .site-nav {
     flex: 1 1 100%;
     order: 3;
     display: none;
     flex-direction: column;
-    gap: 0;
-    margin-top: 8px;
-    padding-top: 8px;
+    gap: 4px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
-    max-height: 80vh;
+    max-height: calc(100vh - var(--header-h, 64px) - 16px);
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .site-nav.open { display: flex; }
 .site-nav > a,
 .site-nav > .has-dropdown > a {
-    display: block;
-    padding: 14px 8px;
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 14px 14px;
     color: var(--text);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.02rem;
+    line-height: 1.2;
     text-decoration: none;
-    border-radius: 0;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s, color 0.15s;
+    border-radius: 10px;
+    border-bottom: none;
+    background: white;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
 }
-.site-nav a:hover { background: var(--primary-light); color: var(--primary); }
-.site-nav a.active { color: var(--primary); background: var(--primary-light); }
+.site-nav > a + a,
+.site-nav > .has-dropdown + a,
+.site-nav > a + .has-dropdown > a,
+.site-nav > .has-dropdown + .has-dropdown > a { margin-top: 2px; }
+.site-nav a:hover,
+.site-nav a:focus-visible {
+    background: var(--primary-light);
+    color: var(--primary);
+    outline: none;
+}
+.site-nav a:active { transform: scale(0.985); }
+.site-nav a.active {
+    color: var(--primary);
+    background: var(--primary-light);
+    font-weight: 700;
+}
 
 /* ============ SEARCHBAR (kidsvakantiegids-stijl) ============ */
 .searchbar-wrap {
@@ -898,47 +916,106 @@ button { font-family: inherit; cursor: pointer; }
     font-weight: 600;
 }
 
-/* ============ DROPDOWN NAV (accordeon in drawer) ============ */
+/* ============ DROPDOWN NAV — premium accordion ============
+   Accordion-toggle voor expandable secties (Vakantietypen,
+   Bestemmingen, Reisgezelschap). Verbeterde mobiele leesbaarheid:
+   schone chevron-iconen i.p.v. +/-, ruimere tap-targets, sub-items
+   in 2-koloms grid op landscape phones zodat opgevouwen labels niet
+   over de hele kolombreedte uitsmeren. */
 .site-nav .has-dropdown { display: block; }
-.site-nav .has-dropdown > a::after {
-    content: '+';
-    float: right;
-    font-size: 1.15rem;
-    color: var(--secondary);
-    margin-left: 8px;
-    line-height: 1;
+.site-nav .has-dropdown > a {
+    position: relative;
+    padding-right: 44px;
 }
-.site-nav .has-dropdown.open > a::after { content: '−'; }
+.site-nav .has-dropdown > a::after {
+    content: '';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid var(--secondary);
+    border-bottom: 2px solid var(--secondary);
+    transform: translateY(-65%) rotate(45deg);
+    transition: transform 0.22s ease, border-color 0.18s ease;
+}
+.site-nav .has-dropdown.open > a {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+.site-nav .has-dropdown.open > a::after {
+    transform: translateY(-30%) rotate(-135deg);
+    border-color: var(--primary);
+}
 .nav-dropdown {
     display: none;
     grid-template-columns: 1fr;
-    background: var(--bg-light);
-    padding: 10px 16px 14px;
-    border-bottom: 1px solid var(--border);
+    background: transparent;
+    padding: 6px 4px 10px 12px;
+    margin: 2px 0 8px;
+    border-left: 2px solid var(--primary-light);
     gap: 12px;
 }
 .nav-dropdown.wide { grid-template-columns: 1fr; }
-.site-nav .has-dropdown.open .nav-dropdown { display: grid; }
+.site-nav .has-dropdown.open .nav-dropdown {
+    display: grid;
+    animation: navDropFade 0.22s ease;
+}
+@keyframes navDropFade {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.nav-dd-col + .nav-dd-col { margin-top: 4px; }
 .nav-dd-col h5 {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted, #555);
+    letter-spacing: 0.10em;
+    color: var(--secondary);
     font-weight: 700;
-    margin: 0 0 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
+    margin: 6px 0 6px;
+    padding: 0;
+    border-bottom: none;
 }
 .nav-dd-col a {
-    display: block;
-    padding: 6px 8px;
-    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 9px 12px;
+    font-size: 0.95rem;
     color: var(--text);
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: 8px;
     background: transparent !important;
+    line-height: 1.25;
 }
-.nav-dd-col a:hover { background: var(--primary-light) !important; color: var(--primary); }
+.nav-dd-col a:hover,
+.nav-dd-col a:focus-visible {
+    background: var(--primary-light) !important;
+    color: var(--primary);
+    outline: none;
+}
+
+/* Op landscape phones / kleine tablets (>= 520px) plaatsen we de
+   sub-items in 2 kolommen zodat lange lijsten compacter passen. */
+@media (min-width: 520px) {
+    .nav-dropdown { grid-template-columns: 1fr 1fr; column-gap: 16px; }
+    .nav-dropdown.wide { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 880px) {
+    .nav-dropdown.wide { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* Heel kleine schermen (oudere phones < 360px): verklein de
+   padding zodat alles netjes past zonder horizontale scroll. */
+@media (max-width: 359px) {
+    .site-nav > a,
+    .site-nav > .has-dropdown > a {
+        padding: 12px 10px;
+        font-size: 0.96rem;
+    }
+    .nav-dropdown { padding-left: 10px; }
+    .nav-dd-col a { font-size: 0.9rem; padding: 8px 10px; }
+}
 
 /* ============ BLOG PREVIEW ============ */
 .blog-grid {
@@ -1179,3 +1256,158 @@ button { font-family: inherit; cursor: pointer; }
     .footer-col h4 { font-size: 0.85rem; }
 }
 
+
+/* ============================================================
+   KEUZEHULP HERO BANNER — homepage emotional entry
+   Vervangt het oude functionele Keuzehulp-blok door een editorial
+   travel-scene met aspirational headline + één primaire CTA. Alles
+   CSS+SVG; geen image-asset nodig zodat de bundle slank blijft.
+   ============================================================ */
+.kh-hero {
+    position: relative;
+    max-width: 1280px;
+    margin: 32px auto;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #0c2236;
+    box-shadow: 0 20px 50px rgba(7, 28, 50, 0.20);
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    min-height: 440px;
+    isolation: isolate;
+}
+.kh-hero-visual {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #5b96c6 0%, #2c5d83 55%, #143553 100%);
+}
+.kh-hero-sky {
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 65% 50% at 35% 12%, rgba(255, 230, 200, 0.32) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 70% 18%, rgba(255, 255, 255, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+.kh-hero-sun {
+    position: absolute;
+    top: 16%; right: 22%;
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffd9a4 0%, #ffb066 55%, rgba(255, 176, 102, 0) 75%);
+    filter: blur(2px);
+    opacity: 0.9;
+}
+.kh-hero-mountains {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+}
+.kh-hero-cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 999px;
+    filter: blur(1px);
+}
+.kh-hero-cloud--a { top: 14%; left: 12%; width: 120px; height: 18px; opacity: 0.55; }
+.kh-hero-cloud--b { top: 22%; left: 56%; width: 96px;  height: 14px; opacity: 0.42; }
+.kh-hero-content {
+    position: relative;
+    padding: 56px 56px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #f3f7fc;
+    background: linear-gradient(135deg, #112a44 0%, #0a1f33 100%);
+}
+.kh-hero-content::before {
+    content: "";
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(80, 145, 200, 0.35) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+}
+.kh-hero-content > * { position: relative; z-index: 1; }
+.kh-hero-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #88b5d8;
+    margin-bottom: 14px;
+}
+.kh-hero-title {
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin: 0 0 18px;
+    color: #ffffff;
+    text-wrap: balance;
+}
+.kh-hero-lead {
+    font-size: clamp(1rem, 1.4vw, 1.12rem);
+    line-height: 1.55;
+    color: rgba(243, 247, 252, 0.84);
+    margin: 0 0 28px;
+    max-width: 520px;
+}
+.kh-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 26px;
+    background: #1e6fff;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.005em;
+    text-decoration: none;
+    box-shadow: 0 14px 30px rgba(30, 111, 255, 0.42);
+    transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.18s ease;
+    align-self: flex-start;
+}
+.kh-hero-cta:hover {
+    background: #1559cf;
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px rgba(30, 111, 255, 0.50);
+}
+.kh-hero-cta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.20);
+    font-size: 0.95rem;
+}
+.kh-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 22px;
+    margin-top: 26px;
+    font-size: 0.86rem;
+    color: rgba(243, 247, 252, 0.7);
+}
+.kh-hero-meta span { white-space: nowrap; }
+
+@media (max-width: 900px) {
+    .kh-hero {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        margin: 24px 18px;
+    }
+    .kh-hero-visual { aspect-ratio: 16 / 9; min-height: 240px; }
+    .kh-hero-content {
+        padding: 36px 28px 36px;
+    }
+}
+@media (max-width: 480px) {
+    .kh-hero { margin: 18px 12px; border-radius: 18px; }
+    .kh-hero-content { padding: 30px 22px 30px; }
+    .kh-hero-cta { width: 100%; justify-content: center; padding: 15px 22px; }
+    .kh-hero-meta { gap: 10px 16px; font-size: 0.82rem; }
+}

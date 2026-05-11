@@ -461,6 +461,43 @@
     //   WAT-ref + WIE          → Niveau3-WieWat.html?who=&what= (of &sub=)
     //   WAT-ref + WAAR         → Niveau3-WaarWat.html?what=&where=&sub=
     //   WIE + WAAR (page WAT)  → Niveau4-WieWatWaar.html?who=&what=&where=
+    // ---- GENERIC WAT GENERATORS ---------------------------------------
+    // Voor WAT-keys zonder eigen entry in WHAT_REFINEMENTS / POPULAIR_BY_WAT
+    // (bijv. sun / winter / glamping / adventure-trip / city-trip /
+    // wellness) val je nu niet meer terug op de homepage-default tabs —
+    // we genereren de tabs data-gestuurd op basis van de actieve WAT.
+    function genericPopulairForWat(what /*, whatLabel */) {
+        // 9 curated combo's: 3× WIE-only (WAT+WIE), 3× WAAR-only
+        // (WAT+WAAR), 3× 3-dim (WIE+WAAR via Niveau 4).
+        const w = tagWhat(what);
+        const N3WIE  = (who)   => `Niveau3-WieWat.html?who=${who}&what=${what}`;
+        const N3WAAR = (where) => `Niveau3-WaarWat.html?what=${what}&where=${where}`;
+        const N3R    = (region)=> `Niveau3-WaarWat.html?what=${what}&region=${region}`;
+        const N4     = (who, where) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${where}`;
+        return [
+            { icon: "💑",      title: _tagJoin([w, "Koppels"]),                  href: N3WIE("couples") },
+            { icon: "👨‍👩‍👧", title: _tagJoin([w, "Familie"]),                  href: N3WIE("families-kids") },
+            { icon: "👴",      title: _tagJoin([w, "Senioren"]),                 href: N3WIE("seniors") },
+            { icon: "🍝",      title: _tagJoin([w, "Italië"]),                   href: N3WAAR("italie") },
+            { icon: "🇳🇱",      title: _tagJoin([w, "Nederland"]),                href: N3WAAR("netherlands") },
+            { icon: "🗼",      title: _tagJoin([w, "Frankrijk"]),                href: N3WAAR("frankrijk") },
+            { icon: "🌍",      title: _tagJoin([w, "Europa"]),                   href: N3R("europa") },
+            { icon: "🏨",      title: _tagJoin([w, "Italië",    "Koppels"]),     href: N4("couples",       "italie") },
+            { icon: "⛺",      title: _tagJoin([w, "Frankrijk", "Familie"]),     href: N4("families-kids", "frankrijk") },
+        ];
+    }
+    // genericVakantietype: cross-suggesties naar andere WAT-types
+    // wanneer de huidige WAT geen sub-refinements heeft.
+    function genericVakantietypeForWat(what) {
+        const sib = ['hotel','camping','holiday-park','glamping','wellness','sun','winter','adventure-trip','city-trip']
+            .filter(k => k !== what);
+        return sib.map(k => ({
+            icon: _whatIcon(k),
+            title: tagWhat(k),
+            href: `Niveau2-Wat.html?what=${k}`,
+        }));
+    }
+
     // POPULAIR_BY_WAT — curated 9-item lijst per WAT-categorie.
     // Tag-style labels: "<sub-of-WAT-tag> + <Bestemming-of-WIE>".
     // 3-dim combinaties: "<sub> + <Bestemming> + <WIE-short>".
@@ -999,10 +1036,18 @@
             // heeft de sub al gekozen, dus refinement-tab is minder
             // primair dan combinatie-exploration.
             orderedTabIds = ["populair", "reisgezelschap", "bestemmingen", "vakantietype"];
+        } else if (isSingleWat && !WHAT_REFINEMENTS[contextWhat]) {
+            // Niveau 2 — Wat voor "leaf"-categorieën (sun / winter /
+            // glamping / wellness / adventure-trip / city-trip):
+            // geen sub-refinements beschikbaar, dus Vakantietype-tab is
+            // niet een refinement-keuze maar een cross-suggestion naar
+            // andere WAT-types. Populair-first voelt dan
+            // discovery-driven, net als op subtype-pagina's.
+            orderedTabIds = ["populair", "reisgezelschap", "bestemmingen", "vakantietype"];
         } else if (isSingleWat) {
-            // Niveau 2 — Wat zonder sub (Alle hotels / Alle campings /
-            // Alle vakantieparken): Vakantietype eerst zodat de bezoeker
-            // direct naar een sub kan verfijnen.
+            // Niveau 2 — Wat met sub-refinements (Alle hotels / Alle
+            // campings / Alle vakantieparken): Vakantietype eerst zodat
+            // de bezoeker direct naar een sub kan verfijnen.
             orderedTabIds = ["vakantietype", "reisgezelschap", "bestemmingen", "populair"];
         } else if (isSingleWie) {
             orderedTabIds = ["vakantietype", "bestemmingen", "populair"];
@@ -1090,11 +1135,24 @@
                     if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat]) return WHAT_REFINEMENTS[contextWhat];
                     return tab.items;
                 }
-                // WAT-CONTEXT zonder sub
-                if (activeTab === "populair"     && POPULAIR_BY_WAT[contextWhat])     return POPULAIR_BY_WAT[contextWhat];
-                if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat])    return WHAT_REFINEMENTS[contextWhat];
-                if (activeTab === "bestemmingen" && BESTEMMINGEN_BY_WAT[contextWhat]) return BESTEMMINGEN_BY_WAT[contextWhat];
-                if (activeTab === "reisgezelschap" && REISGEZELSCHAP_BY_WAT[contextWhat]) return REISGEZELSCHAP_BY_WAT[contextWhat];
+                // WAT-CONTEXT zonder sub.
+                //   Hotel / Camping / Vakantiepark → curated WAT-maps.
+                //   Andere WAT-keys (sun / winter / glamping / wellness /
+                //   adventure-trip / city-trip) → generieke generators
+                //   zodat ze nooit meer terugvallen op de homepage
+                //   default tab-items.
+                if (activeTab === "populair") {
+                    return POPULAIR_BY_WAT[contextWhat]     || genericPopulairForWat(contextWhat, contextWhatLabel);
+                }
+                if (activeTab === "vakantietype") {
+                    return WHAT_REFINEMENTS[contextWhat]    || genericVakantietypeForWat(contextWhat);
+                }
+                if (activeTab === "bestemmingen") {
+                    return BESTEMMINGEN_BY_WAT[contextWhat] || bestemmingenForWat(contextWhat);
+                }
+                if (activeTab === "reisgezelschap") {
+                    return REISGEZELSCHAP_BY_WAT[contextWhat] || reisgezelschapForWat(contextWhat);
+                }
                 return tab.items;
             }
 

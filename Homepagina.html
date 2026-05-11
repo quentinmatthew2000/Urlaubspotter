@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=15">
     <link rel="stylesheet" href="search-navigation.css?v=8">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
@@ -15,8 +15,10 @@
 <!-- Nieuwe homepage zoeknavigatie (collapsed bar + Wie/Wat/Waar/Wanneer modal) -->
 <div id="hero-searchbar"></div>
 
-<!-- KEUZEHULP CTA — verplaatst naar boven Inspiratie voor jou. -->
-<section class="section" id="keuzehulp-block"></section>
+<!-- KEUZEHULP HERO — grote emotionele instapsectie, mountain-scene
+     visual + aspirational copy + "Start de keuzehulp" CTA. Wordt
+     gevuld door renderKeuzehulpHero('keuzehulp-block') (site.js). -->
+<div id="keuzehulp-block"></div>
 
 <!-- Inspiratie-tabs (Populair / Reisgezelschap / Vakantietype / Bestemmingen) -->
 <div id="inspiration-tabs"></div>
@@ -243,12 +245,14 @@
 </div>
 
 <!-- Verplaatste blokken (Wie / Wat / Waar) — onderaan de homepage,
-     direct boven de nieuwsbrief. Inhoud en design ongewijzigd. -->
+     direct boven de nieuwsbrief. De eigen sectie-titels zijn bewust
+     weggehaald — de eyebrow + "alle X" link communiceren al genoeg
+     context en het scheelt visuele herhaling met de Inspiratie-tabs
+     bovenaan de pagina. -->
 <section class="section">
     <div class="section-head">
         <div>
             <span class="eyebrow">Voor wie ga je?</span>
-            <h2>Kies je reisgezelschap</h2>
         </div>
         <a class="link" href="Niveau2-Wie.html">Alle gezelschappen →</a>
     </div>
@@ -260,7 +264,6 @@
     <div class="section-head">
         <div>
             <span class="eyebrow">Wat voor vakantie?</span>
-            <h2>Wat voor vakantie zoek je?</h2>
         </div>
         <a class="link" href="Niveau2-Wat.html">Alle types →</a>
     </div>
@@ -272,7 +275,6 @@
     <div class="section-head">
         <div>
             <span class="eyebrow">Waar wil je naartoe?</span>
-            <h2>Kies een bestemming</h2>
         </div>
         <a class="link" href="Niveau2-Waar.html">Alle bestemmingen →</a>
     </div>
@@ -290,9 +292,9 @@
 </footer>
 
 <script src="site-data.js?v=13"></script>
-<script src="site.js?v=17"></script>
+<script src="site.js?v=18"></script>
 <script src="search-navigation.js?v=8"></script>
-<script src="inspiration-tabs.js?v=19"></script>
+<script src="inspiration-tabs.js?v=20"></script>
 <script>
     renderHeader('home');
     renderSearchNavigation('hero-searchbar');
@@ -312,7 +314,9 @@
     });
 
     renderListingPreview('popular-listing', SITE_DATA.accommodations.slice(0, 8), { limit: 8 });
-    renderKeuzehulpCTA('keuzehulp-block');
+    // Homepage gebruikt de emotionele hero-banner i.p.v. de compacte
+    // CTA-kaart. Andere pagina's blijven renderKeuzehulpCTA gebruiken.
+    renderKeuzehulpHero('keuzehulp-block');
     renderBlogPreview('blog-preview', 'Vakantie');
     renderNewsSocial('news-social');
     renderFooter();
