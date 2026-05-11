@@ -93,12 +93,23 @@
         const regionDisplay = region ? DATA.regionDisplayName(region) : '';
         const regionPrep    = region ? DATA.regionPreposition(region) : 'in';
 
-        const noun = subLabel || whatLabel || (region || where ? 'Vakantie' : 'Jouw vakantie');
-        const destPhrase = region ? `${regionPrep} ${regionLabel}` : (where ? `in ${whereLabel}` : '');
-        const audPhrase  = whoLabel ? `voor ${whoLabel.toLowerCase()}` : '';
-
+        // WIE-only (Niveau 2 — Wie): editoriaal startpunt — niet de
+        // generieke "Vakantie voor X" maar een uitnodiging om verder
+        // te ontdekken. Past in de nieuwe premium hiërarchie i.p.v.
+        // de oude Niveau 1 audience-landings.
+        // WAAR-only (Niveau 2 — Waar): zelfde aanpak — destination-
+        // first, met preposition uit de region-config voor
+        // natuurlijke NL-zinnen.
         let title;
-        if (what || sub || where || region || who) {
+        if (who && !what && !sub && !where && !region) {
+            title = `De mooiste vakanties voor ${whoLabel.toLowerCase()}`;
+        } else if ((where || region) && !what && !sub && !who) {
+            const destPhrase = region ? `${regionPrep} ${regionLabel}` : `in ${whereLabel}`;
+            title = `Op vakantie ${destPhrase}`;
+        } else if (what || sub || where || region || who) {
+            const noun = subLabel || whatLabel || (region || where ? 'Vakantie' : 'Jouw vakantie');
+            const destPhrase = region ? `${regionPrep} ${regionLabel}` : (where ? `in ${whereLabel}` : '');
+            const audPhrase  = whoLabel ? `voor ${whoLabel.toLowerCase()}` : '';
             const parts = [noun];
             if (audPhrase)  parts.push(audPhrase);
             if (destPhrase) parts.push(destPhrase);
@@ -112,9 +123,17 @@
             lead = window.buildContextLead({ what, sub, who, where, region }) || '';
         }
         if (!lead) {
-            const nounLower = noun.toLowerCase();
-            const destExtra = destPhrase ? ` ${destPhrase}` : '';
-            lead = `Onze redactie selecteerde de mooiste ${nounLower}${destExtra} — handpicked, eerlijk getest en met persoonlijke tips voor jouw reis.`;
+            if (who && !what && !sub && !where && !region) {
+                lead = `Hotels, campings, vakantieparken en bestemmingen die wij speciaal voor ${whoLabel.toLowerCase()} aanbevelen — gescoord op rust, gemak en wat écht past bij dit reisgezelschap.`;
+            } else if ((where || region) && !what && !sub && !who) {
+                const destPhrase = region ? `${regionPrep} ${regionLabel}` : `in ${whereLabel}`;
+                lead = `Onze redactie test honderden accommodaties ${destPhrase}. Hieronder vind je hotels, campings en vakantieparken die wij zelf zouden boeken.`;
+            } else {
+                const nounLower = (subLabel || whatLabel || 'vakantie').toLowerCase();
+                const destPhrase = region ? `${regionPrep} ${regionLabel}` : (where ? `in ${whereLabel}` : '');
+                const destExtra = destPhrase ? ` ${destPhrase}` : '';
+                lead = `Onze redactie selecteerde de mooiste ${nounLower}${destExtra} — handpicked, eerlijk getest en met persoonlijke tips voor jouw reis.`;
+            }
         }
 
         const eyebrowParts = [];
@@ -208,10 +227,19 @@
             const whoLabel = DATA.label('who', who).toLowerCase();
             // who-treffer is een lichte boost — content is zelden
             // expliciet "voor koppels" geschreven maar wel "romantisch".
+            // Extra regex-bonussen per WIE-categorie geven de scoring
+            // genoeg signaal om Tips/Stories te selecteren die qua
+            // sfeer aansluiten, ook als de tekst niet letterlijk de
+            // WIE-key bevat.
             if (haystack.includes(whoLabel)) score += 2;
-            if (who.includes('couples') && /romantisch|koppel/.test(haystack)) score += 2;
-            if (who.includes('families') && /gezin|kind|familie/.test(haystack)) score += 2;
-            if (who.includes('friends') && /vrienden|groep/.test(haystack)) score += 2;
+            if (who.includes('couples')        && /romantisch|koppel|samen|twee/.test(haystack)) score += 2;
+            if (who.includes('families')       && /gezin|kind|familie|kinderen/.test(haystack)) score += 2;
+            if (who.includes('friends')        && /vrienden|groep|samen|sociale/.test(haystack)) score += 2;
+            if (who === 'seniors'              && /senior|rust|comfort|gemak|stil/.test(haystack)) score += 2;
+            if (who === 'solo'                 && /alleen|solo|hostel|backpack/.test(haystack)) score += 2;
+            if (who === 'pets'                 && /huisdier|hond|dier/.test(haystack)) score += 2;
+            if (who === 'families-babies'      && /baby|peuter|kleine kinder/.test(haystack)) score += 2;
+            if (who === 'families-teens'       && /tiener|teenager|jonger|sport/.test(haystack)) score += 2;
         }
         return score;
     }
@@ -622,19 +650,31 @@
             applyNiveau3Layout();
         }
 
-        // Inspiration-tabs (optioneel). Alleen mounten als we WAT-
-        // of sub-context hebben — anders levert het een lege div op.
-        // Wanneer de page-script de tabs zelf al gerenderd heeft
-        // (Niveau 2 — Wat doet dat eerder in het script), pakt
+        // Inspiration-tabs (optioneel). Mounten op iedere premium-
+        // pagina die ten minste één context heeft (WAT / sub / WIE /
+        // WAAR / region). renderInspirationTabs detecteert zelf welke
+        // context-flavor van toepassing is en dispatcht naar de
+        // bijbehorende tab-generators:
+        //   • WAT-context  → vakantietype-refinements + WAT-specifieke
+        //                    WIE/WAAR/Populair-tabs
+        //   • WIE-context  → Vakantietype/Bestemmingen/Populair voor
+        //                    de gekozen WIE
+        //   • WAAR-context → Vakantietype/Reisgezelschap/Populair voor
+        //                    de gekozen bestemming
+        // Wanneer de page-script de tabs zelf al gerenderd heeft pakt
         // ensureInspirationMount de bestaande mount.
+        const hasAnyContext = !!(ctx.what || ctx.sub || ctx.who || ctx.where || ctx.region);
         const wantTabs = ctx.renderInspirationTabs !== false
-                         && (ctx.what || ctx.sub)
+                         && hasAnyContext
                          && typeof window.renderInspirationTabs === 'function';
         if (wantTabs) {
             ensureInspirationMount();
             window.renderInspirationTabs('inspiration-tabs', {
-                contextWhat: ctx.what || null,
-                contextSub:  ctx.sub  || null,
+                contextWhat:   ctx.what   || null,
+                contextSub:    ctx.sub    || null,
+                contextWho:    ctx.who    || null,
+                contextWhere:  ctx.where  || null,
+                contextRegion: ctx.region || null,
             });
         }
 
