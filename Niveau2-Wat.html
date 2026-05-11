@@ -17,7 +17,7 @@
          Hotel-pagina (zie inline script onderaan). De CSS is generiek
          opgezet zodat we hetzelfde patroon later eenvoudig uitrollen
          naar andere Niveau 2/3/4 WAT-categorieën. -->
-    <link rel="stylesheet" href="premium-hero.css?v=3">
+    <link rel="stylesheet" href="premium-hero.css?v=4">
 </head>
 <body>
 
@@ -184,7 +184,7 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=10"></script>
+<script src="site-data.js?v=11"></script>
 <script src="sub-context.js?v=1"></script>
 <script src="context-copy.js?v=1"></script>
 <script src="site.js?v=16"></script>
@@ -526,13 +526,15 @@
             moreHref:   'blogs.html',
             moreLabel:  'Alle tips →',
             cards: [
+                // Iedere tip linkt naar een echte blog-detail-pagina
+                // (SITE_DATA.blogs id 7-10, hotel-themed content).
                 {
                     tag:      'Boutique',
                     emoji:    '🛎️',
                     gradient: 'linear-gradient(135deg, #faf3e6 0%, #d4b682 100%)',
                     title:    'De mooiste boutique hotels in Europa',
                     intro:    'Karaktervolle suites, persoonlijke service en geen ketenervaring — onze pick van Europa\'s mooiste boutique hotels.',
-                    href:     'Niveau3-WaarWat.html?what=hotel&region=europa&sub=boutique',
+                    href:     'blog-detail.html?id=7',
                 },
                 {
                     tag:      'Wellness',
@@ -540,7 +542,7 @@
                     gradient: 'linear-gradient(135deg, #fde6e6 0%, #c89292 100%)',
                     title:    '5 wellness hotels voor een romantisch weekend',
                     intro:    'Spa, infinity pools en kaarslicht — vijf wellness hotels waar jullie samen tot rust komen.',
-                    href:     'Niveau3-WieWat.html?who=couples&what=hotel&sub=wellness',
+                    href:     'blog-detail.html?id=8',
                 },
                 {
                     tag:      'Citytrip',
@@ -548,7 +550,7 @@
                     gradient: 'linear-gradient(135deg, #e0eaf5 0%, #6f8ca6 100%)',
                     title:    'De leukste citytrip hotels in Italië',
                     intro:    'Van Romeinse rooftops tot Toscaanse stadssuites — Italiaanse hotels met die ene perfecte ligging.',
-                    href:     'Niveau3-WaarWat.html?what=hotel&where=italie&sub=city',
+                    href:     'blog-detail.html?id=9',
                 },
                 {
                     tag:      'Luxe',
@@ -556,7 +558,7 @@
                     gradient: 'linear-gradient(135deg, #e8f0e8 0%, #5d8a6a 100%)',
                     title:    'Hotels met infinity pools',
                     intro:    'Zwemmen tot aan de horizon — een selectie hotels met de meest spectaculaire infinity pools van Europa.',
-                    href:     'Niveau3-WieWat.html?who=couples&what=hotel&sub=resort',
+                    href:     'blog-detail.html?id=10',
                 },
             ],
         });
@@ -568,13 +570,15 @@
             moreHref:  'reisverslagen.html',
             moreLabel: 'Alle reisverslagen →',
             stories: [
+                // Iedere story linkt naar een echte reisverslag-detail-
+                // pagina (SITE_DATA.stories id 7-11, hotel-themed).
                 {
                     emoji:    '🥐',
                     gradient: 'linear-gradient(135deg, #f3e7d2 0%, #c19a5a 100%)',
                     author:   'Door Sophie · Redacteur citytrips',
                     title:    '48 uur in een boutique hotel in Parijs',
                     intro:    'Een lang weekend in een sfeervol boutique hotel in de Marais — kleine ontbijten, persoonlijke service en de stad voor de deur.',
-                    href:     'reisverslag-detail.html?id=1',
+                    href:     'reisverslag-detail.html?id=7',
                 },
                 {
                     emoji:    '🌿',
@@ -582,7 +586,7 @@
                     author:   'Door Anouk · Redacteur wellness',
                     title:    'Onze favoriete wellness hotels in Italië',
                     intro:    'Van thermen in Toscane tot spa-suites aan de Comomeer — Anouk test vier wellness hotels in Italië.',
-                    href:     'reisverslag-detail.html?id=2',
+                    href:     'reisverslag-detail.html?id=8',
                 },
                 {
                     emoji:    '🖤',
@@ -590,7 +594,7 @@
                     author:   'Door Mark · Redacteur design',
                     title:    'Een weekend in een design hotel in Kopenhagen',
                     intro:    'Strakke lijnen, doordachte details en Scandinavisch comfort — een weekend in Kopenhagens beste design hotel.',
-                    href:     'reisverslag-detail.html?id=3',
+                    href:     'reisverslag-detail.html?id=9',
                 },
                 {
                     emoji:    '🌅',
@@ -598,7 +602,7 @@
                     author:   'Door Esther · Redacteur luxe reizen',
                     title:    'De mooiste rooftop hotels van Europa',
                     intro:    'Zwembaden tot aan de skyline, sunset bars en stadsuitzichten — onze pick van Europa\'s mooiste rooftop hotels.',
-                    href:     'reisverslag-detail.html?id=4',
+                    href:     'reisverslag-detail.html?id=10',
                 },
                 {
                     emoji:    '🗺️',
@@ -606,10 +610,22 @@
                     author:   'Door Lisa · Hoofdredacteur',
                     title:    'Hoe wij de perfecte citytrip hotels vonden',
                     intro:    'Welke ligging, welke prijs, welke faciliteiten — onze redactie deelt hoe ze de beste citytrip hotels selecteren.',
-                    href:     'reisverslag-detail.html?id=5',
+                    href:     'reisverslag-detail.html?id=11',
                 },
             ],
         });
+
+        // Verplaats "De ultieme zoektool" (keuzehulp-block) naar direct
+        // ONDER het "15 geschikte accommodaties" matches-blok.
+        // Standaard staat het verderop in de DOM, ná de WIE/Waar
+        // carousels. Op de Hotel-pagina willen we de zoektool als
+        // logische volgende stap NA de aanbevolen accommodaties.
+        const keuzehulpBlock = document.getElementById('keuzehulp-block');
+        const matchesListing = document.getElementById('matches-listing');
+        const matchesSection = matchesListing ? matchesListing.closest('section') : null;
+        if (keuzehulpBlock && matchesSection) {
+            matchesSection.insertAdjacentElement('afterend', keuzehulpBlock);
+        }
     }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)

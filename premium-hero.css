@@ -481,13 +481,24 @@
    3. Tight spacing van hero naar Inspiratie voor jou.
    ============================================================ */
 
+/* Site-header zelf op de Hotel-pagina: geen eigen border/shadow
+   meer. Het sticky tab-blok eronder krijgt de divider — dat
+   voorkomt het dubbele "drijvend grijs strookje" effect waar
+   header-shadow en tab-border tegen elkaar aan zaten. */
+body.ph-hotel-page .site-header {
+    border-bottom: none;
+    box-shadow: none;
+}
+
 body.ph-hotel-page #hero-searchbar {
     position: sticky;
     top: var(--header-h, 64px);
     z-index: 50;
     background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+    /* Eén nette divider onderin — de header erboven is onzichtbaar
+       overgegaan in dit blok dankzij de identieke witte fill. */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 body.ph-hotel-page .sn-bar { display: none !important; }
 body.ph-hotel-page .sn-bar-wrap {
@@ -496,12 +507,16 @@ body.ph-hotel-page .sn-bar-wrap {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    background: #ffffff;
 }
 body.ph-hotel-page .sn-tabs {
     width: 100%;
     max-width: 1280px;
-    justify-content: flex-start;
-    gap: 26px;
+    /* Centreer de drie tabs als een premium category switcher
+       (i.p.v. links-uitgelijnd). Op kleinere schermen valt het
+       terug op natuurlijk centreren bij flex-wrap. */
+    justify-content: center;
+    gap: 32px;
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
@@ -511,9 +526,12 @@ body.ph-hotel-page .sn-tab { padding: 8px 4px 10px; }
 body.ph-hotel-page .sn-tab-emoji { font-size: 1.3rem; }
 body.ph-hotel-page .sn-tab-label { font-size: 0.82rem; white-space: nowrap; }
 @media (min-width: 720px) {
-    body.ph-hotel-page .sn-tabs { gap: 40px; }
+    body.ph-hotel-page .sn-tabs { gap: 56px; }
     body.ph-hotel-page .sn-tab-emoji { font-size: 1.5rem; }
     body.ph-hotel-page .sn-tab-label { font-size: 0.9rem; }
+}
+@media (min-width: 1024px) {
+    body.ph-hotel-page .sn-tabs { gap: 72px; }
 }
 
 /* Tight transition: hero → inspiratie. Verlaag de bottom-padding
