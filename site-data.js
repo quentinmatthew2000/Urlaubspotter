@@ -70,7 +70,7 @@ const SITE_DATA = {
                 'wellness':      'Wellness Hotels',
                 'all-inclusive': 'All-inclusive Hotels',
                 'design':        'Design Hotels',
-                'city':          'Hotels midden in het centrum',
+                'city':          'Centrumgelegen Hotels',
                 'resort':        'Resorts',
             },
             'camping': {
@@ -418,7 +418,16 @@ const DATA = {
     countries: () => Object.entries(SITE_DATA.labels.countries),
     campingTypes: () => Object.entries(SITE_DATA.labels.campingTypes),
     label(dim, key) {
-        if (dim === 'where') return SITE_DATA.labels.whereNL[key] || SITE_DATA.labels.whereEU[key] || key;
+        if (dim === 'where') {
+            // 'netherlands' staat in SITE_DATA.labels.countries en moet
+            // hier als "Nederland" oplossen zodat pagina-titels als
+            // "Design Hotels in Nederland" correct renderen. Provincies
+            // gaan via whereNL, EU-landen via whereEU.
+            return SITE_DATA.labels.whereNL[key]
+                || SITE_DATA.labels.whereEU[key]
+                || SITE_DATA.labels.countries[key]
+                || key;
+        }
         return SITE_DATA.labels[dim]?.[key] || key;
     },
     icon(key) { return SITE_DATA.icons[key] || '📌'; },
@@ -445,10 +454,20 @@ const DATA = {
         const subIsWat = subKey && SITE_DATA.labels.what[subKey];
         // Tag-haystack vooraf opbouwen per accommodatie zou efficienter
         // zijn maar de dataset is klein; .toLowerCase per call is OK.
+        // 'netherlands' is een aggregaat-key (geen accommodatie heeft
+        // where='netherlands') en moet matchen tegen alle NL-provincies.
+        const NL_KEYS = Object.keys(SITE_DATA.labels.whereNL);
+        const whereNL = where === 'netherlands';
         return SITE_DATA.accommodations.filter(a => {
             if (who && !a.who.includes(who)) return false;
             if (what && !a.what.includes(what)) return false;
-            if (where && a.where !== where) return false;
+            if (where) {
+                if (whereNL) {
+                    if (!NL_KEYS.includes(a.where)) return false;
+                } else if (a.where !== where) {
+                    return false;
+                }
+            }
             if (subIsWat && !a.what.includes(subKey)) return false;
             return true;
         });
