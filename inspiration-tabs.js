@@ -472,6 +472,316 @@
         },
     ];
 
+    // ============================================================
+    //  DUAL-CONTEXT GENERATORS (Niveau 3 — twee actieve dimensies)
+    // ============================================================
+    //  Op een Niveau 3 pagina heeft de bezoeker al twee dimensies
+    //  vastgelegd. De Inspiratie-tabs voegen de derde dimensie toe of
+    //  swappen sub-refinements binnen de huidige WAT. Iedere URL
+    //  preserveert de actieve context (geen verlies van who/what/sub
+    //  bij doorklik). De Populair-tab is met de hand gemodelleerd in
+    //  9-item-blokken zodat de combo's curated en non-redundant zijn.
+    //
+    //  Tab-volgorde voor dual-context (zie renderInspirationTabs):
+    //    1. Populaire zoekcombinaties   ← primaire discovery
+    //    2. Reisgezelschap              (of WAT, afhankelijk van mix)
+    //    3. Bestemmingen
+    //    4. Vakantietype
+    //
+    //  De Populair-items zijn opgebouwd als 3-3-3 mix:
+    //    • 3× derde dimensie toevoegen (preserveert beide actieve)
+    //    • 3× sub-variant binnen huidige WAT (alleen voor WAT-context)
+    //    • 3× cross-pollination (drop één dimensie, voeg andere toe)
+    //  Hierdoor blijft de tab interessant ook als de actieve combinatie
+    //  weinig Niveau-4 alternatieven heeft.
+
+    function _safeSubKeys(what) {
+        const map = (typeof SITE_DATA !== 'undefined' && SITE_DATA.subLabels && SITE_DATA.subLabels[what]) || {};
+        return Object.keys(map);
+    }
+    function _resolveSubLabelGlobal(what, sub) {
+        if (typeof window !== 'undefined' && typeof window.safeSubLabel === 'function') return window.safeSubLabel(what, sub) || '';
+        if (typeof DATA !== 'undefined' && typeof DATA.subLabel === 'function') return DATA.subLabel(what, sub) || '';
+        return '';
+    }
+    function _whatIcon(what)  { return (typeof SITE_DATA !== 'undefined' && SITE_DATA.icons && SITE_DATA.icons[what]) || '📌'; }
+    function _whoIcon(who)    { return (typeof SITE_DATA !== 'undefined' && SITE_DATA.icons && SITE_DATA.icons[who])  || '👤'; }
+    function _destSuffixDual(whereKey, regionKey) {
+        // Reuse the existing _destSuffix definition (see WAAR-context
+        // generators above). This local copy is intentional — keeps
+        // the dual-context generators self-contained for refactoring.
+        if (regionKey && typeof DATA.region === 'function') {
+            const def = DATA.region(regionKey);
+            if (def) return ` ${def.preposition} ${def.label}`;
+        }
+        if (whereKey) return ` in ${DATA.label('where', whereKey)}`;
+        return '';
+    }
+    function _subParam(sub) { return sub ? `&sub=${sub}` : ''; }
+
+    // ---- WIE + WAT dual-context (Niveau 3 — WieWat) ----
+    function populairForWieWatContext(who, whoLabel, what, whatLabel, sub, subLabel) {
+        const baseLabel = subLabel || whatLabel; // bv. "Boutique Hotels" of "Hotels"
+        const lo = (whoLabel || '').toLowerCase();
+        const sp = _subParam(sub);
+        const N4    = (w) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${w}${sp}`;
+        const N3R   = (r) => `Niveau3-WaarWat.html?what=${what}&region=${r}${sp}`;
+        const N3SUB = (s) => `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${s}`;
+        // 3 sub-varianten binnen huidige WAT (curated max)
+        const subItems = _safeSubKeys(what).filter(k => k !== sub).slice(0, 3).map(k => {
+            const lbl = _resolveSubLabelGlobal(what, k);
+            return lbl ? { icon: _whatIcon(what), title: `${lbl} voor ${lo}`, href: N3SUB(k) } : null;
+        }).filter(Boolean);
+        // 6 bestemming-uitbreidingen + 3 sub-varianten = 9 items
+        return [
+            { icon: "🍝", title: `${baseLabel} voor ${lo} in Italië`,     href: N4("italie") },
+            { icon: "🗼", title: `${baseLabel} voor ${lo} in Frankrijk`,  href: N4("frankrijk") },
+            { icon: "🇳🇱", title: `${baseLabel} voor ${lo} in Nederland`,  href: N4("netherlands") },
+            { icon: "🥘", title: `${baseLabel} voor ${lo} in Spanje`,     href: N4("spanje") },
+            { icon: "🏖️", title: `${baseLabel} voor ${lo} aan zee`,       href: N3R("aan-zee") },
+            { icon: "⛰️", title: `${baseLabel} voor ${lo} bij de bergen`, href: N3R("bergen") },
+            ...subItems,
+        ].slice(0, 9);
+    }
+    function reisgezelschapForWieWatContext(who, what, whatLabel, sub, subLabel) {
+        // Alternatieve WIE-keuzes voor dezelfde WAT+sub.
+        const baseLabel = subLabel || whatLabel;
+        const sp = _subParam(sub);
+        const N3 = (otherWho) => `Niveau3-WieWat.html?who=${otherWho}&what=${what}${sp}`;
+        const allWho = [
+            { who: "couples",         icon: "💑",      lbl: "voor koppels" },
+            { who: "families-kids",   icon: "👨‍👩‍👧", lbl: "voor families" },
+            { who: "families-teens",  icon: "🧑",      lbl: "voor tieners" },
+            { who: "families-babies", icon: "👶",      lbl: "met baby's" },
+            { who: "friends",         icon: "👫",      lbl: "met vrienden" },
+            { who: "seniors",         icon: "👴",      lbl: "voor senioren" },
+            { who: "solo",            icon: "🚶",      lbl: "voor alleen reizenden" },
+            { who: "pets",            icon: "🐕",      lbl: "met huisdier" },
+        ].filter(w => w.who !== who);
+        return allWho.slice(0, 9).map(w => ({
+            icon: w.icon, title: `${baseLabel} ${w.lbl}`, href: N3(w.who),
+        }));
+    }
+    function bestemmingenForWieWatContext(who, whoLabel, what, sub, subLabel) {
+        // Bestemming-toevoeging met huidige WIE+WAT+sub → Niveau 4
+        // (concrete landen) of Niveau 3 met region= (aggregaten).
+        const baseLabel = subLabel || DATA.label('what', what);
+        const lo = (whoLabel || '').toLowerCase();
+        const sp = _subParam(sub);
+        const N4  = (w) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${w}${sp}`;
+        const N3R = (r) => `Niveau3-WaarWat.html?what=${what}&region=${r}${sp}`;
+        return [
+            { icon: "🌍", title: `${baseLabel} voor ${lo} in Europa`,     href: N3R("europa") },
+            { icon: "🍝", title: `${baseLabel} voor ${lo} in Italië`,     href: N4("italie") },
+            { icon: "🗼", title: `${baseLabel} voor ${lo} in Frankrijk`,  href: N4("frankrijk") },
+            { icon: "🥘", title: `${baseLabel} voor ${lo} in Spanje`,     href: N4("spanje") },
+            { icon: "🍺", title: `${baseLabel} voor ${lo} in Duitsland`,  href: N4("duitsland") },
+            { icon: "🇳🇱", title: `${baseLabel} voor ${lo} in Nederland`,  href: N4("netherlands") },
+            { icon: "⛵", title: `${baseLabel} voor ${lo} in Kroatië`,    href: N4("kroatie") },
+            { icon: "🏖️", title: `${baseLabel} voor ${lo} aan zee`,       href: N3R("aan-zee") },
+            { icon: "⛰️", title: `${baseLabel} voor ${lo} bij de bergen`, href: N3R("bergen") },
+        ];
+    }
+    function vakantietypeForWieWatContext(who, whoLabel, what) {
+        // Sub-refinements binnen huidige WAT (preserveert WIE). Wanneer
+        // de WAT geen sub-map heeft (bv. sun/winter) val je terug op
+        // andere WAT-types voor dezelfde WIE.
+        const subs = (typeof SITE_DATA !== 'undefined' && SITE_DATA.subLabels && SITE_DATA.subLabels[what]) || null;
+        const lo = (whoLabel || '').toLowerCase();
+        if (subs) {
+            return Object.entries(subs).map(([k, lbl]) => ({
+                icon: _whatIcon(what),
+                title: `${lbl} voor ${lo}`,
+                href: `Niveau3-WieWat.html?who=${who}&what=${what}&sub=${k}`,
+            })).slice(0, 9);
+        }
+        // Geen subs voor deze WAT → toon alternatieve WAT-types
+        return vakantietypeForWieContext(who, whoLabel);
+    }
+
+    // ---- WAT + WAAR dual-context (Niveau 3 — WaarWat) ----
+    function populairForWatWaarContext(what, whatLabel, sub, subLabel, whereKey, regionKey) {
+        const baseLabel = subLabel || whatLabel;
+        const suf = _destSuffixDual(whereKey, regionKey);
+        const sp = _subParam(sub);
+        const destParam = whereKey ? `where=${whereKey}` : `region=${regionKey}`;
+        // Niveau 4 ondersteunt alleen where=, niet region=. Voor region-
+        // aggregaten vallen we terug op Niveau 3 — WaarWat.
+        const N4   = (w) => whereKey
+            ? `Niveau4-WieWatWaar.html?who=${w}&what=${what}&where=${whereKey}${sp}`
+            : `Niveau3-WaarWat.html?who=${w}&what=${what}&region=${regionKey}${sp}`;
+        const N3SUB = (s) => `Niveau3-WaarWat.html?what=${what}&${destParam}&sub=${s}`;
+        const N3WIE = (w) => `Niveau3-WieWat.html?who=${w}&what=${what}${sp}`;
+        const subItems = _safeSubKeys(what).filter(k => k !== sub).slice(0, 3).map(k => {
+            const lbl = _resolveSubLabelGlobal(what, k);
+            return lbl ? { icon: _whatIcon(what), title: `${lbl}${suf}`, href: N3SUB(k) } : null;
+        }).filter(Boolean);
+        // 3 WIE-uitbreidingen (preserveert WAT+sub+WAAR) +
+        // 3 sub-varianten (preserveert WAT+WAAR) +
+        // 3 cross-pollination (drop WAAR, voeg WIE toe) = 9 items
+        return [
+            { icon: "💑",      title: `${baseLabel}${suf} voor koppels`,      href: N4("couples") },
+            { icon: "👨‍👩‍👧", title: `${baseLabel}${suf} voor gezinnen`,     href: N4("families-kids") },
+            { icon: "👴",      title: `${baseLabel}${suf} voor senioren`,     href: N4("seniors") },
+            ...subItems,
+            { icon: "👫", title: `${baseLabel} met vrienden`,            href: N3WIE("friends") },
+            { icon: "🚶", title: `${baseLabel} voor alleen reizenden`,   href: N3WIE("solo") },
+            { icon: "🐕", title: `${baseLabel} met huisdier`,            href: N3WIE("pets") },
+        ].slice(0, 9);
+    }
+    function reisgezelschapForWatWaarContext(what, whatLabel, sub, subLabel, whereKey, regionKey) {
+        // 8 WIE-opties met huidige WAT+sub+WAAR → Niveau 4 (concrete
+        // landen) of Niveau 3 met who+region (aggregaten).
+        const baseLabel = subLabel || whatLabel;
+        const suf = _destSuffixDual(whereKey, regionKey);
+        const sp = _subParam(sub);
+        const N4 = (w) => whereKey
+            ? `Niveau4-WieWatWaar.html?who=${w}&what=${what}&where=${whereKey}${sp}`
+            : `Niveau3-WaarWat.html?who=${w}&what=${what}&region=${regionKey}${sp}`;
+        return [
+            { icon: "💑",      title: `${baseLabel}${suf} voor koppels`,                href: N4("couples") },
+            { icon: "👨‍👩‍👧", title: `${baseLabel}${suf} voor gezinnen met kinderen`,  href: N4("families-kids") },
+            { icon: "🧑",      title: `${baseLabel}${suf} voor gezinnen met tieners`,   href: N4("families-teens") },
+            { icon: "👶",      title: `${baseLabel}${suf} met baby's`,                  href: N4("families-babies") },
+            { icon: "👫",      title: `${baseLabel}${suf} met vrienden`,                href: N4("friends") },
+            { icon: "👴",      title: `${baseLabel}${suf} voor senioren`,               href: N4("seniors") },
+            { icon: "🚶",      title: `${baseLabel}${suf} voor alleen reizenden`,       href: N4("solo") },
+            { icon: "🐕",      title: `${baseLabel}${suf} met huisdier`,                href: N4("pets") },
+        ];
+    }
+    function bestemmingenForWatWaarContext(what, whatLabel, sub, subLabel, whereKey, regionKey) {
+        // Alternatieve WAAR-keuzes met huidige WAT+sub. We tonen alle
+        // landen behalve de huidige, plus de region-aggregaten die
+        // sterk genoeg zijn (Europa, Bergen, Aan zee).
+        const baseLabel = subLabel || whatLabel;
+        const sp = _subParam(sub);
+        const N3 = (w) => `Niveau3-WaarWat.html?what=${what}&where=${w}${sp}`;
+        const N3R = (r) => `Niveau3-WaarWat.html?what=${what}&region=${r}${sp}`;
+        const allWhere = [
+            { key: "italie",      icon: "🍝",  label: "Italië" },
+            { key: "frankrijk",   icon: "🗼",  label: "Frankrijk" },
+            { key: "spanje",      icon: "🥘",  label: "Spanje" },
+            { key: "duitsland",   icon: "🍺",  label: "Duitsland" },
+            { key: "kroatie",     icon: "⛵",  label: "Kroatië" },
+            { key: "netherlands", icon: "🇳🇱",  label: "Nederland" },
+            { key: "belgie",      icon: "🍫",  label: "België" },
+            { key: "portugal",    icon: "🏖️",  label: "Portugal" },
+        ].filter(w => w.key !== whereKey).slice(0, 6);
+        const regionItems = [
+            { key: "europa",  icon: "🌍",  label: "in Europa",     prep: "in" },
+            { key: "bergen",  icon: "⛰️",  label: "bij de bergen", prep: "bij" },
+            { key: "aan-zee", icon: "🏖️",  label: "aan zee",       prep: "aan" },
+        ].filter(r => r.key !== regionKey).slice(0, 3);
+        return [
+            ...allWhere.map(w => ({
+                icon: w.icon, title: `${baseLabel} in ${w.label}`, href: N3(w.key),
+            })),
+            ...regionItems.map(r => ({
+                icon: r.icon, title: `${baseLabel} ${r.label}`, href: N3R(r.key),
+            })),
+        ].slice(0, 9);
+    }
+    function vakantietypeForWatWaarContext(what, whereKey, regionKey) {
+        // Sub-refinements binnen huidige WAT (preserveert WAAR).
+        const subs = (typeof SITE_DATA !== 'undefined' && SITE_DATA.subLabels && SITE_DATA.subLabels[what]) || null;
+        const suf = _destSuffixDual(whereKey, regionKey);
+        const destParam = whereKey ? `where=${whereKey}` : `region=${regionKey}`;
+        if (subs) {
+            return Object.entries(subs).map(([k, lbl]) => ({
+                icon: _whatIcon(what),
+                title: `${lbl}${suf}`,
+                href: `Niveau3-WaarWat.html?what=${what}&${destParam}&sub=${k}`,
+            })).slice(0, 9);
+        }
+        return vakantietypeForWaarContext(whereKey, regionKey);
+    }
+
+    // ---- WIE + WAAR dual-context (Niveau 3 — WieWaar) ----
+    function populairForWieWaarContext(who, whoLabel, whereKey, regionKey) {
+        const lo = (whoLabel || '').toLowerCase();
+        const suf = _destSuffixDual(whereKey, regionKey);
+        const destParam = whereKey ? `where=${whereKey}` : `region=${regionKey}`;
+        const N4 = (what) => whereKey
+            ? `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${whereKey}`
+            : `Niveau3-WaarWat.html?who=${who}&what=${what}&region=${regionKey}`;
+        const N3WAARWAT = (what) => `Niveau3-WaarWat.html?what=${what}&${destParam}`;
+        return [
+            { icon: "🏨", title: `Hotel${suf} voor ${lo}`,         href: N4("hotel") },
+            { icon: "⛺", title: `Camping${suf} met ${lo}`,        href: N4("camping") },
+            { icon: "🎡", title: `Vakantiepark${suf} voor ${lo}`,  href: N4("holiday-park") },
+            { icon: "💆", title: `Wellness${suf} voor ${lo}`,      href: N4("wellness") },
+            { icon: "✨", title: `Glamping${suf} voor ${lo}`,      href: N4("glamping") },
+            { icon: "☀️", title: `Zonvakantie${suf} voor ${lo}`,   href: N4("sun") },
+            { icon: "🏨", title: `Hotels${suf}`,                   href: N3WAARWAT("hotel") },
+            { icon: "⛺", title: `Camping${suf}`,                  href: N3WAARWAT("camping") },
+            { icon: "🎡", title: `Vakantieparken${suf}`,           href: N3WAARWAT("holiday-park") },
+        ];
+    }
+    function reisgezelschapForWieWaarContext(who, whereKey, regionKey) {
+        // Alternatieve WIE-keuzes met huidige WAAR.
+        const N3 = (otherWho) => whereKey
+            ? `Niveau3-WieWaar.html?who=${otherWho}&where=${whereKey}`
+            : `Niveau3-WieWaar.html?who=${otherWho}&region=${regionKey}`;
+        const suf = _destSuffixDual(whereKey, regionKey);
+        const all = [
+            { who: "couples",         icon: "💑",      lbl: `Voor koppels${suf}` },
+            { who: "families-kids",   icon: "👨‍👩‍👧", lbl: `Voor gezinnen${suf}` },
+            { who: "families-teens",  icon: "🧑",      lbl: `Voor tieners${suf}` },
+            { who: "families-babies", icon: "👶",      lbl: `Met baby's${suf}` },
+            { who: "friends",         icon: "👫",      lbl: `Met vrienden${suf}` },
+            { who: "seniors",         icon: "👴",      lbl: `Voor senioren${suf}` },
+            { who: "solo",            icon: "🚶",      lbl: `Alleen reizend${suf}` },
+            { who: "pets",            icon: "🐕",      lbl: `Met huisdier${suf}` },
+        ].filter(w => w.who !== who);
+        return all.slice(0, 9).map(w => ({ icon: w.icon, title: w.lbl, href: N3(w.who) }));
+    }
+    function bestemmingenForWieWaarContext(who, whoLabel, whereKey, regionKey) {
+        // Alternatieve WAAR-keuzes met huidige WIE → Niveau 3 — WieWaar.
+        const lo = (whoLabel || '').toLowerCase();
+        const N3W = (w)  => `Niveau3-WieWaar.html?who=${who}&where=${w}`;
+        const N3R = (r)  => `Niveau3-WieWaar.html?who=${who}&region=${r}`;
+        const allWhere = [
+            { key: "italie",      icon: "🍝",  label: "Italië" },
+            { key: "frankrijk",   icon: "🗼",  label: "Frankrijk" },
+            { key: "spanje",      icon: "🥘",  label: "Spanje" },
+            { key: "duitsland",   icon: "🍺",  label: "Duitsland" },
+            { key: "kroatie",     icon: "⛵",  label: "Kroatië" },
+            { key: "netherlands", icon: "🇳🇱",  label: "Nederland" },
+        ].filter(w => w.key !== whereKey).slice(0, 6);
+        const regionItems = [
+            { key: "europa",  icon: "🌍",  label: "Europa met",     pref: "" },
+            { key: "bergen",  icon: "⛰️",  label: "de bergen met",  pref: "" },
+            { key: "aan-zee", icon: "🏖️",  label: "Aan zee met",    pref: "" },
+        ].filter(r => r.key !== regionKey).slice(0, 3);
+        return [
+            ...allWhere.map(w => ({
+                icon: w.icon, title: `${w.label} met ${lo}`, href: N3W(w.key),
+            })),
+            ...regionItems.map(r => ({
+                icon: r.icon, title: `${r.label} ${lo}`, href: N3R(r.key),
+            })),
+        ].slice(0, 9);
+    }
+    function vakantietypeForWieWaarContext(who, whoLabel, whereKey, regionKey) {
+        // WAT-toevoegingen met huidige WIE+WAAR → Niveau 4.
+        const lo = (whoLabel || '').toLowerCase();
+        const suf = _destSuffixDual(whereKey, regionKey);
+        const N4 = (what) => whereKey
+            ? `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${whereKey}`
+            : `Niveau3-WaarWat.html?who=${who}&what=${what}&region=${regionKey}`;
+        return [
+            { icon: "🏨", title: `Hotels${suf} voor ${lo}`,         href: N4("hotel") },
+            { icon: "⛺", title: `Camping${suf} voor ${lo}`,        href: N4("camping") },
+            { icon: "🎡", title: `Vakantieparken${suf} voor ${lo}`, href: N4("holiday-park") },
+            { icon: "✨", title: `Glamping${suf} voor ${lo}`,       href: N4("glamping") },
+            { icon: "💆", title: `Wellness${suf} voor ${lo}`,       href: N4("wellness") },
+            { icon: "☀️", title: `Zonvakantie${suf} voor ${lo}`,    href: N4("sun") },
+            { icon: "⛷️", title: `Wintersport${suf} voor ${lo}`,    href: N4("winter") },
+            { icon: "🧗", title: `Avontuur${suf} voor ${lo}`,       href: N4("adventure-trip") },
+            { icon: "🏙️", title: `Weekendje weg${suf} voor ${lo}`,  href: N4("city-trip") },
+        ];
+    }
+
     function escapeHTML(s) {
         return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
@@ -482,28 +792,40 @@
 
         const opts = options || {};
         // ---- CONTEXT RESOLUTION ----
-        // Vier mutueel-exclusieve contexten ondersteund:
-        //   1. contextWhat (+contextSub) → WAT-context (Niveau 2 — Wat)
-        //   2. contextWho                → WIE-context (Niveau 2 — Wie)
-        //   3. contextWhere/contextRegion → WAAR-context (Niveau 2 — Waar)
-        //   4. (geen) → homepage default (Populair / Reisgezelschap /
-        //               Vakantietype / Bestemmingen, generieke items)
+        // Tot drie dimensies tegelijk ondersteund (Niveau 2 + Niveau 3).
+        // Iedere dimensie wordt los geresolved — er is GEEN auto-nulling
+        // van WIE/WAAR wanneer WAT óók aanwezig is, want Niveau 3
+        // pagina's hebben juist meerdere dimensies tegelijk.
         //
-        // Eén-context-tegelijk policy: bij overlap wint WAT > WIE > WAAR.
-        // De aanroeper hoort er maar één tegelijk te zetten — de override
-        // hier is een vangnet.
-        const contextWhat = opts.contextWhat && WHAT_REFINEMENTS[opts.contextWhat]
-            ? opts.contextWhat
-            : null;
-        const contextWho    = (!contextWhat && opts.contextWho)
-            ? opts.contextWho : null;
-        const contextWhere  = (!contextWhat && !contextWho && opts.contextWhere)
-            ? opts.contextWhere : null;
-        const contextRegion = (!contextWhat && !contextWho && opts.contextRegion)
-            ? opts.contextRegion : null;
+        // De dispatchers detecteren single-context vs dual-context op
+        // basis van de gecombineerde booleans (isDualWieWat etc.).
+        const contextWhat   = opts.contextWhat   || null;
+        const contextWho    = opts.contextWho    || null;
+        const contextWhere  = opts.contextWhere  || null;
+        const contextRegion = opts.contextRegion || null;
+
+        // Booleans voor single- en dual-context scenario's.
+        const hasContextWat  = !!contextWhat;
         const hasContextWie  = !!contextWho;
         const hasContextWaar = !!contextWhere || !!contextRegion;
-        const contextWhoLabel = contextWho ? DATA.label('who', contextWho) : '';
+
+        // Dual-context = Niveau 3 (precies 2 dimensies aan). Drie 3-
+        // way combinaties; ene uitsluitend, dus mutex via && !...
+        const isDualWieWat   = hasContextWie  && hasContextWat  && !hasContextWaar;
+        const isDualWatWaar  = hasContextWat  && hasContextWaar && !hasContextWie;
+        const isDualWieWaar  = hasContextWie  && hasContextWaar && !hasContextWat;
+        const isDual         = isDualWieWat || isDualWatWaar || isDualWieWaar;
+
+        // Single-context = Niveau 2 (exact 1 dimensie aan).
+        const isSingleWat  = hasContextWat  && !hasContextWie  && !hasContextWaar;
+        const isSingleWie  = hasContextWie  && !hasContextWat  && !hasContextWaar;
+        const isSingleWaar = hasContextWaar && !hasContextWat  && !hasContextWie;
+
+        // Labels die hieronder door alle generators worden gebruikt.
+        const contextWhoLabel    = contextWho   ? DATA.label('who', contextWho)        : '';
+        const contextWhatLabel   = contextWhat  ? DATA.label('what', contextWhat)      : '';
+        const contextWhereLabel  = contextWhere ? DATA.label('where', contextWhere)    : '';
+        const contextRegionLabel = contextRegion ? DATA.regionDisplayName(contextRegion) : '';
         // contextSub = sub-niveau binnen contextWhat (bijv. 'wellness',
         // 'boutique', 'glamping'). Wanneer gezet, regenereren we
         // Reisgezelschap / Bestemmingen / Populair zodat de
@@ -546,28 +868,36 @@
         });
 
         // Tab-volgorde + label-override per context.
-        //   • WAT-context: Vakantietype eerst (sub-refinements), dán
-        //     Reisgezelschap / Bestemmingen / Populair.
-        //   • WIE-context: Reisgezelschap weg (al gekozen). Tabs:
+        //   • Niveau 3 dual-context (WIE+WAT / WAT+WAAR / WIE+WAAR):
+        //     Populaire zoekcombinaties EERST → primaire discovery
+        //     ("Boutique Hotels voor solo in Italië"). Dan Reisgezel-
+        //     schap / Bestemmingen / Vakantietype voor verdieping.
+        //   • Niveau 2 — Wat (single WAT-context): Vakantietype eerst
+        //     (sub-refinements), dán Reisgezelschap / Bestemmingen /
+        //     Populair.
+        //   • Niveau 2 — Wie: Reisgezelschap weg (al gekozen). Tabs:
         //     Vakantietype / Bestemmingen / Populair.
-        //   • WAAR-context: Bestemmingen weg (al gekozen). Tabs:
+        //   • Niveau 2 — Waar: Bestemmingen weg (al gekozen). Tabs:
         //     Vakantietype / Reisgezelschap / Populair.
         //   • Homepage (geen context): standaard 4 tabs.
         //
-        // Populair-tab krijgt op een context-pagina de label
+        // Populair-tab krijgt op iedere context-pagina de label
         // "Populaire zoekcombinaties" om duidelijk te maken dat het
-        // 2-dim combo's zijn binnen de huidige context.
+        // combinatorische verfijningen zijn van de huidige context.
         let orderedTabIds;
-        if (contextWhat) {
+        if (isDual) {
+            // Niveau 3 — Populair first (discovery-driven)
+            orderedTabIds = ["populair", "reisgezelschap", "bestemmingen", "vakantietype"];
+        } else if (isSingleWat) {
             orderedTabIds = ["vakantietype", "reisgezelschap", "bestemmingen", "populair"];
-        } else if (hasContextWie) {
+        } else if (isSingleWie) {
             orderedTabIds = ["vakantietype", "bestemmingen", "populair"];
-        } else if (hasContextWaar) {
+        } else if (isSingleWaar) {
             orderedTabIds = ["vakantietype", "reisgezelschap", "populair"];
         } else {
             orderedTabIds = TABS.map(t => t.id);
         }
-        const hasAnyContext = !!contextWhat || hasContextWie || hasContextWaar;
+        const hasAnyContext = isDual || isSingleWat || isSingleWie || isSingleWaar;
         const TAB_LABEL_OVERRIDES = hasAnyContext
             ? { populair: "Populaire zoekcombinaties" }
             : {};
@@ -594,45 +924,67 @@
         function itemsForCurrentTab() {
             const tab = TABS.find(t => t.id === activeTab) || TABS[0];
 
-            // ---- WIE-CONTEXT (Niveau 2 — Wie) ----
-            if (hasContextWie) {
+            // ---- NIVEAU 3 DUAL-CONTEXT ----
+            // Twee dimensies actief — Populair toont curated 9-item
+            // combo's met derde dimensie of sub-twist; overige tabs
+            // preserveren beide actieve dimensies in elke URL.
+            if (isDualWieWat) {
+                if (activeTab === "populair")       return populairForWieWatContext(contextWho, contextWhoLabel, contextWhat, contextWhatLabel, contextSub, contextSubLabel);
+                if (activeTab === "reisgezelschap") return reisgezelschapForWieWatContext(contextWho, contextWhat, contextWhatLabel, contextSub, contextSubLabel);
+                if (activeTab === "bestemmingen")   return bestemmingenForWieWatContext(contextWho, contextWhoLabel, contextWhat, contextSub, contextSubLabel);
+                if (activeTab === "vakantietype")   return vakantietypeForWieWatContext(contextWho, contextWhoLabel, contextWhat);
+                return tab.items;
+            }
+            if (isDualWatWaar) {
+                if (activeTab === "populair")       return populairForWatWaarContext(contextWhat, contextWhatLabel, contextSub, contextSubLabel, contextWhere, contextRegion);
+                if (activeTab === "reisgezelschap") return reisgezelschapForWatWaarContext(contextWhat, contextWhatLabel, contextSub, contextSubLabel, contextWhere, contextRegion);
+                if (activeTab === "bestemmingen")   return bestemmingenForWatWaarContext(contextWhat, contextWhatLabel, contextSub, contextSubLabel, contextWhere, contextRegion);
+                if (activeTab === "vakantietype")   return vakantietypeForWatWaarContext(contextWhat, contextWhere, contextRegion);
+                return tab.items;
+            }
+            if (isDualWieWaar) {
+                if (activeTab === "populair")       return populairForWieWaarContext(contextWho, contextWhoLabel, contextWhere, contextRegion);
+                if (activeTab === "reisgezelschap") return reisgezelschapForWieWaarContext(contextWho, contextWhere, contextRegion);
+                if (activeTab === "bestemmingen")   return bestemmingenForWieWaarContext(contextWho, contextWhoLabel, contextWhere, contextRegion);
+                if (activeTab === "vakantietype")   return vakantietypeForWieWaarContext(contextWho, contextWhoLabel, contextWhere, contextRegion);
+                return tab.items;
+            }
+
+            // ---- NIVEAU 2 SINGLE-CONTEXT ----
+            if (isSingleWie) {
                 if (activeTab === "vakantietype") return vakantietypeForWieContext(contextWho, contextWhoLabel);
                 if (activeTab === "bestemmingen") return bestemmingenForWieContext(contextWho, contextWhoLabel);
                 if (activeTab === "populair")     return populairForWieContext(contextWho, contextWhoLabel);
                 return tab.items;
             }
-
-            // ---- WAAR-CONTEXT (Niveau 2 — Waar) ----
-            if (hasContextWaar) {
+            if (isSingleWaar) {
                 if (activeTab === "vakantietype")  return vakantietypeForWaarContext(contextWhere, contextRegion);
                 if (activeTab === "reisgezelschap") return reisgezelschapForWaarContext(contextWhere, contextRegion);
                 if (activeTab === "populair")      return populairForWaarContext(contextWhere, contextRegion);
                 return tab.items;
             }
-
-            if (!contextWhat) return tab.items;
-
-            // ---- WAT-SUB-CONTEXT (bijv. "Wellness Hotels") ----
-            // Álle dynamische tabs preserveren het sub-niveau in
-            // label én URL. Vakantietype blijft de refinement-lijst
-            // tonen zodat de gebruiker eventueel naar een ander sub-
-            // type kan overstappen — daar voegen we geen sub aan toe
-            // omdat de refinements zelf al sub-keuzes zijn.
-            if (contextSub) {
-                if (activeTab === "populair")      return populairForSubContext(contextWhat, contextSub, contextSubLabel);
-                if (activeTab === "reisgezelschap") return reisgezelschapForSubContext(contextWhat, contextSub, contextSubLabel);
-                if (activeTab === "bestemmingen")   return bestemmingenForSubContext(contextWhat, contextSub, contextSubLabel);
-                if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat]) return WHAT_REFINEMENTS[contextWhat];
+            if (isSingleWat) {
+                // WAT-SUB-CONTEXT (bijv. "Wellness Hotels"): álle
+                // dynamische tabs preserveren het sub-niveau in label
+                // én URL. Vakantietype blijft de refinement-lijst
+                // tonen zodat de gebruiker naar een andere sub kan
+                // overstappen.
+                if (contextSub) {
+                    if (activeTab === "populair")       return populairForSubContext(contextWhat, contextSub, contextSubLabel);
+                    if (activeTab === "reisgezelschap") return reisgezelschapForSubContext(contextWhat, contextSub, contextSubLabel);
+                    if (activeTab === "bestemmingen")   return bestemmingenForSubContext(contextWhat, contextSub, contextSubLabel);
+                    if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat]) return WHAT_REFINEMENTS[contextWhat];
+                    return tab.items;
+                }
+                // WAT-CONTEXT zonder sub
+                if (activeTab === "populair"     && POPULAIR_BY_WAT[contextWhat])     return POPULAIR_BY_WAT[contextWhat];
+                if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat])    return WHAT_REFINEMENTS[contextWhat];
+                if (activeTab === "bestemmingen" && BESTEMMINGEN_BY_WAT[contextWhat]) return BESTEMMINGEN_BY_WAT[contextWhat];
+                if (activeTab === "reisgezelschap" && REISGEZELSCHAP_BY_WAT[contextWhat]) return REISGEZELSCHAP_BY_WAT[contextWhat];
                 return tab.items;
             }
 
-            // ---- WAT-CONTEXT zonder sub ----
-            if (activeTab === "populair"     && POPULAIR_BY_WAT[contextWhat])     return POPULAIR_BY_WAT[contextWhat];
-            if (activeTab === "vakantietype" && WHAT_REFINEMENTS[contextWhat])    return WHAT_REFINEMENTS[contextWhat];
-            if (activeTab === "bestemmingen" && BESTEMMINGEN_BY_WAT[contextWhat]) return BESTEMMINGEN_BY_WAT[contextWhat];
-            if (activeTab === "reisgezelschap" && REISGEZELSCHAP_BY_WAT[contextWhat]) {
-                return REISGEZELSCHAP_BY_WAT[contextWhat];
-            }
+            // ---- HOMEPAGE / GEEN CONTEXT ----
             return tab.items;
         }
 
