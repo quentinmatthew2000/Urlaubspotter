@@ -1,0 +1,191 @@
+/* ============================================================
+   premium-hero.css — geïsoleerd "premium category hero" component.
+
+   Bewust opgezet als generieke .ph-hero met thema-modifiers
+   (.ph-hero--hotel, ...--camping, ...--vakantiepark, etc.) zodat
+   we hetzelfde patroon later naar andere Niveau 2/3/4 pagina's
+   kunnen rollen zonder dit bestand te hoeven dupliceren.
+
+   Alle selectors zijn `.ph-*` namespaced — geen overlap met
+   site.css of andere componenten.
+   ============================================================ */
+
+.ph-hero {
+    /* CSS-variabelen worden per thema overschreven; defaults zijn
+       neutraal en passen bij alle WAT-types. */
+    --ph-bg-start: #ffffff;
+    --ph-bg-end:   #f5f5f5;
+    --ph-accent:   var(--primary, #1e6fff);
+    --ph-text:     #1a1f2c;
+    --ph-text-soft: #5a6373;
+    --ph-chip-bg:  rgba(255, 255, 255, 0.78);
+    --ph-chip-border: rgba(0, 0, 0, 0.08);
+    --ph-chip-text: var(--ph-text);
+
+    position: relative;
+    padding: 64px 24px 80px;
+    color: var(--ph-text);
+    overflow: hidden;
+    isolation: isolate;
+    /* Drie lagen: radial highlight rechtsboven (zonlicht), zachte
+       vignette linksonder (diepte), en het thema-kleurverloop. */
+    background:
+        radial-gradient(ellipse 80% 55% at 85% -10%, rgba(255,255,255,0.55), transparent 55%),
+        radial-gradient(ellipse 55% 55% at -5% 110%, rgba(0,0,0,0.06), transparent 60%),
+        linear-gradient(135deg, var(--ph-bg-start) 0%, var(--ph-bg-end) 100%);
+}
+
+.ph-hero-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- Breadcrumb — zachter, geïntegreerd in de hero ---------- */
+.ph-hero-breadcrumb {
+    font-size: 0.85rem;
+    color: var(--ph-text-soft);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    letter-spacing: 0.01em;
+}
+.ph-hero-breadcrumb a {
+    color: var(--ph-text-soft);
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+.ph-hero-breadcrumb a:hover { color: var(--ph-accent); }
+.ph-hero-breadcrumb .ph-sep {
+    opacity: 0.4;
+    margin: 0 2px;
+}
+.ph-hero-breadcrumb .ph-current {
+    color: var(--ph-text);
+    font-weight: 600;
+}
+
+/* ---------- Eyebrow (Niveau 2 — Wat › …) ---------- */
+.ph-hero-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ph-accent);
+    margin-bottom: 14px;
+    opacity: 0.85;
+}
+
+/* ---------- Editoriale titel ---------- */
+.ph-hero-title {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.06;
+    color: var(--ph-text);
+    margin: 0 0 20px;
+    max-width: 880px;
+    text-wrap: balance;
+}
+
+/* ---------- Supporting copy ---------- */
+.ph-hero-lead {
+    font-size: clamp(1.05rem, 1.5vw, 1.18rem);
+    line-height: 1.6;
+    color: var(--ph-text-soft);
+    max-width: 700px;
+    margin: 0 0 32px;
+    text-wrap: pretty;
+}
+
+/* ---------- Chips — premium glass-look ---------- */
+.ph-hero-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.ph-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--ph-chip-bg);
+    border: 1px solid var(--ph-chip-border);
+    border-radius: 999px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ph-chip-text);
+    line-height: 1.2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease, box-shadow 0.18s ease;
+    /* Lichte glas-effect voor premium feel; valt automatisch terug op
+       de opake achtergrond wanneer de browser geen backdrop-filter
+       ondersteunt. */
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+}
+.ph-chip--active {
+    background: var(--ph-text);
+    color: #fff;
+    border-color: var(--ph-text);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+    transform: translateY(-1px);
+}
+.ph-chip .ph-chip-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+/* ---------- Decoratie laag — accent line aan de onderkant ---------- */
+.ph-hero::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--ph-accent) 50%, transparent 100%);
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ---------- Thema: HOTEL (warm cream / gold luxury) ---------- */
+.ph-hero--hotel {
+    --ph-bg-start:  #faf3e6;   /* warme cream */
+    --ph-bg-end:    #ede0c5;   /* dieper warm beige */
+    --ph-accent:    #8b6914;   /* warm goud-brons */
+    --ph-text:      #2a2417;   /* deep ink op cream */
+    --ph-text-soft: #6f624a;
+    --ph-chip-bg:   rgba(255, 255, 255, 0.72);
+    --ph-chip-border: rgba(139, 105, 20, 0.20);
+}
+/* Extra warm-light blob aan de rechterbovenkant — suggereert
+   raamlicht in een luxe lounge. Volledig CSS, geen image assets. */
+.ph-hero--hotel::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -100px;
+    width: 540px;
+    height: 540px;
+    background:
+        radial-gradient(circle, rgba(255, 240, 200, 0.55) 0%, transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 720px) {
+    .ph-hero { padding: 40px 20px 56px; }
+    .ph-hero-breadcrumb { margin-bottom: 20px; }
+    .ph-hero-eyebrow { margin-bottom: 10px; }
+    .ph-hero-title { margin-bottom: 14px; }
+    .ph-hero-lead { margin-bottom: 24px; }
+    .ph-hero--hotel::before { width: 360px; height: 360px; right: -120px; top: -80px; }
+}

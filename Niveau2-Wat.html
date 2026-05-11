@@ -13,6 +13,11 @@
     <title>Wat voor vakantie? · Urlaubspotter</title>
     <link rel="stylesheet" href="site.css?v=14">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
+    <!-- Premium category hero — voorlopig alleen geactiveerd op de
+         Hotel-pagina (zie inline script onderaan). De CSS is generiek
+         opgezet zodat we hetzelfde patroon later eenvoudig uitrollen
+         naar andere Niveau 2/3/4 WAT-categorieën. -->
+    <link rel="stylesheet" href="premium-hero.css?v=1">
 </head>
 <body>
 
@@ -295,6 +300,69 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('what-carousel');
+
+    // ---- Premium category hero — opt-in test op Hotel-pagina ----
+    // Niveau2-Wat.html?what=hotel (geen sub) krijgt een premium
+    // editorial hero. Op alle andere combinaties valt het terug op
+    // de bestaande generieke header. De helper is bewust generiek
+    // gehouden zodat we hetzelfde patroon later kunnen uitrollen
+    // naar Camping, Vakantiepark, sub-pagina's, etc.
+    function applyPremiumHero(config) {
+        const oldCrumb = document.getElementById('bc');
+        const oldHeadSection = document.querySelector('section.section.tight');
+        if (oldCrumb) oldCrumb.style.display = 'none';
+        if (oldHeadSection) oldHeadSection.style.display = 'none';
+
+        const crumbHTML = (config.breadcrumb || []).map((seg, i, arr) => {
+            const isLast = i === arr.length - 1;
+            const sep = i > 0 ? `<span class="ph-sep">/</span>` : '';
+            const node = seg.href && !isLast
+                ? `<a href="${seg.href}">${seg.text}</a>`
+                : `<span class="ph-current">${seg.text}</span>`;
+            return sep + node;
+        }).join('');
+
+        const chipsHTML = (config.chips || []).map(c => `
+            <span class="ph-chip${c.active ? ' ph-chip--active' : ''}">
+                ${c.icon ? `<span class="ph-chip-icon" aria-hidden="true">${c.icon}</span>` : ''}
+                <span>${c.label}</span>
+            </span>
+        `).join('');
+
+        const heroHTML = `
+            <section class="ph-hero ph-hero--${config.theme || 'generic'}">
+                <div class="ph-hero-inner">
+                    <nav class="ph-hero-breadcrumb" aria-label="Kruimelpad">${crumbHTML}</nav>
+                    ${config.eyebrow ? `<span class="ph-hero-eyebrow">${config.eyebrow}</span>` : ''}
+                    <h1 class="ph-hero-title">${config.title}</h1>
+                    ${config.lead ? `<p class="ph-hero-lead">${config.lead}</p>` : ''}
+                    ${chipsHTML ? `<div class="ph-hero-chips">${chipsHTML}</div>` : ''}
+                </div>
+            </section>
+        `;
+        const header = document.querySelector('header.site-header');
+        if (header) header.insertAdjacentHTML('afterend', heroHTML);
+        // Document title sluit aan op de editorial titel.
+        document.title = `${config.title} · Urlaubspotter`;
+    }
+
+    // ALLEEN activeren voor de Hotel-pagina zonder sub-context.
+    if (whatPre === 'hotel' && !subPre) {
+        applyPremiumHero({
+            theme:    'hotel',
+            eyebrow:  'Niveau 2 — Wat › Hotel',
+            title:    'Vind jouw ideale hotelvakantie',
+            lead:     'Van luxe resorts en boutique hotels tot sfeervolle city stays en wellness escapes — ontdek hotels voor iedere reisstijl en bestemming.',
+            breadcrumb: [
+                { href: 'Homepagina.html',  text: 'Home' },
+                { href: 'Niveau2-Wat.html', text: 'Wat voor vakantie?' },
+                {                            text: 'Hotels' },
+            ],
+            chips: [
+                { icon: '🏨', label: 'Hotel', active: true },
+            ],
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {
