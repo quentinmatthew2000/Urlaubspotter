@@ -894,7 +894,7 @@ function renderKeuzehulpHero(containerId) {
             <div class="kh-hero-content">
                 <span class="kh-hero-eyebrow">Jouw volgende ontdekking</span>
                 <h2 class="kh-hero-title">Jouw reisgenoot voor de mooiste plekken ter wereld.</h2>
-                <p class="kh-hero-lead">Vind in zeven slimme vragen de vakantie die écht bij jou past — gebaseerd op je reisgezelschap, sfeer en bestemming.</p>
+                <p class="kh-hero-lead">Vind in zeven slimme vragen de vakantie die écht bij jou past.</p>
                 <a class="kh-hero-cta" href="Keuzehulp.html">
                     <!-- Sparkles-icon (lucide-style) — past bij "slimme
                          personalisatie / guided discovery" beter dan

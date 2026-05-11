@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=19">
+    <link rel="stylesheet" href="site.css?v=20">
     <link rel="stylesheet" href="search-navigation.css?v=9">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
@@ -15,53 +15,15 @@
 <!-- Search-navigation mount. Op .hp-home wordt de oude "Begin je
      zoektocht"-pill verborgen (zie site.css); wat zichtbaar blijft
      zijn de sticky category-tabs (Resorts & Hotels / Campings /
-     Vakantieparken). De pill leeft nu in de discovery-banner
-     hieronder met dezelfde data-sn-open trigger. -->
+     Vakantieparken) — fungeren als hero/top-strip. -->
 <div id="hero-searchbar"></div>
 
-<!-- MAIN DISCOVERY BANNER — premium homepage hoofd-hero met
-     geïntegreerde "Begin je zoektocht" pill. Editorial layered
-     compositie met sunset/ocean accent-gradients en
-     destination-chips als discovery-hints. -->
-<section class="hp-discovery" aria-label="Vind jouw vakantie">
-    <div class="hp-discovery-inner">
-        <span class="hp-discovery-eyebrow">Jouw volgende reis</span>
-        <h1 class="hp-discovery-title">Vind vakanties die <em>écht</em> bij je passen</h1>
-        <p class="hp-discovery-lead">Slim zoeken op reisgezelschap, vakantietype en bestemming — gepersonaliseerd door onze redactie.</p>
-        <div class="hp-discovery-search">
-            <button type="button" class="hp-discovery-pill" data-sn-open aria-haspopup="dialog">
-                <span class="hp-discovery-pill-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </span>
-                <span class="hp-discovery-pill-text">
-                    <strong>Begin je zoektocht</strong>
-                    <span>Wie · Wat · Waar · Wanneer</span>
-                </span>
-                <span class="hp-discovery-pill-cta">Start →</span>
-            </button>
-        </div>
-        <!-- Discovery-hints: 5 destination/sub chips als warm
-             travel-atmosphere. Klikbaar — koppelen aan bestaande
-             Niveau 2 contextpagina's. -->
-        <div class="hp-discovery-chips">
-            <a class="hp-discovery-chip" href="Niveau2-Waar.html?where=italie">
-                <span class="hp-discovery-chip-emoji" aria-hidden="true">🍝</span>Italië
-            </a>
-            <a class="hp-discovery-chip" href="Niveau2-Waar.html?region=bergen">
-                <span class="hp-discovery-chip-emoji" aria-hidden="true">⛰️</span>Bergen
-            </a>
-            <a class="hp-discovery-chip" href="Niveau2-Waar.html?region=aan-zee">
-                <span class="hp-discovery-chip-emoji" aria-hidden="true">🏖️</span>Aan zee
-            </a>
-            <a class="hp-discovery-chip" href="Niveau2-Wat.html?what=hotel&amp;sub=wellness">
-                <span class="hp-discovery-chip-emoji" aria-hidden="true">💆</span>Wellness
-            </a>
-            <a class="hp-discovery-chip" href="Niveau2-Wat.html?what=hotel&amp;sub=boutique">
-                <span class="hp-discovery-chip-emoji" aria-hidden="true">🛎️</span>Boutique hotels
-            </a>
-        </div>
-    </div>
-</section>
+<!-- MAIN DISCOVERY ENTRY — de dark premium Keuzehulp-CTA is nu
+     hét centrale onboarding-blok van de homepage. Vervangt de
+     oude "Begin je zoektocht" search-flow + de tegel-rijen
+     onderaan. Eén premium discovery-systeem, geen duplicatie.
+     Wordt gevuld door renderKeuzehulpHero('keuzehulp-block'). -->
+<div id="keuzehulp-block"></div>
 
 <!-- Inspiratie-tabs (Populair / Reisgezelschap / Vakantietype / Bestemmingen) -->
 <div id="inspiration-tabs"></div>
@@ -80,11 +42,6 @@
     </div>
     <div class="blog-grid" id="blog-preview" data-rail="260"></div>
 </section>
-
-<!-- COMPACT KEUZEHULP CTA — emotionele conversion-module ONDER
-     Blogs & Tips. Lichtgewicht onboarding-blok midden-pagina.
-     Wordt gevuld door renderKeuzehulpHero('keuzehulp-block'). -->
-<div id="keuzehulp-block"></div>
 
 <!-- 5. POPULAIRE ACCOMMODATIES (sleepbaar) -->
 <section class="section">
@@ -292,39 +249,10 @@
 </section>
 </div>
 
-<!-- Verplaatste blokken (Wie / Wat / Waar) — onderaan de homepage,
-     direct boven de nieuwsbrief. Inhoud en design ongewijzigd. -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Voor wie ga je?</span>
-        </div>
-        <a class="link" href="Niveau2-Wie.html">Alle gezelschappen →</a>
-    </div>
-    <div class="cat-grid small" id="home-who-tiles"></div>
-</section>
-
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Wat voor vakantie?</span>
-        </div>
-        <a class="link" href="Niveau2-Wat.html">Alle types →</a>
-    </div>
-    <div class="cat-grid small" id="home-what-tiles"></div>
-</section>
-</div>
-
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Waar wil je naartoe?</span>
-        </div>
-        <a class="link" href="Niveau2-Waar.html">Alle bestemmingen →</a>
-    </div>
-    <div class="cat-grid small" id="home-where-tiles"></div>
-</section>
+<!-- De drie tegel-rijen onderaan (Wie / Wat / Waar) zijn verwijderd
+     omdat ze het oude discovery-systeem dupliceerden. De Keuzehulp-
+     CTA bovenaan is nu het primaire onboarding-blok; Inspiratie-tabs
+     verzorgen de granulaire navigatie. -->
 
 <!-- NIEUWSBRIEF + SOCIAL -->
 <section class="section">
@@ -337,26 +265,13 @@
 </footer>
 
 <script src="site-data.js?v=13"></script>
-<script src="site.js?v=19"></script>
+<script src="site.js?v=20"></script>
 <script src="search-navigation.js?v=9"></script>
 <script src="inspiration-tabs.js?v=20"></script>
 <script>
     renderHeader('home');
     renderSearchNavigation('hero-searchbar');
     renderInspirationTabs('inspiration-tabs');
-
-    renderCategoryTiles('home-who-tiles', DATA.who(), {
-        linkBuilder: (v) => `Niveau2-Wie.html?who=${v}`,
-        gradient: SITE_DATA.gradients.who
-    });
-    renderCategoryTiles('home-what-tiles', DATA.what(), {
-        linkBuilder: (v) => `Niveau2-Wat.html?what=${v}`,
-        gradient: SITE_DATA.gradients.what
-    });
-    renderCategoryTiles('home-where-tiles', DATA.whereAll().slice(0, 8), {
-        linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
-        gradient: SITE_DATA.gradients.where
-    });
 
     renderListingPreview('popular-listing', SITE_DATA.accommodations.slice(0, 8), { limit: 8 });
     // Homepage gebruikt de emotionele hero-banner i.p.v. de compacte
