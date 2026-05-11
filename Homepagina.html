@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=20">
+    <link rel="stylesheet" href="site.css?v=21">
     <link rel="stylesheet" href="search-navigation.css?v=9">
     <link rel="stylesheet" href="inspiration-tabs.css?v=3">
 </head>
@@ -43,7 +43,70 @@
     <div class="blog-grid" id="blog-preview" data-rail="260"></div>
 </section>
 
-<!-- 5. POPULAIRE ACCOMMODATIES (sleepbaar) -->
+<!-- REDACTIE — Reisverslagen (sleepbaar). Verplaatst boven
+     Populaire accommodaties zodat inspiration-first de homepage-
+     tonaliteit zet i.p.v. catalog-first. Beide blokken blijven
+     horizontaal swipeable op mobiel via data-rail. -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Van de redactie</span>
+            <h2>Reisverslagen van onze redactie</h2>
+        </div>
+        <a class="link" href="reisverslagen.html">Alle reisverslagen →</a>
+    </div>
+    <div class="editorial-grid" data-rail="320">
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
+                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
+                <p>Wat viel ons op bij deze populaire camping aan de Noordzee? We sliepen er met ons gezin en beoordelen alles: van sanitair tot avondanimatie.</p>
+                <a class="link" href="reisverslag-detail.html?id=1">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
+                <h3>Een week wandelen in Zuid-Tirol</h3>
+                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best? Mark test drie opties in de Dolomieten en deelt zijn voorkeuren.</p>
+                <a class="link" href="reisverslag-detail.html?id=2">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
+                <h3>Wellness-weekenden in Nederland getest</h3>
+                <p>Van thermen in Limburg tot saunalandschap op de Veluwe. Anouk boekt vier wellness-hotels en geeft per plek haar gouden tips.</p>
+                <a class="link" href="reisverslag-detail.html?id=3">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🌴</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Kevin · Redacteur zonvakanties</span>
+                <h3>Vergelijking: Griekse eilanden voor gezinnen</h3>
+                <p>Kreta, Rhodos of Kos? Kevin verbleef op alle drie en deelt per eiland de sterke en zwakke punten voor families met jonge kinderen.</p>
+                <a class="link" href="reisverslag-detail.html?id=4">Lees het verslag →</a>
+            </div>
+        </article>
+        <article class="editorial-card">
+            <div class="editorial-card-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎿</div>
+            <div class="editorial-card-body">
+                <span class="editorial-author">Door Esther · Redacteur wintersport</span>
+                <h3>5 onbekende skigebieden in Oostenrijk</h3>
+                <p>Weg van de drukte — Esther zocht rustige skidorpen uit die nog betaalbaar zijn en bezocht er vijf in één seizoen.</p>
+                <a class="link" href="reisverslag-detail.html?id=5">Lees het verslag →</a>
+            </div>
+        </article>
+    </div>
+</section>
+</div>
+
+<!-- POPULAIRE ACCOMMODATIES (sleepbaar) -->
 <section class="section">
     <div class="section-head">
         <div>
@@ -188,66 +251,6 @@
         </a>
     </div>
 </section>
-
-<!-- 10. REDACTIE — Reisverslagen (sleepbaar) -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Van de redactie</span>
-            <h2>Reisverslagen van onze redactie</h2>
-        </div>
-        <a class="link" href="reisverslagen.html">Alle reisverslagen →</a>
-    </div>
-    <div class="editorial-grid" data-rail="320">
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">🏕️</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Lisa · Redacteur kamperen</span>
-                <h3>3 dagen op Camping De Lakens — eerlijke review</h3>
-                <p>Wat viel ons op bij deze populaire camping aan de Noordzee? We sliepen er met ons gezin en beoordelen alles: van sanitair tot avondanimatie.</p>
-                <a class="link" href="reisverslag-detail.html?id=1">Lees het verslag →</a>
-            </div>
-        </article>
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">⛰️</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Mark · Redacteur bergvakanties</span>
-                <h3>Een week wandelen in Zuid-Tirol</h3>
-                <p>Hotel, hut of appartement — waar verblijf je als wandelaar het best? Mark test drie opties in de Dolomieten en deelt zijn voorkeuren.</p>
-                <a class="link" href="reisverslag-detail.html?id=2">Lees het verslag →</a>
-            </div>
-        </article>
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🧖</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Anouk · Redacteur wellness</span>
-                <h3>Wellness-weekenden in Nederland getest</h3>
-                <p>Van thermen in Limburg tot saunalandschap op de Veluwe. Anouk boekt vier wellness-hotels en geeft per plek haar gouden tips.</p>
-                <a class="link" href="reisverslag-detail.html?id=3">Lees het verslag →</a>
-            </div>
-        </article>
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🌴</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Kevin · Redacteur zonvakanties</span>
-                <h3>Vergelijking: Griekse eilanden voor gezinnen</h3>
-                <p>Kreta, Rhodos of Kos? Kevin verbleef op alle drie en deelt per eiland de sterke en zwakke punten voor families met jonge kinderen.</p>
-                <a class="link" href="reisverslag-detail.html?id=4">Lees het verslag →</a>
-            </div>
-        </article>
-        <article class="editorial-card">
-            <div class="editorial-card-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎿</div>
-            <div class="editorial-card-body">
-                <span class="editorial-author">Door Esther · Redacteur wintersport</span>
-                <h3>5 onbekende skigebieden in Oostenrijk</h3>
-                <p>Weg van de drukte — Esther zocht rustige skidorpen uit die nog betaalbaar zijn en bezocht er vijf in één seizoen.</p>
-                <a class="link" href="reisverslag-detail.html?id=5">Lees het verslag →</a>
-            </div>
-        </article>
-    </div>
-</section>
-</div>
 
 <!-- De drie tegel-rijen onderaan (Wie / Wat / Waar) zijn verwijderd
      omdat ze het oude discovery-systeem dupliceerden. De Keuzehulp-

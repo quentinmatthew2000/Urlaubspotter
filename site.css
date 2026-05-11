@@ -1258,49 +1258,59 @@ button { font-family: inherit; cursor: pointer; }
 
 
 /* ============================================================
-   KEUZEHULP HERO BANNER — homepage emotional CTA-blok
-   Compacte dark premium single-column module die onder Blogs &
-   Tips leeft. De vorige iteratie had een CSS+SVG mountain-scene
-   aan de linkerkant; die maakte het blok te hero-achtig. Nu
-   alleen het content-paneel — strakker, premium, content-eerst.
-   Geen image-asset, alles CSS.
+   KEUZEHULP HERO BANNER — warm luxury entry (homepage main CTA)
+   Beige/ivory/champagne/gold palette matched op .ph-hero--hotel
+   zodat het blok één brand-identity is met de Niveau 2 — Wat ›
+   Hotel pagina. Single-column compact discovery-module: eyebrow
+   + title + supporting copy + gold CTA + USP-row. Geen
+   illustratie — alles via CSS gradients en pseudo-element glows.
    ============================================================ */
 .kh-hero {
     position: relative;
     max-width: 1280px;
     margin: 20px auto;
-    border-radius: 18px;
+    border-radius: 22px;
     overflow: hidden;
-    background: linear-gradient(135deg, #112a44 0%, #0a1f33 100%);
-    box-shadow: 0 14px 36px rgba(7, 28, 50, 0.22);
     isolation: isolate;
+    /* Layered warm cream-base + champagne accent-glow rechtsboven
+       en linksonder. Cream tonen 50→100 geven editorial-luxury
+       diepte zonder lawaai. */
+    background:
+        radial-gradient(ellipse 55% 70% at 92% 8%, rgba(220, 180, 130, 0.42) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 65% at 4% 96%, rgba(190, 155, 100, 0.22) 0%, transparent 65%),
+        linear-gradient(135deg, #faf3e6 0%, #f0e6d4 48%, #e7dac0 100%);
+    box-shadow:
+        0 1px 0 rgba(255, 252, 240, 0.85) inset,
+        0 0 0 1px rgba(139, 105, 20, 0.07),
+        0 18px 44px -20px rgba(120, 90, 40, 0.20),
+        0 6px 16px -8px rgba(120, 90, 40, 0.10);
 }
 .kh-hero-content {
     position: relative;
-    padding: 36px 40px;
+    padding: 40px 44px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: #f3f7fc;
+    color: #2a2417;
 }
-/* Twee subtiele blauwe glow-blobs als atmosferische diepte.
-   Geen mountain-illustratie meer — alleen sfeerverlichting in
-   het dark blok. */
+/* Twee warme glow-blobs voor zachte diepte — champagne/gold tinten
+   die het editorial luxury-gevoel ondersteunen zonder beeldgewicht
+   te claimen. */
 .kh-hero-content::before {
     content: "";
     position: absolute;
-    top: -140px; right: -120px;
-    width: 380px; height: 380px;
-    background: radial-gradient(circle, rgba(80, 145, 200, 0.32) 0%, transparent 65%);
+    top: -130px; right: -110px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(255, 220, 175, 0.45) 0%, transparent 65%);
     pointer-events: none;
     z-index: 0;
 }
 .kh-hero-content::after {
     content: "";
     position: absolute;
-    bottom: -180px; left: -140px;
-    width: 340px; height: 340px;
-    background: radial-gradient(circle, rgba(30, 111, 255, 0.18) 0%, transparent 65%);
+    bottom: -160px; left: -130px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(190, 155, 100, 0.22) 0%, transparent 65%);
     pointer-events: none;
     z-index: 0;
 }
@@ -1309,89 +1319,89 @@ button { font-family: inherit; cursor: pointer; }
     display: inline-block;
     font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #88b5d8;
-    margin-bottom: 10px;
+    color: #8b6914;            /* warm gold-bronze */
+    margin-bottom: 14px;
 }
 .kh-hero-title {
-    font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+    font-size: clamp(1.4rem, 2.7vw, 2rem);
     font-weight: 800;
     letter-spacing: -0.018em;
     line-height: 1.12;
-    margin: 0 0 10px;
-    color: #ffffff;
+    margin: 0 0 12px;
+    color: #1f1810;            /* deep warm-ink */
     text-wrap: balance;
     max-width: 720px;
 }
 .kh-hero-lead {
-    font-size: clamp(0.92rem, 1.1vw, 1rem);
-    line-height: 1.55;
-    color: rgba(243, 247, 252, 0.80);
-    margin: 0 0 20px;
-    max-width: 600px;
+    font-size: clamp(0.95rem, 1.1vw, 1.04rem);
+    line-height: 1.6;
+    color: rgba(82, 68, 48, 0.85);
+    margin: 0 0 24px;
+    max-width: 580px;
 }
 .kh-hero-cta {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 11px 22px 11px 12px;
-    background: linear-gradient(135deg, #2a7dff 0%, #0d4dd4 100%);
-    color: #fff;
+    gap: 12px;
+    padding: 11px 22px 11px 13px;
+    background: linear-gradient(135deg, #b48848 0%, #8b6914 100%);
+    color: #fdf6ed;
     border-radius: 999px;
     font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: 0.008em;
     text-decoration: none;
     box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.25) inset,
-        0 10px 22px rgba(30, 111, 255, 0.36);
+        0 1px 0 rgba(255, 240, 200, 0.30) inset,
+        0 10px 22px rgba(139, 105, 20, 0.30);
     transition: transform 0.18s ease, box-shadow 0.22s ease, filter 0.18s ease;
     align-self: flex-start;
 }
 .kh-hero-cta:hover {
     transform: translateY(-2px);
-    filter: brightness(1.06);
+    filter: brightness(1.05);
     box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.25) inset,
-        0 14px 28px rgba(30, 111, 255, 0.46);
+        0 1px 0 rgba(255, 240, 200, 0.30) inset,
+        0 14px 28px rgba(139, 105, 20, 0.42);
 }
 .kh-hero-cta-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px; height: 30px;
+    width: 28px; height: 28px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 248, 230, 0.22);
     flex-shrink: 0;
 }
 .kh-hero-cta-icon svg {
-    width: 16px; height: 16px;
-    color: #ffffff;
+    width: 15px; height: 15px;
+    color: #fdf6ed;
 }
 .kh-hero-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 18px;
-    margin-top: 16px;
+    gap: 6px 20px;
+    margin-top: 18px;
     font-size: 0.78rem;
-    color: rgba(243, 247, 252, 0.65);
+    color: rgba(110, 90, 55, 0.78);
 }
 .kh-hero-meta span { white-space: nowrap; }
 
 @media (max-width: 900px) {
     .kh-hero {
         margin: 16px 16px;
-        border-radius: 16px;
+        border-radius: 18px;
     }
-    .kh-hero-content { padding: 26px 22px 28px; }
-    .kh-hero-title  { font-size: clamp(1.25rem, 5vw, 1.65rem); margin-bottom: 8px; }
-    .kh-hero-lead   { margin-bottom: 16px; }
+    .kh-hero-content { padding: 28px 22px 28px; }
+    .kh-hero-title  { font-size: clamp(1.25rem, 5vw, 1.65rem); margin-bottom: 10px; }
+    .kh-hero-lead   { margin-bottom: 18px; }
     .kh-hero-meta   { margin-top: 14px; }
 }
 @media (max-width: 480px) {
-    .kh-hero { margin: 14px 12px; border-radius: 14px; }
-    .kh-hero-content { padding: 22px 18px 22px; }
+    .kh-hero { margin: 14px 12px; border-radius: 16px; }
+    .kh-hero-content { padding: 24px 18px 24px; }
     .kh-hero-cta {
         /* Op heel kleine schermen vol-breed maar minder hoog. */
         width: 100%;
@@ -1399,11 +1409,11 @@ button { font-family: inherit; cursor: pointer; }
         padding: 11px 18px;
     }
     .kh-hero-meta {
-        gap: 5px 12px;
+        gap: 5px 14px;
         font-size: 0.74rem;
-        margin-top: 12px;
+        margin-top: 14px;
     }
-    .kh-hero-eyebrow { margin-bottom: 6px; }
+    .kh-hero-eyebrow { margin-bottom: 10px; }
 }
 
 /* ============================================================
