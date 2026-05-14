@@ -575,13 +575,21 @@ const app = {
              <rect width='1200' height='700' fill='url(%23g)'/>
              <text x='600' y='400' font-size='240' text-anchor='middle' font-family='system-ui'>${emoji}</text>
              </svg>`)}`;
+        // Korte description / longDescription zonder de tag-array als
+        // platte tekst te dumpen — die contextuele info wordt nu via
+        // de tag-pills hieronder gerendeerd (zie _buildDisplayTags +
+        // renderDetail). Voorheen kwamen tags uit SITE_DATA hier als
+        // " · "-gescheiden zin op de pagina, wat het visuele design
+        // doodde en de gebruiker tweemaal dezelfde info zag.
+        const whoLabels = (src.who || []).map(k => (typeof DATA !== 'undefined' ? DATA.label('who', k) : k)).filter(Boolean);
+        const whoText = whoLabels.length ? whoLabels.join(', ').toLowerCase() : 'verschillende reisgezelschappen';
         const synth = {
             id: src.id, name: src.name, location: src.location, price: src.price,
             rating: src.rating, reviews: src.reviews, tags: src.tags || [],
             images: [placeholder, placeholder, placeholder],
             image: placeholder,
-            description: `${src.name} in ${src.location}. ${(src.tags||[]).join(' · ')}.`,
-            longDescription: `${src.name} is een ${(src.tags||[]).join(', ').toLowerCase()} accommodatie in ${src.location}. Onze redactie beoordeelt deze plek met ${src.rating}/10 op basis van ${src.reviews} reviews.`,
+            description: `${src.name} in ${src.location}.`,
+            longDescription: `${src.name} is een populaire keuze voor ${whoText} in ${src.location}. Onze redactie beoordeelt deze plek met ${src.rating}/10 op basis van ${src.reviews} reviews.`,
             editorial: 'De redactie werkt nog aan een uitgebreid reisverslag voor deze accommodatie.',
             facilities: ['WiFi','Parkeren','Ontbijt inbegrepen','Kindvriendelijk'],
             facilityKeys: [], accommodationKeys: [],
@@ -758,6 +766,33 @@ const app = {
         uspRow.innerHTML = uspItems + (hasOverflow
             ? `<button type="button" class="usp-item usp-more" onclick="app.toggleUspExpanded()"><div class="usp-circle">⋯</div><span class="usp-label">Meer</span></button>`
             : '');
+
+        // Contextuele tag-pills. Bouwt één geünifieerde lijst op uit
+        //   • acc.tags  (synthesized-from-SITE_DATA records dragen
+        //                hier de canonieke string-labels — bv.
+        //                "Appartement", "Adult Only", "Aan zee")
+        //   • acc.whatKeys      → this.labels.what[k]
+        //   • acc.locationKeys  → this.labels.location[k]
+        //   • acc.facilityKeys  → this.labels.facilities[k]
+        // Dedupe via Set zodat we geen "Hotel · Hotel" krijgen wanneer
+        // een what- en facility-key naar hetzelfde label resolven. Het
+        // resultaat zijn de pills die de gebruiker in één oogopslag
+        // ziet — same vocabulary als de keuzehulp + de listing-cards.
+        const tagsEl = document.getElementById('detail-tags');
+        if (tagsEl) {
+            const seen = new Set();
+            const displayTags = [];
+            const add = (txt) => {
+                if (txt && !seen.has(txt)) { seen.add(txt); displayTags.push(txt); }
+            };
+            (acc.tags || []).forEach(add);
+            (acc.whatKeys || []).forEach(k => add(this.labels.what[k]));
+            (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
+            (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));
+            tagsEl.innerHTML = displayTags
+                .map(t => `<span class="tag">${t}</span>`)
+                .join('');
+        }
 
         // In het kort
         document.getElementById('ihk-list').innerHTML = `

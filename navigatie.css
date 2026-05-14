@@ -297,6 +297,23 @@ img { max-width: 100%; height: auto; }
     border-radius: 20px;
     font-size: 0.75rem;
 }
+/* Contextuele tag-pills onder de USP-iconrij op de detail-pagina.
+   Visueel identiek aan de listing-card tags (zelfde .tag class) maar
+   met ruimere gap + iets royaler font omdat ze de hoofd-glance van
+   het accommodatie-overzicht zijn. Wordt door renderDetail() gevuld
+   met de geünifieerde tags via _buildDisplayTags(). */
+.detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 20px;
+}
+.detail-tags .tag {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+.detail-tags:empty { display: none; }
 
 .no-results {
     display: none;

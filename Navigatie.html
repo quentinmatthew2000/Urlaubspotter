@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
     <link rel="stylesheet" href="site.css?v=26">
-    <link rel="stylesheet" href="navigatie.css?v=14">
+    <link rel="stylesheet" href="navigatie.css?v=15">
 </head>
 <body>
 <!-- Unified site header — gerenderd via renderHeader() uit site.js -->
@@ -177,6 +177,13 @@
             <!-- USP icoonrij (WIFI, Pool, Hond, Natuur, TV, Fiets, Meer) -->
             <div class="usp-row" id="usp-row"></div>
 
+            <!-- Contextuele tag-pills (Adult Only, Aan zee, Wellness, ...).
+                 Wordt gevuld door renderDetail() via _buildDisplayTags() —
+                 unified vocabulary uit labels.{what,location,facilities}
+                 + acc.tags. Werkt zowel voor hardcoded navigatie-records
+                 als voor synthesized records uit SITE_DATA. -->
+            <div class="detail-tags" id="detail-tags"></div>
+
             <!-- "In het kort" blok -->
             <div class="in-het-kort">
                 <h3 class="ihk-title">🔍 <span>IN HET KORT</span></h3>
@@ -303,6 +310,6 @@
 
 <script src="site-data.js?v=14"></script>
 <script src="site.js?v=23"></script>
-<script src="navigatie.js?v=16"></script>
+<script src="navigatie.js?v=17"></script>
 </body>
 </html>
