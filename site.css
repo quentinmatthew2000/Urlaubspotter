@@ -2010,27 +2010,37 @@ button.inspiration-tab[aria-selected="true"] {
 /* ============ DETAIL-PAGE FEATURE TAGS ============
    Gedeelde feature-card tag-stijl voor zowel Navigatie.html?acc=
    (rendered door navigatie.js) als accommodatie.html?slug= (rendered
-   door renderFeatureTags in site.js). Eén premium visuele taal
-   voor accommodatie-detail-experiences — type, doelgroep, sfeer,
-   ligging, context. Afgestemd op de "In het Kort"-kaart en
-   .usp-item zodat de detail-pagina één feature-card vocabulaire
-   heeft met consistente diepte, typografie en hiërarchie.
+   door renderFeatureTags in site.js).
+
+   GRID-LAYOUT (niet flex-wrap):
+   CSS-grid met repeat(auto-fill, minmax(...)) garandeert dat alle
+   cards op één rij EQUAL columns krijgen, met grid-auto-rows: 1fr
+   stretcht elke rij naar de hoogste card. Gevolg: lange labels
+   ("Bezienswaardigheden", "Centraal gelegen") wrappen netjes op
+   2 regels terwijl de naast-staande cards (1-regelige label) op
+   exact dezelfde hoogte uitlijnen. Geen "random buttons" gevoel
+   meer — cohesief premium feature-card systeem.
    ============================================================ */
 .detail-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 10px;
     margin: 18px 0 28px;
 }
 .detail-tags:empty { display: none; }
 .detail-tag {
-    display: inline-flex;
+    /* Card-content vertical-flex zodat icon altijd boven, label
+       altijd onder zit — ongeacht of de label 1 of 2 regels is.
+       Min-height plus stretch in grid garandeert dezelfde hoogte. */
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 14px 14px 12px;
-    min-width: 96px;
-    background: #ffffff;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 16px 12px 14px;
+    min-height: 116px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
     border: 1px solid var(--border, #e5e7eb);
     border-radius: 14px;
     font-size: 0.8rem;
@@ -2039,17 +2049,19 @@ button.inspiration-tab[aria-selected="true"] {
     text-align: center;
     line-height: 1.3;
     letter-spacing: -0.005em;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 2px 6px -2px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
     transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    box-sizing: border-box;
 }
 .detail-tag:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px -6px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.05);
-    border-color: rgba(30, 108, 214, 0.22);
+    box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.05);
+    border-color: rgba(30, 108, 214, 0.28);
 }
 .detail-tag-circle {
     width: 44px;
     height: 44px;
+    flex-shrink: 0;
     border-radius: 50%;
     /* Premium ringed circle — soft brand-blue tint i.p.v. een
        neutrale grijze rand. Matched de "In het Kort" ihk-icon
@@ -2064,14 +2076,44 @@ button.inspiration-tab[aria-selected="true"] {
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 .detail-tag-label {
-    max-width: 150px;
+    /* 2-regelige line-clamp met fixed line-height geeft elke card
+       een voorspelbare label-zone. Korte labels staan op 1 regel
+       maar reserveren visueel ruimte voor regel 2 zodat naast-
+       staande cards met 2-regelige labels niet hoger uitkomen. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     overflow-wrap: break-word;
+    hyphens: auto;
     color: var(--text, #1a2230);
+    font-weight: 600;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    min-height: 2.6em;        /* reserve ~2 lines so all cards line up */
+    width: 100%;
+    padding: 0 2px;
 }
 @media (max-width: 540px) {
-    .detail-tags { gap: 8px; margin: 14px 0 20px; }
-    .detail-tag { min-width: 80px; padding: 10px 10px 9px; gap: 6px; font-size: 0.72rem; border-radius: 12px; }
-    .detail-tag-circle { width: 36px; height: 36px; font-size: 1rem; }
-    .detail-tag-label { max-width: 110px; }
+    /* Mobile: kleinere min-column zodat 3 cards naast elkaar op
+       320px viewports passen, gap iets kleiner voor visuele rust. */
+    .detail-tags {
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 8px;
+        margin: 14px 0 22px;
+    }
+    .detail-tag {
+        min-height: 102px;
+        padding: 12px 8px 11px;
+        gap: 8px;
+        border-radius: 12px;
+    }
+    .detail-tag-circle { width: 38px; height: 38px; font-size: 1.05rem; }
+    .detail-tag-label { font-size: 0.72rem; min-height: 2.6em; }
+}
+@media (max-width: 360px) {
+    /* Extra-smalle iPhone-SE-ish: 2 cards per rij i.p.v. 3. */
+    .detail-tags { grid-template-columns: repeat(2, 1fr); }
 }
 

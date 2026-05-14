@@ -989,14 +989,33 @@ const app = {
                     .map(k => this.labels.facilities[k])
                     .filter(Boolean)
             );
+            // Recommendation-phrasings die NIET in de feature-tag grid
+            // horen — die zijn redactionele aanbevelings-context
+            // (eerder thuis in "Ideaal voor" of de editorial-card),
+            // geen harde accommodatie-trait. "Weekendje weg" is ook
+            // de canonieke label voor what='city-trip' — we remappen
+            // dat naar "Stedentrip" (een echte verblijfsstijl) in de
+            // WHAT_FEATURE_REMAP hieronder zodat de what-key visueel
+            // blijft maar niet meer als marketing-phrase leest.
+            const RECOMMENDATION_PHRASES = new Set([
+                'Weekendje weg',
+                'Korte vakantie',
+                'Lang weekend',
+                'Last minutes',
+                'Lastminute'
+            ]);
+            const WHAT_FEATURE_REMAP = {
+                'city-trip': 'Stedentrip'
+            };
             const seen = new Set();
             const displayTags = [];
             const add = (txt) => {
                 if (!txt || seen.has(txt) || uspLabels.has(txt)) return;
+                if (RECOMMENDATION_PHRASES.has(txt)) return;
                 seen.add(txt); displayTags.push(txt);
             };
             (acc.tags || []).forEach(add);
-            (acc.whatKeys || []).forEach(k => add(this.labels.what[k]));
+            (acc.whatKeys || []).forEach(k => add(WHAT_FEATURE_REMAP[k] || this.labels.what[k]));
             (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
             // facilityKeys bewust NIET toegevoegd — die hangen al in de
             // USP-row hierboven als feature-card icon. Surfacen ze hier

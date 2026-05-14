@@ -335,15 +335,20 @@ img { max-width: 100%; height: auto; }
 }
 
 .detail-header-bar {
+    /* Header-rij: alle 3 kolommen (back / titel / actions) verticaal
+       gecentreerd zodat een 1-regelige titel niet "floats" tussen
+       knoppen die boven zitten. Bij een 2-regelige titel blijven
+       knoppen netjes naast de eerste regel uitgelijnd via
+       align-self. Voelt premium en balanced i.p.v. floating. */
     display: flex;
-    align-items: flex-start;   /* titel mag over 2 regels, icoontjes blijven bovenaan uitgelijnd */
-    gap: 12px;
-    padding: 4px 0 14px;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 0 18px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 20px;
-    min-height: 44px;
+    margin-bottom: 24px;
+    min-height: 48px;
 }
-.detail-header-bar > .icon-btn { flex-shrink: 0; align-self: flex-start; margin-top: 2px; }
+.detail-header-bar > .icon-btn { flex-shrink: 0; align-self: center; }
 
 /* Titel-kolom: neemt beschikbare ruimte, titel clampt netjes op 2 regels,
    sterren komen daar direct onder. Geen awkward wrapping meer. */
@@ -353,7 +358,7 @@ img { max-width: 100%; height: auto; }
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 5px;
 }
 .detail-header-title h1 {
     margin: 0;
@@ -362,11 +367,12 @@ img { max-width: 100%; height: auto; }
        brand-blue gereserveerd voor links/CTAs. */
     color: var(--text, #1a2230);
     font-weight: 800;
-    font-size: clamp(1.25rem, 3vw, 1.7rem);
-    line-height: 1.2;
+    font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+    line-height: 1.22;
     letter-spacing: -0.022em;
     word-break: break-word;
     overflow-wrap: anywhere;
+    text-wrap: balance;
     /* 2-regelige line-clamp — progressive enhancement, andere browsers
        tonen volledige tekst zonder te breken */
     display: -webkit-box;
@@ -375,14 +381,13 @@ img { max-width: 100%; height: auto; }
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-.detail-stars { color: #ffc107; font-size: 0.95rem; letter-spacing: 2px; line-height: 1; }
+.detail-stars { color: #c8a567; font-size: 0.92rem; letter-spacing: 2px; line-height: 1; }
 
 .detail-header-actions {
     display: flex;
     gap: 8px;
     flex-shrink: 0;
-    align-self: flex-start;
-    margin-top: 2px;
+    align-self: center;
 }
 .icon-btn {
     background: white;
@@ -1244,9 +1249,23 @@ button.usp-more:hover .usp-circle {
     .sticky-cta .btn-primary { width: 100%; }
     .hero { padding: 50px 20px; min-height: 360px; }
     .category-selection { flex-direction: column; align-items: stretch; }
-    /* Titel krijgt compactere knoppen zodat er meer ruimte is voor de naam */
-    .detail-header-bar { gap: 8px; }
-    .detail-header-bar .icon-btn { width: 34px; height: 34px; }
+    /* Mobile-header polish: compactere gaps + iets kleinere knoppen
+       zodat de titel-zone visueel het zwaarste blok blijft i.p.v.
+       dat de knoppen mee-domineren. align-items: center op .detail-
+       header-bar (basis-rule) houdt 1-regelige titels netjes
+       gecentreerd t.o.v. de knoppen. */
+    .detail-header-bar {
+        gap: 10px;
+        padding: 4px 0 14px;
+        margin-bottom: 18px;
+    }
+    .detail-header-bar .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+    .detail-header-title h1 {
+        font-size: clamp(1.1rem, 4.4vw, 1.35rem);
+        line-height: 1.2;
+    }
+    .detail-stars { font-size: 0.85rem; letter-spacing: 1.5px; }
+    .detail-header-actions { gap: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

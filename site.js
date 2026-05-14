@@ -411,12 +411,20 @@ const FEATURE_TAG_ICONS = {
     'Nederland': '🇳🇱', 'België': '🍫', 'Portugal': '🍷', 'Kroatië': '⛵',
     'Oostenrijk': '🎿'
 };
+// Recommendation-phrases die NIET in de feature-tag grid horen — die
+// zijn redactionele aanbevelings-context (Ideaal voor / editorial-
+// card), geen harde accommodatie-trait. Houd in sync met de copy
+// in navigatie.js renderDetail().
+const FEATURE_TAG_RECOMMENDATION_PHRASES = new Set([
+    'Weekendje weg', 'Korte vakantie', 'Lang weekend', 'Last minutes', 'Lastminute'
+]);
 function renderFeatureTags(containerId, tags) {
     const el = document.getElementById(containerId);
     if (!el) return;
     const seen = new Set();
     const list = (tags || []).filter(t => {
         if (!t || seen.has(t)) return false;
+        if (FEATURE_TAG_RECOMMENDATION_PHRASES.has(t)) return false;
         seen.add(t); return true;
     });
     el.innerHTML = list.map(t => `
