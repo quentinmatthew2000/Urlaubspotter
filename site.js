@@ -672,20 +672,58 @@ function autoMountSearchNavigation() {
 }
 
 // Hamburger + accordion (mobiel) — vanilla JS, geen library
+//
+// Drie defensieve maatregelen tegen het Samsung-Internet flicker-bug
+// (drawer ging "open / dicht / open / dicht" bij één tap):
+//   1. data-nav-bound sentinel op de toggle-button voorkomt dat een
+//      tweede aanroep van bindMobileNav een extra click-listener op
+//      dezelfde button stackt. Event-stacking → meerdere toggles per
+//      tap → flicker.
+//   2. event.stopPropagation() voorkomt dat de tap verder bubbelt
+//      naar document-level click-handlers (bv. de search-panel
+//      outside-close). Defensief — geen huidige bug, wel
+//      structurele afdichting.
+//   3. Idempotente state-update: bereken eerst de target-state (open
+//      of dicht) en zet die deterministisch met classList.toggle(
+//      name, force). Geen toggle-by-read-modify-write.
+//
+// De CSS-fix loopt hier parallel mee (zie site.css .nav-toggle /
+// .nav-toggle span): touch-action: manipulation + pointer-events:
+// none op de inner span-balkjes schakelen browser-rebound-clicks
+// en target-child-event-double-fire uit. Dat is bewezen de
+// hoofdoorzaak op Samsung Internet — de JS-guards zijn de
+// structurele dubbelzekering tegen event-stacking.
 function bindMobileNav(header) {
     const toggle = header.querySelector('.nav-toggle');
     const nav = header.querySelector('.site-nav');
     if (!toggle || !nav) return;
-    toggle.addEventListener('click', () => {
-        const open = nav.classList.toggle('open');
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        toggle.classList.toggle('open', open);
-    });
-    // Accordion-toggle voor dropdown-secties: drawer wordt nu op alle breedtes
-    // gebruikt, dus klik toggelt open/dicht ongeacht viewport.
+
+    // (1) Idempotency: re-binden op dezelfde button is een no-op.
+    if (toggle.dataset.navBound !== '1') {
+        toggle.dataset.navBound = '1';
+        toggle.addEventListener('click', (e) => {
+            // (2) Stop bubbling — voorkomt dat document-level
+            //     handlers ook reageren op deze tap.
+            e.stopPropagation();
+            // (3) Deterministische flip: bereken target, zet 'm.
+            const willOpen = !nav.classList.contains('open');
+            nav.classList.toggle('open', willOpen);
+            toggle.classList.toggle('open', willOpen);
+            toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        });
+    }
+
+    // Accordion-toggle voor dropdown-secties: drawer wordt op alle
+    // breedtes gebruikt, dus klik toggelt open/dicht ongeacht viewport.
+    // Per-link sentinel zelfde rationale: geen event-stacking als
+    // bindMobileNav om wat voor reden ooit nogmaals draait op
+    // dezelfde DOM-nodes.
     nav.querySelectorAll('.has-dropdown > a').forEach(link => {
+        if (link.dataset.navBound === '1') return;
+        link.dataset.navBound = '1';
         link.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const parent = link.parentElement;
             // Sluit andere open secties
             nav.querySelectorAll('.has-dropdown.open').forEach(el => {

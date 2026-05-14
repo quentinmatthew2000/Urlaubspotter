@@ -231,7 +231,12 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 640px) {
     .site-logo img { height: 34px; }
 }
-/* Hamburger: altijd zichtbaar, links */
+/* Hamburger: altijd zichtbaar, links.
+   touch-action: manipulation schakelt de legacy 300ms-tap-vertraging
+   uit op mobiel én voorkomt dat browsers (vooral Samsung Internet en
+   oudere Android Chrome) een "rebound"-click synthesiseren na
+   touchend. Dat dubbele click-event was de hoofdoorzaak van de
+   open/dicht-flicker op de drawer. */
 .nav-toggle {
     display: flex;
     background: transparent;
@@ -245,7 +250,14 @@ button { font-family: inherit; cursor: pointer; }
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
+/* pointer-events: none op de drie hamburger-balkjes zodat het click-
+   target altijd de <button> zelf is, nooit een child <span>. Op
+   Samsung Internet kon een tap die als target-span landde een tweede
+   click veroorzaken nadat de event naar de button bubbelde. Met deze
+   regel is dat onmogelijk. */
 .nav-toggle span {
     display: block;
     width: 22px;
@@ -253,6 +265,7 @@ button { font-family: inherit; cursor: pointer; }
     background: var(--text);
     border-radius: 2px;
     transition: transform 0.2s, opacity 0.2s;
+    pointer-events: none;
 }
 .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-toggle.open span:nth-child(2) { opacity: 0; }
@@ -277,6 +290,10 @@ button { font-family: inherit; cursor: pointer; }
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Zelfde stabilisatie als .nav-toggle — geen 300ms-vertraging en
+       geen rebound-click op de favorieten/zoek-iconen. */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 .site-action:hover { background: var(--primary-light); color: var(--primary); }
 .site-action svg { display: block; pointer-events: none; }
