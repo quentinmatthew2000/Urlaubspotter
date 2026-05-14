@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wie + Waar · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=7">
+    <!-- Premium category hero — overlay'd op deze Wie+Waar pagina.
+         Geen WAT in de context, dus de theme komt uit de
+         destination (Italië, Frankrijk, Bergen, Aan-Zee, ...) of
+         valt terug op 'generic'. -->
+    <link rel="stylesheet" href="premium-hero.css?v=2">
 </head>
 <body>
 
@@ -20,6 +29,12 @@
         </div>
     </div>
 </section>
+
+<!-- Mount-punt voor de premium inspiratie-tabs. Op deze pagina
+     hebben we geen WAT-context, dus de tabs blijven inactive en
+     applyPremiumPage skipt de mount. Wel handig om de plek te
+     reserveren voor toekomstige uitbreidingen. -->
+<div id="inspiration-tabs"></div>
 
 <section class="section tight">
     <div class="chips" id="active-filters"></div>
@@ -120,8 +135,12 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
+<script src="site.js?v=20"></script>
+<script src="inspiration-tabs.js?v=21"></script>
+<script src="premium-page.js?v=3"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
@@ -143,11 +162,11 @@
         document.getElementById('page-lead').textContent = `Je zocht op ${whoLabel.toLowerCase()} + ${whereLabel}. Kies nu een vakantietype of bekijk het aanbod.`;
     }
 
+    // Active filter chips — alleen het actieve WIE + WAAR. Breadcrumb
+    // biedt de terugweg, dus "Verander gezelschap" chips zijn weg.
     const chips = [];
     if (whoLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel}</span>`);
     if (whereLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
-    chips.push(`<a class="chip" href="Niveau2-Wie.html">+ Verander gezelschap</a>`);
-    chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
     renderCategoryTiles('what-tiles', DATA.what(), {
@@ -165,6 +184,23 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('what-carousel');
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Zonder WAT-context worden de inspiratie-tabs niet gemount;
+    // wel komt er een editorial hero met destination-theme (Italië /
+    // Frankrijk / Bergen / Aan-Zee / generic) + Tips/Stories gescoord
+    // tegen {who, where}.
+    if (typeof window.applyPremiumPage === 'function' && (who || where)) {
+        window.applyPremiumPage({
+            who:   who   || null,
+            where: where || null,
+            root: [
+                { href: 'Homepagina.html',    text: 'Home' },
+                { href: 'Niveau2-Wie.html',   text: 'Wie' },
+                { href: 'Niveau2-Waar.html',  text: 'Waar' },
+            ],
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

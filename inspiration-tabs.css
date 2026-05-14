@@ -1,0 +1,228 @@
+/* ============================================================
+   inspiration-tabs.css — geïsoleerde styles voor het nieuwe
+   "Inspiratie voor toekomstige uitstapjes" blok op de homepage.
+   Alle selectors leven onder .it-* zodat er geen overlap is met
+   site.css of andere componenten.
+   ============================================================ */
+
+.it-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    /* Mobile: ZERO horizontal padding op het outer container niveau
+       — we laten de cards zelf hun rand bepalen via een wrapping
+       inner. Dit geeft de pills 100% van de viewport-breedte minus
+       hun 16px outer gap. Voorkomt double-padding (page + container)
+       die op smalle Android viewports cards te smal maakte. */
+    padding: 28px 14px 18px;
+}
+@media (min-width: 640px) {
+    .it-section { padding: 36px 18px 22px; }
+}
+@media (min-width: 1024px) {
+    .it-section { padding: 48px 24px 24px; }
+}
+
+.it-title {
+    font-size: clamp(1.4rem, 3.2vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text, #222);
+    margin: 0 0 14px;
+}
+@media (min-width: 768px) {
+    .it-title { margin: 0 0 18px; }
+}
+
+/* ---------- Tab-balk ---------- */
+.it-tabs {
+    position: relative;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    margin-bottom: 18px;
+}
+.it-tabs-track {
+    display: flex;
+    /* Krappere gap op mobile zodat alle 4 tabs vaker zonder scroll
+       passen op 360-390px viewports. */
+    gap: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+@media (min-width: 768px) {
+    .it-tabs-track { gap: 28px; }
+}
+.it-tabs-track::-webkit-scrollbar { display: none; }
+
+.it-tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    /* Verhoogde verticale padding op mobile zodat tabs ≥44px hoog
+       zijn (tap-target richtlijn). */
+    padding: 12px 2px 14px;
+    font: inherit;
+    /* Iets kleiner op mobile zodat 4 tabs comfortabel passen zonder
+       direct overflow. */
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--secondary, #6b7280);
+    position: relative;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    transition: color 0.15s ease;
+}
+@media (min-width: 768px) {
+    .it-tab {
+        padding: 10px 2px 14px;
+        font-size: 1rem;
+    }
+}
+.it-tab:hover { color: var(--text, #222); }
+.it-tab.active {
+    color: var(--text, #222);
+    font-weight: 700;
+}
+.it-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--text, #222);
+    border-radius: 2px;
+}
+
+/* Mobiele scroll-hint chevron rechts — fade naar de page bg
+   (ivory) zodat de chevron niet als een witte block leest op de
+   ivory canvas. */
+.it-tabs::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 1px;
+    width: 36px;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, var(--bg, #fbf8f0) 65%);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.it-tabs.has-overflow::after { opacity: 1; }
+
+/* ---------- Items grid (pill-cards) ----------
+   Discovery-rich layout: meerdere kaarten naast elkaar, op alle
+   viewports. Single-column liet de "Inspiratie voor jou" te
+   vertical en list-achtig leesbaar; we willen het swipeable /
+   browsing-gevoel terug.
+     • <420px   → 2 kolommen (smal mobile)
+     • 420-639  → 2 kolommen (groot mobile / klein tablet)
+     • 640-1023 → 3 kolommen (tablet / klein desktop)
+     • ≥1024px  → 4 kolommen (full desktop, 2 rijen × 4 = 8 pills)
+   ---------- */
+.it-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* grid-auto-rows: 1fr forceert dat alle rij-hoogtes binnen het
+       grid gelijk zijn aan de tallest card per row — dit elimineert
+       de "random stagger" waar één 2-regelige titel naast een
+       1-regelige titel een ongelijke rij produceerde. Tegelijk
+       blijven kaarten in z'n geheel compact. */
+    grid-auto-rows: 1fr;
+    gap: 8px;
+    padding: 4px 0 16px;
+}
+@media (min-width: 640px) {
+    .it-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+}
+@media (min-width: 1024px) {
+    .it-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+.it-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    /* Kleinere column-gap op mobile — emoji is 22px wide, geeft de
+       titel meer kolombreedte op 360px Android viewports. */
+    column-gap: 8px;
+    /* Compacter padding — 9px horizontal i.p.v. 12 maakt het kritieke
+       verschil op 360-380px Samsung viewports waar 2 cards naast
+       elkaar moeten passen. */
+    padding: 11px 10px;
+    background: #fff;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    min-width: 0;
+    min-height: 56px;
+    height: 100%;
+}
+@media (min-width: 640px) {
+    .it-item {
+        column-gap: 12px;
+        padding: 12px 14px;
+        min-height: 60px;
+    }
+}
+@media (min-width: 1024px) {
+    .it-item {
+        padding: 12px 16px;
+    }
+}
+.it-item:hover {
+    border-color: var(--primary, #0070f3);
+    background: var(--primary-light, #eaf4ff);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.it-item:active { transform: scale(0.99); }
+
+.it-item-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    align-self: center;
+}
+@media (min-width: 640px) {
+    .it-item-icon { font-size: 1.35rem; width: 26px; }
+}
+.it-item-title {
+    /* Geen line-clamp, geen ellipsis. Op Android (Roboto, iets bredere
+       glyphs) braken titels als "Gezinnen met tieners + Aquapark"
+       met de oude 2-line clamp; nu mogen ze gewoon 2-3 regels gebruiken
+       en grid-auto-rows: 1fr maakt alle kaarten van die rij hetzelfde
+       hoog. Dat is robuuster dan font-shrinking. */
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text, #222);
+    line-height: 1.28;
+    text-wrap: balance;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    min-width: 0;
+    /* Letter-spacing terug naar default — alle compactness wint via
+       slimmere word-wrap, niet visuele krap. */
+    letter-spacing: -0.005em;
+}
+@media (min-width: 640px) {
+    .it-item-title { font-size: 0.92rem; line-height: 1.3; }
+}
+@media (min-width: 1024px) {
+    .it-item-title { font-size: 0.95rem; }
+}
+.it-item:hover .it-item-title { color: var(--primary, #0070f3); }

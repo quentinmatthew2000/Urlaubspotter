@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Waar + Wat · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=7">
+    <!-- Premium category hero — applyPremiumPage() overlay'd op deze
+         Waar+Wat pagina. Theme adapteert zich aan {what, sub, where,
+         region}: "Hotels in Italië" wordt italië-thema, "Hotels in
+         Europa" wordt europa-thema, etc. Vanilla flow blijft de
+         fallback. -->
+    <link rel="stylesheet" href="premium-hero.css?v=2">
 </head>
 <body>
 
@@ -20,6 +30,11 @@
         </div>
     </div>
 </section>
+
+<!-- Mount-punt voor de premium inspiratie-tabs (sub-aware
+     refinements). applyPremiumPage() hangt hier de tabs aan; bij
+     fallback blijft de div leeg en is dat niet erg. -->
+<div id="inspiration-tabs"></div>
 
 <section class="section tight">
     <div class="chips" id="active-filters"></div>
@@ -120,50 +135,122 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
+<script src="site.js?v=20"></script>
+<script src="inspiration-tabs.js?v=21"></script>
+<script src="premium-page.js?v=3"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const what = params.get('what') || '';
     const where = params.get('where') || '';
+    const sub = params.get('sub') || '';
+    // ?region= aggregaat (europa / azie / bergen / afrika /
+    // scandinavie). Wanneer gezet wordt de region het primaire WAAR-
+    // segment i.p.v. een individueel land. "Hotels in Europa",
+    // "Hotels nabij de bergen" — geen verkeerde Niveau 1 Continent-
+    // pagina of toevallig-land fallback meer.
+    const region = params.get('region') || '';
 
     renderHeader('');
 
     const whatLabel = what ? DATA.label('what', what) : null;
     const whereLabel = where ? DATA.label('where', where) : null;
+    const regionLabel = region ? DATA.regionLabel(region) : '';
+    const regionPrep  = region ? DATA.regionPreposition(region) : 'in';
+    // destinationLabel = primary WAAR-identity. Region wint van
+    // individueel land wanneer beide gezet zijn.
+    const destinationLabel = regionLabel || whereLabel;
+    // safeSubLabel (fallback uit sub-context.js) zodat stale site-
+    // data.js zonder DATA.subLabel niet de sub-as-primary breekt.
+    const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
+    console.log('[Niveau3-WaarWat]', { what, where, sub, region, whatLabel, whereLabel, regionLabel, subLabel });
+    const displayWatLabel = subLabel || whatLabel;
+
+    // Breadcrumb: toont primaire WAAR-identity (region of land) +
+    // primaire WAT-identity (sub of what).
+    const crumbCurrent = `${destinationLabel || 'Alle bestemmingen'} · ${displayWatLabel || 'Alle types'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wat.html">Wat</a>`, `<span class="sep">›</span>`,
-        `<span class="current">${whereLabel || 'Alle bestemmingen'} · ${whatLabel || 'Alle types'}</span>`
+        `<span class="current">${crumbCurrent}</span>`
     ].join('');
 
-    if (whatLabel && whereLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} in ${whereLabel}`;
+    if (displayWatLabel && destinationLabel) {
+        // "Hotels in Europa" / "Hotels nabij de bergen" / "Hotels in
+        // Italië" — preposition komt uit de region-config of valt
+        // terug op "in" voor individuele landen.
+        const titlePrep = region ? regionPrep : 'in';
+        document.getElementById('page-title').textContent = `${displayWatLabel} ${titlePrep} ${destinationLabel}`;
+        document.title = `${displayWatLabel} ${titlePrep} ${destinationLabel} · Urlaubspotter`;
+        // Contextuele intro-copy via context-copy.js — sub × where
+        // matrix. Valt terug op de bestaande static lead in de HTML.
+        const _lead = (typeof window.buildContextLead === 'function'
+            ? window.buildContextLead({ what, sub, where, region })
+            : '');
+        if (_lead) document.getElementById('page-lead').textContent = _lead;
     }
 
+    // Active filters: alleen WAAR + WAT (primair label, sub als
+    // dominant). Geen "Verander X" navigatie-chips meer.
     const chips = [];
-    if (whereLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where)} ${whereLabel}</span>`);
-    if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel}</span>`);
-    chips.push(`<a class="chip" href="Niveau2-Waar.html">+ Verander bestemming</a>`);
-    chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
+    if (destinationLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(where || region)} ${destinationLabel}</span>`);
+    if (displayWatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
+    // Sub + region propageren naar Niveau 4 doorklikken zodat
+    // "Boutique Hotels in Italië" + Wie-keuze niet ineens degenereert
+    // tot "Hotel in Italië voor X". Voor region geven we ipv where
+    // de region als URL-param mee zodat de Niveau 4 page (wanneer
+    // die region-aware wordt gemaakt) hetzelfde aggregaat kan tonen.
+    const subParam = sub ? `&sub=${sub}` : '';
+    const destQuery = region ? `region=${region}` : `where=${where}`;
     renderCategoryTiles('who-tiles', DATA.who(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&where=${where}`,
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${v}&what=${what}&${destQuery}${subParam}`,
         gradient: SITE_DATA.gradients.who
     });
 
-    const filtered = DATA.filter({ what, where });
+    // Sub-aware filtering: "Boutique Hotels in Italië" toont alleen
+    // boutique-hotels (via tag-match) i.p.v. alle hotels in Italië.
+    // Region wordt meegegeven zodat europa/bergen aggregaten matchen.
+    const filtered = DATA.filterWithSub({ what, where, sub, region });
     renderListingPreview('listing', filtered, { limit: 9 });
     document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
-    document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({what, where}).toString()}`;
+    document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams(
+        Object.fromEntries(Object.entries({ what, where, region, sub }).filter(([_,v]) => v))
+    ).toString()}`;
 
-    renderBlogPreview('blog-preview', `${whatLabel || ''} ${whereLabel || ''}`.trim() || 'Vakantie');
+    renderBlogPreview('blog-preview', `${whatLabel || ''} ${destinationLabel || ''}`.trim() || 'Vakantie');
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('who-carousel');
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Theme-resolutie houdt rekening met region (Europa / Bergen /
+    // Aan-Zee) én individueel land (Italië / Frankrijk / ...).
+    // Tips + Stories worden gescoord tegen de volledige context
+    // zodat "Hotels in Italië" Italië-getinte content surfacet.
+    if (typeof window.applyPremiumPage === 'function' && (what || where || region)) {
+        window.applyPremiumPage({
+            what:   what   || null,
+            where:  where  || null,
+            region: region || null,
+            sub:    sub    || null,
+            root: [
+                { href: 'Homepagina.html',   text: 'Home' },
+                { href: 'Niveau2-Waar.html', text: 'Waar' },
+                { href: 'Niveau2-Wat.html',  text: 'Wat' },
+            ],
+        });
+    } else if (typeof renderInspirationTabs === 'function' && what) {
+        renderInspirationTabs('inspiration-tabs', {
+            contextWhat: what,
+            contextSub:  sub || null,
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

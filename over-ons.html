@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>Over ons · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=25">
+    <style>
+        /* ============================================================
+           OVER ONS — warm, editorial, human story page.
+           Clean white surface, brand-blue accents, restrained type.
+           Reads as: "a team of travel enthusiasts who help you
+           discover vacations that genuinely fit you" — not a
+           corporate booking-intermediary blurb.
+           ============================================================ */
+        .ov-hero {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 56px 24px 28px;
+            text-align: left;
+        }
+        .ov-hero .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--brand);
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin: 0 0 18px;
+        }
+        .ov-hero .eyebrow::before {
+            content: "";
+            width: 22px; height: 1px;
+            background: currentColor;
+            opacity: 0.55;
+        }
+        .ov-hero h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2rem, 4.4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.1;
+            margin: 0 0 18px;
+            color: var(--text);
+            text-wrap: balance;
+            max-width: 720px;
+        }
+        .ov-hero .lead {
+            font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+            max-width: 660px;
+        }
+
+        .ov-section { max-width: 880px; margin: 0 auto; padding: 36px 24px; }
+        .ov-section h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+            font-weight: 700;
+            letter-spacing: -0.018em;
+            margin: 0 0 14px;
+            color: var(--text);
+        }
+        .ov-section p {
+            font-size: 1.02rem;
+            line-height: 1.7;
+            color: var(--text);
+            margin: 0 0 14px;
+        }
+        .ov-section p.muted { color: var(--text-muted); }
+
+        /* Pull-quote — gives the story an editorial moment without
+           heavy chrome. Hairline left border in brand blue, larger
+           serif-fallback type for warmth. */
+        .ov-pull {
+            margin: 32px 0;
+            padding: 6px 0 6px 22px;
+            border-left: 3px solid var(--brand);
+            font-family: var(--font-editorial);
+            font-style: italic;
+            font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+            line-height: 1.45;
+            color: var(--text);
+            max-width: 680px;
+        }
+
+        /* "Hoe we werken" — four numbered tiles, clean white cards,
+           thin border, brand-blue index number. Calm, scannable. */
+        .ov-pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 22px;
+        }
+        .ov-pillar {
+            padding: 22px 22px 24px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.18s ease, transform 0.18s ease;
+        }
+        .ov-pillar:hover {
+            border-color: var(--brand);
+            transform: translateY(-2px);
+        }
+        .ov-pillar .num {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            color: var(--brand);
+        }
+        .ov-pillar h3 {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.012em;
+            color: var(--text);
+        }
+        .ov-pillar p {
+            font-size: 0.93rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.55;
+        }
+
+        /* "Waar we voor staan" — light brand-tinted strip with three
+           short principles. Reads as values, not feature list. */
+        .ov-values {
+            background: var(--brand-light);
+            border: 1px solid #d9e4f3;
+            border-radius: 16px;
+            padding: 32px 32px;
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+        .ov-values .v h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--brand);
+            margin: 0 0 8px;
+            font-weight: 700;
+        }
+        .ov-values .v p {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .ov-contact {
+            margin-top: 32px;
+            padding: 28px 24px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .ov-contact .txt h3 {
+            margin: 0 0 4px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .ov-contact .txt p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+        .ov-contact a.btn-mail {
+            padding: 11px 22px;
+            background: var(--brand);
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: background 0.18s ease;
+        }
+        .ov-contact a.btn-mail:hover { background: var(--brand-dark); }
+
+        @media (max-width: 720px) {
+            .ov-hero { padding: 36px 18px 20px; }
+            .ov-hero h1 { font-size: clamp(1.65rem, 7.5vw, 2.2rem); }
+            .ov-hero .lead { font-size: 1rem; }
+            .ov-section { padding: 26px 18px; }
+            .ov-section p { font-size: 0.98rem; }
+            .ov-pull { margin: 22px 0; padding-left: 16px; }
+            .ov-pillars { gap: 12px; }
+            .ov-pillar { padding: 18px 18px 20px; }
+            .ov-values { grid-template-columns: 1fr; padding: 24px 22px; gap: 22px; }
+            .ov-contact { padding: 22px 18px; flex-direction: column; align-items: stretch; text-align: center; }
+            .ov-contact a.btn-mail { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header"><div class="inner"></div></header>
+
+<nav class="breadcrumb" id="bc">
+    <a href="Homepagina.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Over ons</span>
+</nav>
+
+<section class="ov-hero">
+    <span class="eyebrow">Wie we zijn</span>
+    <h1>Een klein team reisliefhebbers — dat al jaren bezig is met de vraag: welke vakantie past nou echt bij wie?</h1>
+    <p class="lead">Urlaubspotter is geen boekingsmotor en geen vergelijker. We zijn een redactie die accommodaties bezoekt, bestemmingen onderzoekt en reisstijlen bij elkaar brengt — om jou te helpen sneller de vakantie te vinden die genoeg op jou lijkt om écht te kloppen.</p>
+</section>
+
+<section class="ov-section">
+    <h2>Hoe we begonnen</h2>
+    <p>Het begon met een terugkerende frustratie. Je zoekt een vakantie en je krijgt overal hetzelfde te zien: dezelfde top-10's, dezelfde sponsored rankings, dezelfde generieke beschrijvingen. Of het nu een gezin met kleine kinderen is, een wandelaar met een hond, een stel dat rust zoekt of een groep vrienden die juist niets dan reuring wil — iedereen krijgt grofweg hetzelfde lijstje voorgeschoteld.</p>
+    <p>Dat kan beter, dachten we. Niet door nóg een filter toe te voegen, maar door écht te kijken: wie ben je, hoe reis je, en welke plek past daarbij?</p>
+
+    <div class="ov-pull">"Een vakantie is geen product. Het is een week van je leven — die mag bij je passen."</div>
+
+    <h2>Wat we doen</h2>
+    <p>We bezoeken accommodaties zelf en delen wat we tegenkomen — ook wat minder goed werkte. We schrijven gidsen vanuit reisstijl, niet alleen vanuit bestemming. We bouwen een keuzehulp die je niet vraagt "wat is je budget", maar "wat hoop je dat je je nog herinnert in december."</p>
+    <p class="muted">Achter de schermen werken we met een vaste redactie van vier mensen, een netwerk van regelmatige test-reizigers in Nederland, België, Duitsland, Oostenrijk, Italië en Spanje, en een groeiende community van lezers die ons hun ervaringen sturen.</p>
+
+    <h2 style="margin-top:36px;">Hoe we werken</h2>
+    <div class="ov-pillars">
+        <div class="ov-pillar">
+            <span class="num">01 — ONDERZOEK</span>
+            <h3>We bezoeken zelf</h3>
+            <p>Geen knip-en-plak-reviews. Onze redactie verblijft, fotografeert en let op de details die op een website nooit zichtbaar zijn.</p>
+        </div>
+        <div class="ov-pillar">
+            <span class="num">02 — CURATIE</span>
+            <h3>We selecteren scherp</h3>
+            <p>Niet elke accommodatie verdient een plek. We werken met een ondergrens en zijn eerlijk over waarom iets wel of niet voor jou is.</p>
+        </div>
+        <div class="ov-pillar">
+            <span class="num">03 — MATCHING</span>
+            <h3>We denken in reisstijlen</h3>
+            <p>De vraag is niet "een hotel in Italië", maar "het hotel in Italië dat bij iemand zoals jij past". Daar bouwen we onze keuzehulp omheen.</p>
+        </div>
+        <div class="ov-pillar">
+            <span class="num">04 — INSPIRATIE</span>
+            <h3>We blijven verhalen vertellen</h3>
+            <p>Reisverslagen, lange-leesgidsen en seizoensaanbevelingen — omdat een vakantie kiezen ook moet voelen als ergens naar uitkijken.</p>
+        </div>
+    </div>
+</section>
+
+<section class="ov-section">
+    <h2>Waar we voor staan</h2>
+    <div class="ov-values">
+        <div class="v">
+            <h4>Eerlijk</h4>
+            <p>Onafhankelijk geschreven. We laten zien wat werkt én wat tegenviel — geen verkooppraat.</p>
+        </div>
+        <div class="v">
+            <h4>Persoonlijk</h4>
+            <p>Vakantie kiezen gaat over wie je bent, niet over wat trending is. Onze gidsen reflecteren dat.</p>
+        </div>
+        <div class="v">
+            <h4>Onderzocht</h4>
+            <p>Elke aanbeveling is teruggevoerd op een redactiebezoek, een gesprek of een testreiziger.</p>
+        </div>
+    </div>
+
+    <div class="ov-contact">
+        <div class="txt">
+            <h3>Tip, vraag of mooi verhaal?</h3>
+            <p>We lezen elke mail. Werkdagen reageren we binnen 24 uur.</p>
+        </div>
+        <a href="mailto:hallo@urlaubspotter.nl" class="btn-mail">hallo@urlaubspotter.nl</a>
+    </div>
+</section>
+
+<section class="section">
+    <div class="news-social" id="news-social"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+</footer>
+
+<script src="site-data.js?v=13"></script>
+<script src="site.js?v=21"></script>
+<script>
+    renderHeader('over');
+    renderNewsSocial('news-social');
+    renderFooter();
+</script>
+</body>
+</html>

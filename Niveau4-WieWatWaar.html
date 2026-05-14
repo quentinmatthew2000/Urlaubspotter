@@ -3,33 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wie + Wat + Waar · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
     <style>
-        /* Niveau 4 styling: listing-heavy, meer filterpagina-look */
+        /* Niveau 4 — filter-bar (count + sort) en sub-styling.
+           Mobile-first: stacked layout op smalle viewports zodat
+           het count- en sort-blok ieder hun eigen rij krijgen en
+           tap-targets ≥44px halen. */
         .filter-bar {
             background: var(--bg-light);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 14px 16px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
             margin-bottom: 20px;
         }
-        .filter-bar .count { font-size: 1.1rem; font-weight: 700; }
-        .filter-bar .count small { color: var(--secondary); font-weight: 500; }
-        .sort-wrap { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        @media (min-width: 640px) {
+            .filter-bar {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 20px;
+                padding: 16px 20px;
+            }
+        }
+        .filter-bar .count { font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+        .filter-bar .count small { color: var(--secondary); font-weight: 500; font-size: 0.92rem; }
+        .sort-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.92rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
         .sort-wrap select {
-            padding: 8px 12px;
+            flex: 1;
+            min-height: 44px; /* iOS/Android tap-target floor */
+            padding: 10px 14px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             background: white;
             font-family: inherit;
+            font-size: 0.95rem;
             font-weight: 600;
+            color: var(--ink);
             cursor: pointer;
+            /* Native dropdown chevron behouden, geen custom SVG —
+               OS-consistente affordance op iOS Safari + Android. */
+            appearance: auto;
+        }
+        @media (min-width: 640px) {
+            .sort-wrap select {
+                flex: initial;
+                min-height: 40px;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Active-filter chips — dezelfde primary-blauwe accent als
+           voorheen via inline styles, nu via een modifier class
+           zodat hover/focus uniform behandeld worden. */
+        .chip--active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+        .chip--active:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+            /* Geen state-flip — dit is een readonly context-chip. */
+        }
+
+        /* Editorial block "Dichtbij de perfecte match" — verlaten
+           de oude paarse gradient (didn't match coastal palette).
+           Nu: brand-light surface met subtiele blauwe border, in
+           lijn met de kh-hero discovery-module. Visual-tile leest
+           als een rustige icon-card, niet meer als marketing-banner. */
+        .n4-editorial .visual {
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark, #14365a) 100%) !important;
+            color: #fff;
         }
     </style>
 </head>
@@ -84,10 +145,12 @@
 </section>
 </div>
 
-<!-- EDITORIAL: kort, niet dominant -->
-<section class="section">
+<!-- EDITORIAL: kort, niet dominant. Brand-coherent surface
+     i.p.v. de oude paarse gradient — leest nu als rustige
+     discovery-card in plaats van marketing-banner. -->
+<section class="section n4-editorial">
     <div class="editorial-block">
-        <div class="visual" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎯</div>
+        <div class="visual">🎯</div>
         <div>
             <h3>Dichtbij de perfecte match</h3>
             <p id="ed-text">Wil je nog meer verfijnen op prijs, voorzieningen of beoordeling? Gebruik het volledige filtersysteem.</p>
@@ -104,13 +167,16 @@
 
 <footer class="site-footer"><div class="footer-inner"></div><div class="footer-bottom"></div></footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
+<script src="site.js?v=20"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
     const what = params.get('what') || '';
     const where = params.get('where') || '';
+    const sub = params.get('sub') || '';
 
     renderHeader('');
     renderSearchbar('top-searchbar', { compact: true, preset: { who, what, where } });
@@ -118,34 +184,54 @@
     const whoLabel = who ? DATA.label('who', who) : '';
     const whatLabel = what ? DATA.label('what', what) : '';
     const whereLabel = where ? DATA.label('where', where) : '';
+    // safeSubLabel (fallback uit sub-context.js) zodat stale site-
+    // data.js niet de sub-as-primary breekt.
+    const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
+    console.log('[Niveau4-WieWatWaar]', { who, what, where, sub, whoLabel, whatLabel, whereLabel, subLabel });
+    const displayWatLabel = subLabel || whatLabel;
 
+    // Sub-as-primary: breadcrumb + chips tonen alleen het sub-label
+    // wanneer aanwezig (geen Hotel + Wellness Hotels stapel meer).
+    const crumbCurrent = `${whoLabel || '—'} · ${displayWatLabel || '—'} · ${whereLabel || '—'}`;
     document.getElementById('bc').innerHTML = [
         `<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wie.html">Wie</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Wat.html">Wat</a>`, `<span class="sep">›</span>`,
         `<a href="Niveau2-Waar.html">Waar</a>`, `<span class="sep">›</span>`,
-        `<span class="current">${whoLabel || '—'} · ${whatLabel || '—'} · ${whereLabel || '—'}</span>`
+        `<span class="current">${crumbCurrent}</span>`
     ].join('');
 
-    if (whoLabel && whatLabel && whereLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} voor ${whoLabel} in ${whereLabel}`;
-        document.getElementById('page-lead').textContent = `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
+    if (whoLabel && displayWatLabel && whereLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel} in ${whereLabel}`;
+        // Contextuele intro-copy: per sub × WIE (where dient als
+        // sfeer-modifier in de copy). Valt terug op de strakke
+        // "Precies gefilterd"-zin wanneer de helper geen template
+        // matched.
+        const _lead = (typeof window.buildContextLead === 'function'
+            ? window.buildContextLead({ what, sub, who, where })
+            : '');
+        document.getElementById('page-lead').textContent = _lead
+            || `Precies gefilterd op gezelschap, vakantietype én bestemming.`;
+        document.title = `${displayWatLabel} voor ${whoLabel} in ${whereLabel} · Urlaubspotter`;
     }
 
+    // Active filters: alleen actieve context (WIE / WAT-primary /
+    // WAAR). Geen "Wijzig X" navigatie-chips meer; de breadcrumb
+    // geeft al de terugweg. `chip--active` is de modifier class
+    // (zie inline <style>) — vervangt de oude per-chip inline styles
+    // zodat alle context-chips uniform stylable zijn.
     const activeChips = [];
-    [['who', who, whoLabel], ['what', what, whatLabel], ['where', where, whereLabel]].forEach(([dim, val, lbl]) => {
-        if (!val) return;
-        activeChips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(val)} ${lbl}</span>`);
-    });
-    activeChips.push(`<a class="chip" href="Niveau3-WieWat.html?who=${who}&what=${what}">+ Wijzig bestemming</a>`);
-    activeChips.push(`<a class="chip" href="Niveau3-WieWaar.html?who=${who}&where=${where}">+ Wijzig type</a>`);
-    activeChips.push(`<a class="chip" href="Niveau3-WaarWat.html?where=${where}&what=${what}">+ Wijzig gezelschap</a>`);
+    if (who)        activeChips.push(`<span class="chip chip--active">${DATA.icon(who)} ${whoLabel}</span>`);
+    if (what)       activeChips.push(`<span class="chip chip--active">${DATA.icon(what)} ${displayWatLabel}</span>`);
+    if (where)      activeChips.push(`<span class="chip chip--active">${DATA.icon(where)} ${whereLabel}</span>`);
     document.getElementById('active-filters').innerHTML = activeChips.join('');
 
     document.getElementById('to-nav').href = `Navigatie.html?${new URLSearchParams({who, what, where}).toString()}`;
 
-    // Filter + sorteer
-    let matches = DATA.filter({ who, what, where });
+    // Filter + sorteer — sub blijft staan zodat een triple-context
+    // pagina als "Wellness Hotels voor koppels in Italië" alleen
+    // matches toont die het sub-niveau respecteren.
+    let matches = DATA.filterWithSub({ who, what, where, sub });
 
     function sortListing() {
         const mode = document.getElementById('sort').value;

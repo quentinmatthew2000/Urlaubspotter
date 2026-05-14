@@ -289,7 +289,8 @@ function renderListingPreview(containerId, accommodations, { limit = 6 } = {}) {
     el.innerHTML = list.map(a => `
         <a class="listing-card" href="Navigatie.html?acc=${a.id}">
             <div class="listing-card-img" style="background: ${gradientFor(a)}">
-                ${a.emoji || '🏝️'}
+                <img src="${photoUrlFor(a, 640, 420)}" alt="${a.name}" loading="lazy" onerror="this.style.display='none'"/>
+                <span class="listing-card-emoji" aria-hidden="true">${a.emoji || '✦'}</span>
                 <span class="listing-card-badge">${DATA.label('where', a.where)}</span>
             </div>
             <div class="listing-card-body">
@@ -381,6 +382,77 @@ const GRADIENTS = [
 ];
 function gradientFor(acc) { return GRADIENTS[acc.id % GRADIENTS.length]; }
 
+// ============ REAL PHOTO HELPERS (Phase 3 — content realism) ============
+// Map an accommodation/blog/story to a deterministic Unsplash Source URL so
+// every card gets a real travel photo instead of a gradient+emoji placeholder.
+// We never invent local image files; Unsplash Source serves a stable image
+// per seed, so the same accommodation always renders the same shot.
+const PHOTO_KEYWORDS = {
+    // WAT (vakantietype) → primaire visuele identiteit
+    'hotel': 'boutique-hotel,interior',
+    'camping': 'camping,nature,tent',
+    'holiday-park': 'cabin,forest,lodge',
+    'glamping': 'glamping,safari-tent,nature',
+    'wellness': 'spa,wellness,pool',
+    'adventure-trip': 'mountains,hiking,adventure',
+    'city-trip': 'city,architecture,europe',
+    'sun': 'beach,mediterranean,coast',
+    'winter': 'ski,alps,snow',
+    // WAAR (regio's) — voegen 'plek' toe aan de visual
+    'zeeland': 'dunes,beach,netherlands',
+    'drenthe': 'forest,heath,netherlands',
+    'gelderland': 'veluwe,forest',
+    'limburg': 'hills,vineyard,limburg',
+    'noord-holland': 'dunes,coast,texel',
+    'overijssel': 'twente,forest',
+    'flevoland': 'lake,polder',
+    'friesland': 'wadden,boat,island',
+    'groningen': 'nature,wadden',
+    'noord-brabant': 'forest,heath',
+    'zuid-holland': 'beach,scheveningen',
+    'utrecht': 'castle,countryside',
+    'belgie': 'ardennen,bruges',
+    'duitsland': 'black-forest,berlin',
+    'frankrijk': 'provence,france-landscape',
+    'spanje': 'costa-brava,andalusia',
+    'italie': 'tuscany,amalfi,italy',
+    'oostenrijk': 'tirol,alps,austria',
+    'portugal': 'algarve,porto,portugal',
+    'kroatie': 'plitvice,croatia-coast'
+};
+// Vertaal accommodation → Unsplash query (where + wat + sub-tags)
+function photoQueryFor(acc) {
+    const parts = [];
+    if (acc.where && PHOTO_KEYWORDS[acc.where]) parts.push(PHOTO_KEYWORDS[acc.where]);
+    if (Array.isArray(acc.what)) {
+        const w = acc.what.find(k => PHOTO_KEYWORDS[k]);
+        if (w) parts.push(PHOTO_KEYWORDS[w]);
+    }
+    if (!parts.length) parts.push('travel,europe');
+    return parts.join(',');
+}
+// Unsplash Source — deterministic per seed
+function photoUrlFor(acc, w = 640, h = 420) {
+    const q = encodeURIComponent(photoQueryFor(acc));
+    const seed = encodeURIComponent('upspot-' + acc.id);
+    return `https://source.unsplash.com/${w}x${h}/?${q}&sig=${seed}`;
+}
+// Editorial photo voor blog/story-entries — gebruikt categorie of tag-hint
+function photoUrlForEditorial(item, w = 720, h = 460) {
+    const cat = (item.category || '').toLowerCase();
+    const map = {
+        'kamperen': 'camping,nature', 'wellness': 'spa,relaxation',
+        'wintersport': 'ski,alps,winter', 'bestemmingen': 'travel,europe',
+        'reistips': 'travel,suitcase', 'inspiratie': 'travel,landscape',
+        'hotels': 'boutique-hotel,interior', 'citytrip': 'city,europe',
+        'glamping': 'glamping,nature', 'vakantiepark': 'pool,resort',
+        'luxe': 'luxury-hotel,pool'
+    };
+    let q = map[cat] || 'travel,europe';
+    const seed = encodeURIComponent('upspot-blog-' + item.id);
+    return `https://source.unsplash.com/${w}x${h}/?${encodeURIComponent(q)}&sig=${seed}`;
+}
+
 // ============ HEADER / FOOTER INJECT ============
 function renderHeader(activePage = '') {
     const header = document.querySelector('.site-header .inner');
@@ -390,7 +462,6 @@ function renderHeader(activePage = '') {
             <span></span><span></span><span></span>
         </button>
         <a href="index.html" class="site-logo" aria-label="Urlaubspotter home">
-            <img src="logo.png" alt="Urlaubspotter" onerror="this.remove()">
             <span class="site-logo-text">Urlaubspotter</span>
         </a>
         <div class="site-actions">
@@ -411,72 +482,193 @@ function renderHeader(activePage = '') {
         </div>
         <nav class="site-nav">
             <a href="Homepagina.html" ${activePage === 'home' ? 'class="active"' : ''}>Home</a>
+            <a href="Keuzehulp.html" ${activePage === 'keuzehulp' ? 'class="active"' : ''}>Keuzehulp</a>
+            <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
             <span class="has-dropdown">
                 <a href="Niveau2-Wat.html" ${activePage === 'wat' ? 'class="active"' : ''}>Vakantietypen</a>
                 <div class="nav-dropdown wide">
                     <div class="nav-dd-col">
                         <h5>🏨 Hotels</h5>
-                        <a href="Navigatie.html?what=hotel">Alle hotels</a>
-                        <a href="Navigatie.html?what=hotel&sub=boutique">Boutique hotels</a>
-                        <a href="Navigatie.html?what=wellness">Wellness hotels</a>
-                        <a href="Navigatie.html?what=hotel&sub=all-inclusive">All-inclusive hotels</a>
-                        <a href="Navigatie.html?what=hotel&sub=design">Design hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel">Alle hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=boutique">Boutique hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=wellness">Wellness hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=adult-only">Adult Only hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=all-inclusive">All-inclusive hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=design">Design hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=city">Centrumgelegen hotels</a>
+                        <a href="Niveau2-Wat.html?what=hotel&sub=resort">Resorts</a>
                     </div>
                     <div class="nav-dd-col">
                         <h5>🏕️ Kamperen</h5>
-                        <a href="Navigatie.html?what=camping">Alle campings</a>
-                        <a href="Navigatie.html?what=glamping">Glampings</a>
-                        <a href="Navigatie.html?what=camping&sub=waterpark">Campings met waterpark</a>
-                        <a href="Navigatie.html?what=camping&sub=natuur">Camping in de natuur</a>
-                        <a href="Navigatie.html?what=camping&sub=kids">Kindercampings</a>
+                        <a href="Niveau2-Wat.html?what=camping">Alle campings</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=glamping">Glamping</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=waterpark">Camping met waterpark</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=natuur">Camping in de natuur</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=kids">Kindercampings</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=honden">Hondvriendelijke campings</a>
+                        <a href="Niveau2-Wat.html?what=camping&sub=zee">Campings aan zee</a>
                     </div>
                     <div class="nav-dd-col">
                         <h5>🏡 Vakantieparken</h5>
-                        <a href="Navigatie.html?what=holiday-park">Alle vakantieparken</a>
-                        <a href="Navigatie.html?what=holiday-park&sub=attractie">Met attractiepark</a>
-                        <a href="Navigatie.html?what=holiday-park&sub=zwemparadijs">Met zwemparadijs</a>
-                        <a href="Navigatie.html?what=holiday-park&sub=luxe">Luxe parken</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park">Alle vakantieparken</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=zwemparadijs">Met zwemparadijs</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=attractiepark">Met attractiepark</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=luxe">Luxe parken</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=kids">Kindvriendelijk</a>
+                        <a href="Niveau2-Wat.html?what=holiday-park&sub=natuur">In de natuur</a>
                     </div>
                     <div class="nav-dd-col">
-                        <h5>🗓️ Weekendjes weg</h5>
-                        <a href="Navigatie.html?what=weekend">Alle weekendjes</a>
-                        <a href="Navigatie.html?what=weekend&sub=nl">In eigen land</a>
-                        <a href="Navigatie.html?what=weekend&sub=buurlanden">In buurlanden</a>
-                        <a href="Navigatie.html?what=weekend&sub=europa">In Europa</a>
-                    </div>
-                    <div class="nav-dd-col">
-                        <h5>☀️ Zonvakanties</h5>
-                        <a href="Navigatie.html?what=zon">Alle zonvakanties</a>
-                        <a href="Navigatie.html?what=zon&sub=middellandse-zee">Middellandse Zee</a>
-                        <a href="Navigatie.html?what=zon&sub=strand">Strandvakanties</a>
-                    </div>
-                    <div class="nav-dd-col">
-                        <h5>❄️ Wintervakanties</h5>
-                        <a href="Navigatie.html?what=winter">Alle wintersport</a>
-                        <a href="Navigatie.html?what=winter&sub=ski">Skivakanties</a>
-                        <a href="Navigatie.html?what=winter&sub=kerst">Kerstvakantie</a>
+                        <h5>🗓️ Andere types</h5>
+                        <a href="Niveau2-Wat.html?what=glamping">Glamping</a>
+                        <a href="Niveau2-Wat.html?what=wellness">Wellness</a>
+                        <a href="Niveau2-Wat.html?what=city-trip">Weekendje weg</a>
+                        <a href="Niveau2-Wat.html?what=sun">Zonvakantie</a>
+                        <a href="Niveau2-Wat.html?what=winter">Wintersport</a>
+                        <a href="Niveau2-Wat.html?what=adventure-trip">Actief / Avontuur</a>
                     </div>
                 </div>
             </span>
             <span class="has-dropdown">
                 <a href="Niveau2-Waar.html" ${activePage === 'waar' ? 'class="active"' : ''}>Bestemmingen</a>
-                <div class="nav-dropdown">
+                <div class="nav-dropdown wide">
                     <div class="nav-dd-col">
-                        <h5>🇳🇱 Nederland</h5>
-                        ${DATA.whereNL().map(([v,l]) => `<a href="Navigatie.html?where=${v}">${l}</a>`).join('')}
+                        <h5>🌍 Continenten & regio's</h5>
+                        <a href="Niveau2-Waar.html?region=europa">Europa</a>
+                        <a href="Niveau2-Waar.html?region=azie">Azië</a>
+                        <a href="Niveau2-Waar.html?region=afrika">Afrika</a>
+                        <a href="Niveau2-Waar.html?region=scandinavie">Scandinavië</a>
+                        <a href="Niveau2-Waar.html?region=bergen">Bergen</a>
+                        <a href="Niveau2-Waar.html?region=aan-zee">Aan zee</a>
                     </div>
                     <div class="nav-dd-col">
-                        <h5>🌍 Europa</h5>
-                        ${DATA.whereEU().map(([v,l]) => `<a href="Navigatie.html?where=${v}">${l}</a>`).join('')}
+                        <h5>🇳🇱 Nederland</h5>
+                        ${DATA.whereNL().map(([v,l]) => `<a href="Niveau2-Waar.html?where=${v}">${l}</a>`).join('')}
+                    </div>
+                    <div class="nav-dd-col">
+                        <h5>🇪🇺 Europese landen</h5>
+                        ${DATA.whereEU().map(([v,l]) => `<a href="Niveau2-Waar.html?where=${v}">${l}</a>`).join('')}
                     </div>
                 </div>
             </span>
-            <a href="Keuzehulp.html" ${activePage === 'keuzehulp' ? 'class="active"' : ''}>Keuzehulp</a>
-            <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
+            <span class="has-dropdown">
+                <a href="Niveau2-Wie.html" ${activePage === 'wie' ? 'class="active"' : ''}>Reisgezelschap</a>
+                <div class="nav-dropdown">
+                    <div class="nav-dd-col">
+                        <h5>👨‍👩‍👧 Gezinnen</h5>
+                        <a href="Niveau2-Wie.html?who=families-babies">Gezinnen met baby's</a>
+                        <a href="Niveau2-Wie.html?who=families-kids">Gezinnen met kinderen</a>
+                        <a href="Niveau2-Wie.html?who=families-teens">Gezinnen met tieners</a>
+                    </div>
+                    <div class="nav-dd-col">
+                        <h5>🥂 Volwassenen</h5>
+                        <a href="Niveau2-Wie.html?who=couples">Koppels</a>
+                        <a href="Niveau2-Wie.html?who=friends">Vrienden</a>
+                        <a href="Niveau2-Wie.html?who=seniors">Senioren</a>
+                        <a href="Niveau2-Wie.html?who=solo">Alleen reizend</a>
+                        <a href="Niveau2-Wie.html?who=pets">Met huisdieren</a>
+                    </div>
+                </div>
+            </span>
+            <a href="over-ons.html" ${activePage === 'over' ? 'class="active"' : ''}>Over ons</a>
         </nav>
     `;
     bindMobileNav(header);
     bindSiteSearch(header);
+    autoMountSearchNavigation();
+}
+
+// Zorgt dat de homepage zoek-component (Begin je zoektocht + Resorts &
+// Hotels / Campings / Vakantieparken) op iedere pagina onder de header
+// verschijnt. Wordt automatisch aangeroepen vanuit renderHeader, dus
+// elke pagina die renderHeader gebruikt krijgt deze gratis. Pages
+// kunnen opt-out met <body data-no-searchnav>.
+function autoMountSearchNavigation() {
+    if (document.body.hasAttribute('data-no-searchnav')) return;
+
+    // 1. Stylesheet laden als deze nog niet staat (homepages hebben hem
+    //    al, andere paginas niet).
+    if (!document.querySelector('link[href*="search-navigation.css"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'search-navigation.css?v=8';
+        document.head.appendChild(link);
+    }
+
+    // 2. Mount-div garanderen, ALTIJD binnen .site-header zodat header
+    //    en categorie-nav samen één sticky systeem vormen (zero gap,
+    //    gedeelde achtergrond, gedeelde z-index). Bestaande pagina's
+    //    waar #hero-searchbar als sibling stond worden hier verplaatst.
+    const headerEl = document.querySelector('.site-header');
+    let mount = document.getElementById('hero-searchbar');
+    if (!mount) {
+        mount = document.createElement('div');
+        mount.id = 'hero-searchbar';
+    }
+    if (headerEl) {
+        if (mount.parentElement !== headerEl) headerEl.appendChild(mount);
+    } else {
+        document.body.insertBefore(mount, document.body.firstChild);
+    }
+
+    // 2b. --header-h dynamisch syncen op de werkelijke header-hoogte
+    //     (inclusief de categorie-strip). De search-modal en andere
+    //     sticky-offsets gebruiken deze variabele. Cruciaal: de
+    //     ResizeObserver-referentie wordt op `window` gehangen zodat
+    //     hij niet door GC verdwijnt zodra deze functie returnt — de
+    //     cat-nav-content laadt namelijk async, dus de meting die
+    //     telt komt PAS na een volgende layout-cycle.
+    const syncHeaderHeight = () => {
+        if (!headerEl) return;
+        const h = headerEl.getBoundingClientRect().height;
+        if (h) document.documentElement.style.setProperty('--header-h', `${Math.round(h)}px`);
+    };
+    syncHeaderHeight();
+    requestAnimationFrame(syncHeaderHeight);
+    // Gebakken-in fallbacks: de async search-navigation.js render
+    // landt ergens binnen het eerste seconde-venster. We meten
+    // gewoon meerdere keren — goedkoper en betrouwbaarder dan
+    // proberen het "juiste" moment te raden.
+    [50, 150, 400, 900, 1800].forEach(ms => setTimeout(syncHeaderHeight, ms));
+    if (window.ResizeObserver && headerEl) {
+        try {
+            // Bewaar zowel observer als de target op window zodat de
+            // GC ze niet kan opruimen wanneer autoMount returnt.
+            if (window.__siteHeaderRO) {
+                try { window.__siteHeaderRO.disconnect(); } catch (_) {}
+            }
+            const ro = new ResizeObserver(syncHeaderHeight);
+            ro.observe(headerEl);
+            window.__siteHeaderRO = ro;
+            window.__siteHeaderEl = headerEl;
+        } catch (_) { /* noop */ }
+    }
+    window.addEventListener('resize', syncHeaderHeight, { passive: true });
+
+    // 3. Render aanroepen — laadt het script dynamisch als nodig.
+    const callRender = () => {
+        if (typeof window.renderSearchNavigation === 'function') {
+            window.renderSearchNavigation('hero-searchbar');
+        }
+    };
+    if (typeof window.renderSearchNavigation === 'function') {
+        callRender();
+    } else if (!document.querySelector('script[src*="search-navigation.js"]')) {
+        const s = document.createElement('script');
+        s.src = 'search-navigation.js?v=8';
+        s.async = false;
+        s.onload = callRender;
+        document.head.appendChild(s);
+    } else {
+        // Script staat al in DOM maar render-functie nog niet beschikbaar
+        // (parser-volgorde) — wacht tot DOM ready of polling op functie.
+        const wait = setInterval(() => {
+            if (typeof window.renderSearchNavigation === 'function') {
+                clearInterval(wait);
+                callRender();
+            }
+        }, 50);
+        setTimeout(() => clearInterval(wait), 5000);
+    }
 }
 
 // Hamburger + accordion (mobiel) — vanilla JS, geen library
@@ -737,9 +929,13 @@ function renderBlogPreview(containerId, topic = '') {
         };
         el.innerHTML = list.map((b, i) => {
             const { bg, emoji } = imgFor(b.image, i);
+            const photo = photoUrlForEditorial(b, 720, 460);
             return `
                 <a class="blog-card" href="blog-detail.html?id=${b.id}">
-                    <div class="blog-img" style="background: ${bg}">${emoji}</div>
+                    <div class="blog-img" style="background: ${bg}">
+                        <img src="${photo}" alt="${b.title}" loading="lazy" onerror="this.style.display='none'"/>
+                        <span class="blog-img-emoji" aria-hidden="true">${emoji}</span>
+                    </div>
                     <div class="blog-body">
                         <div class="blog-tag">${b.category}</div>
                         <h3>${b.title}</h3>
@@ -773,13 +969,16 @@ function renderBlogPreview(containerId, topic = '') {
 }
 
 // ============ KEUZEHULP CTA ============
+// Compacte CTA-kaart, gebruikt op subpagina's (Niveau 2/3/4) onder
+// de matches. Op de homepage gebruiken we de grotere
+// renderKeuzehulpHero hieronder als emotionele instap.
 function renderKeuzehulpCTA(containerId) {
     const el = document.getElementById(containerId);
     if (!el) return;
     el.innerHTML = `
         <div class="keuzehulp-cta">
             <div>
-                <h3>Niet zeker wat je zoekt?</h3>
+                <h3>De ultieme zoektool</h3>
                 <p>Onze Keuzehulp stelt je 7 slimme vragen en vindt precies de juiste vakantie voor jou.</p>
                 <div class="benefits">
                     <span>⚡ Snel</span>
@@ -789,5 +988,37 @@ function renderKeuzehulpCTA(containerId) {
             </div>
             <a class="btn-ghost-white" href="Keuzehulp.html">Start Keuzehulp →</a>
         </div>
+    `;
+}
+
+// ============ KEUZEHULP HERO BANNER (homepage) ============
+// Single-column dark premium discovery-blok (geen illustratie meer).
+// Vervangt de oude functionele Keuzehulp-kaart op de homepage door
+// een compact emotioneel CTA-blok: deep-night gradient achtergrond,
+// editorial copy en één primaire CTA "Start de keuzehulp" die naar
+// Keuzehulp.html linkt.
+//
+// De vorige iteratie had ook een CSS+SVG mountain-scene aan de
+// linkerkant; die maakte het blok te hero-achtig en visueel zwaar.
+// Nu alleen het content-paneel — strakker, premium, content-eerst.
+function renderKeuzehulpHero(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    // Redesign — Booking/Airbnb clarity. White card, brand-blue
+    // accent, generous whitespace, single clear CTA. Geen gradient,
+    // geen gold, geen decoratieve experimentele lagen. Calm,
+    // trustworthy, premium-modern travel-platform register.
+    el.innerHTML = `
+        <section class="kh-hero" aria-label="Start de keuzehulp">
+            <div class="kh-hero-content">
+                <span class="kh-hero-eyebrow">Keuzehulp</span>
+                <h2 class="kh-hero-title">Vind de vakantie die bij je past.</h2>
+                <p class="kh-hero-lead">Beantwoord zeven korte vragen en wij stellen een persoonlijke lijst samen — accommodaties, bestemmingen en tips, op maat van jouw reisstijl.</p>
+                <div class="kh-hero-actions">
+                    <a class="btn btn-primary kh-hero-cta" href="Keuzehulp.html">Start de keuzehulp</a>
+                    <span class="kh-hero-note">Onder de 60 seconden · Geen account nodig</span>
+                </div>
+            </div>
+        </section>
     `;
 }

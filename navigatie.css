@@ -201,33 +201,8 @@ img { max-width: 100%; height: auto; }
 .filter-chips-compact { display: flex; flex-wrap: wrap; gap: 6px; }
 .filter-chips-compact .filter-chip { padding: 6px 10px; font-size: 0.8rem; border-width: 1px; }
 
-/* ========== BUTTONS ========== */
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 600;
-    font-family: inherit;
-}
-.btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
-.btn-secondary {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 600;
-    font-family: inherit;
-}
-.btn-secondary:hover { background: var(--primary-light); }
+/* ========== BUTTONS \u2014 canonical system lives in site.css.
+   Only page-specific utilities here: .btn-text, .btn-review, .btn-book. */
 .btn-large {
     padding: 14px 36px;
     font-size: 1.05rem;
@@ -238,7 +213,7 @@ img { max-width: 100%; height: auto; }
 .btn-text {
     background: none;
     border: none;
-    color: var(--primary);
+    color: var(--brand);
     cursor: pointer;
     font-weight: 600;
     padding: 8px 0;

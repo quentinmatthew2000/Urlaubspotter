@@ -1,76 +1,223 @@
-/* site.css — gedeelde stijlen voor alle niveau-pagina's */
+/* site.css — gedeelde stijlen voor alle niveau-pagina's
+   Phase 2 design refresh: premium travel-editorial palette.
+   Warm ivory canvas, champagne surfaces, gold-bronze accent
+   (continueert de kh-hero north-star uit Phase 1). Twee
+   typefaces: serif display (Lora) + clean sans body (DM Sans). */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;0,700;1,500&display=swap');
 
 :root {
-    --primary: #007bff;
-    --primary-dark: #0056b3;
-    --primary-light: #e8f2ff;
-    --accent: #ff8a3d;      /* oranje voor CTA's (kidsvakantiegids-stijl) */
-    --accent-dark: #e8651a;
-    --secondary: #6c757d;
-    --text: #212529;
-    --text-muted: #555;
-    --bg: #ffffff;
-    --bg-light: #f8f9fa;
-    --border: #e9ecef;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
-    --shadow-lg: 0 16px 40px rgba(0,0,0,0.15);
+    /* ============================================================
+       URLAUBSPOTTER PALETTE — Booking/Airbnb-inspired clarity
+       Blue + white dominant. Warm neutrals only as quiet support.
+       Gold is removed from the primary system; reserved for tiny
+       atmospheric accents only.
+       ============================================================ */
+    --primary: #1a2230;          /* charcoal/dark-navy text base */
+    --primary-dark: #0f1620;
+    --primary-light: #eef2f7;    /* cool gray for hover surfaces */
+    --accent: #1e6cd6;           /* travel-blue (CTA emphasis) */
+    --accent-dark: #1554b0;
+    --accent-soft: #4a8de8;
+    --secondary: #6b7280;        /* soft gray for meta text */
+
+    /* Brand blue — the single recognizable identity color.
+       Used on logo, primary CTAs, links, active states, tabs.
+       Modern travel-platform blue: trustworthy, clean, premium. */
+    --brand: #1e6cd6;
+    --brand-dark: #1554b0;
+    --brand-light: #eaf2fc;      /* airy blue whisper */
+    --brand-soft: #4a8de8;       /* soft hover blue */
+    --brand-deep: #0f3e8a;       /* deep navy for dark surfaces */
+
+    /* Gold reduced to a single restrained accent token. Use rarely:
+       tiny premium accents only (e.g. star ratings). Never on CTAs,
+       large surfaces, or hero gradients. */
+    --sand: #c8a567;
+    --sand-soft: #f4ecda;
+
+    /* Text + neutrals — charcoal hierarchy, no warm-brown drift. */
+    --text: #1a2230;
+    --text-muted: #6b7280;
+    --text-soft: #9ca3af;
+
+    /* Surfaces — clean warm white dominant, cool gray washes for
+       subtle section rhythm. No more ivory/champagne base. */
+    --bg: #ffffff;               /* clean white canvas */
+    --bg-warm: #fbfbfa;          /* whisper of warmth (subtle support) */
+    --bg-light: #f5f7fa;         /* cool light gray for alt sections */
+    --bg-paper: #ffffff;
+    --border: #e5e7eb;           /* cool neutral border */
+    --border-strong: #d1d5db;
+    --gold: #c8a567;             /* legacy alias — usage now sparse */
+    --ink: #1a2230;
+
+    /* Clean modern shadows — soft, subtle, no heavy atmospheric tint.
+       Booking/Airbnb register: depth without drama. */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 16px 40px -12px rgba(15, 23, 42, 0.16), 0 4px 12px -4px rgba(15, 23, 42, 0.06);
+    --shadow-brand: 0 8px 22px -6px rgba(30, 108, 214, 0.32), 0 2px 6px rgba(30, 108, 214, 0.12);
+    --shadow-inset-top: inset 0 1px 0 rgba(255,255,255,0.4);
+
     --radius: 12px;
-    --header-h: 64px;
+    --radius-sm: 8px;
+    --radius-lg: 18px;
+    --header-h: 72px;
+    /* Typography — clean modern sans-serif as the dominant system.
+       Inter for clarity (Booking/Airbnb register); Lora retained as
+       optional display serif for editorial moments only. */
+    --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    --font-editorial: 'Lora', Georgia, serif;
+}
+
+/* Discarded duplicate block below — kept selector-only to no-op. */
+._unused {
+    --text: #1f1810;
+    --text-muted: #6e5a37;
+    --bg: #fdfaf3;               /* warm ivory canvas */
+    --bg-light: #f6efde;         /* champagne surface */
+    --bg-paper: #ffffff;         /* clean paper for cards */
+    --border: #ece3d0;
+    --border-strong: #d9cba8;
+    --gold: #b48848;
+    --ink: #1f1810;
+    --shadow-sm: 0 1px 2px rgba(60,40,15,0.05), 0 2px 8px rgba(60,40,15,0.04);
+    --shadow-md: 0 8px 24px -8px rgba(60,40,15,0.18), 0 2px 6px rgba(60,40,15,0.05);
+    --shadow-lg: 0 28px 60px -24px rgba(60,40,15,0.28), 0 8px 20px -10px rgba(60,40,15,0.12);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --radius-lg: 22px;
+    --header-h: 72px;
+    --font-display: 'Lora', 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html { scroll-behavior: smooth; overflow-x: clip; }
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-body);
     color: var(--text);
     background: var(--bg);
-    line-height: 1.55;
+    line-height: 1.6;
     overflow-x: clip;
     max-width: 100vw;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
 }
+h1, h2, h3, .section-head h2, .hero h1, .editorial-card h3, .listing-card-body h3, .blog-body h3 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.022em;
+}
+/* ============================================================
+   CANONICAL TYPOGRAPHY SCALE
+   One editorial scale used across the platform. Components should
+   reference these tokens (or h1-h4 base styles) rather than
+   declaring ad-hoc font-sizes. The scale is fluid (clamp) so it
+   reads cleanly on every viewport without per-breakpoint overrides.
+   ============================================================ */
+:root {
+    /* Display + heading scale */
+    --t-display:   clamp(2.6rem, 5.5vw, 3.6rem);   /* hero, kh-hero h1 */
+    --t-h1:        clamp(2.0rem, 4.0vw, 2.8rem);   /* page titles */
+    --t-h2:        clamp(1.7rem, 3.2vw, 2.2rem);   /* section heads */
+    --t-h3:        clamp(1.2rem, 2.0vw, 1.45rem);  /* card titles, sub-sections */
+    --t-h4:        1.1rem;                          /* small heads, rail titles */
+    /* Body + UI scale */
+    --t-lead:      1.05rem;                         /* intros, leads, deck-style copy */
+    --t-body:      1rem;                            /* default body */
+    --t-meta:      0.92rem;                         /* meta rows, captions */
+    --t-small:     0.82rem;                         /* labels, helpers */
+    --t-micro:     0.72rem;                         /* eyebrows, tags */
+    /* Line-height tokens */
+    --lh-tight:    1.2;
+    --lh-snug:     1.35;
+    --lh-relaxed:  1.55;
+    --lh-loose:    1.7;
+}
+
+h1, .t-h1 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-h1); line-height: var(--lh-tight); letter-spacing: -0.012em; color: var(--ink); }
+h2, .t-h2 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-h2); line-height: var(--lh-tight); letter-spacing: -0.008em; color: var(--ink); }
+h3, .t-h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-h3); line-height: var(--lh-snug); color: var(--ink); }
+h4, .t-h4 { font-family: var(--font-body);    font-weight: 700; font-size: var(--t-h4); line-height: var(--lh-snug); color: var(--ink); }
+.t-display  { font-family: var(--font-display); font-weight: 600; font-size: var(--t-display); line-height: var(--lh-tight); letter-spacing: -0.018em; color: var(--ink); }
+.t-lead     { font-size: var(--t-lead); line-height: var(--lh-relaxed); color: var(--text-muted); }
+.t-body     { font-size: var(--t-body); line-height: var(--lh-relaxed); color: var(--text); }
+.t-meta     { font-size: var(--t-meta); color: var(--text-muted); }
+.t-small    { font-size: var(--t-small); color: var(--text-muted); }
+.t-micro    { font-size: var(--t-micro); color: var(--text-muted); }
+
+/* Editorial eyebrow — typography-first, no leading rule. The blue
+   color, letter-spacing and weight do the work; ornaments dropped. */
+.eyebrow, .section-head .eyebrow {
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: var(--t-micro);
+    color: var(--brand);
+    display: inline-block;
+}
+.section-head > div > .eyebrow::before { content: none; }
+.offer-head .eyebrow { color: var(--brand); }
 
 img { max-width: 100%; display: block; height: auto; }
 a { color: var(--primary); text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 
-/* ============ HEADER ============ */
+/* ============ HEADER — connected top system ============
+   Header + sticky category nav form ONE unified zone. The header
+   itself drops its own border; the category-strip below carries
+   the single hairline divider for the entire top block. Both
+   share the same surface so they read as one continuous chrome. */
 .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: white;
-    border-bottom: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
+    background: var(--bg);
+    border-bottom: none;
+    box-shadow: none;
 }
 /* 3-koloms layout: hamburger links, logo gecentreerd, acties rechts.
    Nav-drawer staat als vierde kind en wrapt (flex-basis 100%) naar een
-   nieuwe regel wanneer .open gezet wordt. */
+   nieuwe regel wanneer .open gezet wordt.
+   Vertical rhythm: 10px verticale padding op alle viewports zodat
+   header + tabs-strip onder elkaar precies dezelfde top-band hoogte
+   krijgen. */
 .site-header .inner {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 12px 20px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
 }
 .site-logo {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 800;
-    font-size: 1.25rem;
-    color: var(--primary);
+    font-size: 1.4rem;
+    color: var(--brand);
     text-decoration: none;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
+    position: relative;
     flex: 1;
-    text-align: center;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     min-width: 0;
+}
+.site-logo .site-logo-dot {
+    color: var(--brand);
+    font-weight: 700;
+    margin-left: 1px;
+    line-height: 1;
 }
 .site-logo img {
     display: block;
@@ -224,39 +371,57 @@ button { font-family: inherit; cursor: pointer; }
 .ss-meta { font-size: 0.78rem; color: var(--secondary); }
 .ss-empty { padding: 16px; color: var(--secondary); text-align: center; font-size: 0.9rem; }
 
-/* Navigatie-drawer: standaard ingeklapt, klapt open via hamburger op alle
-   breakpoints (3-koloms header = mobile-first ontwerp).
-   BELANGRIJK: wanneer gesloten gebruiken we display:none, zodat dit element
-   géén flex-rij of gap claimt in de header — anders zou er onder de header
-   een zichtbare witte strook staan (max-height:0 neutraliseert alleen de
-   content-hoogte, niet de flex-row/gap/margin/padding/border). */
+/* ============ NAV DRAWER — premium mobile UX ============
+   Standaard ingeklapt; klapt open via hamburger op alle breakpoints.
+   BELANGRIJK: wanneer gesloten gebruiken we display:none zodat het
+   element géén flex-rij of gap claimt in de header. */
 .site-nav {
     flex: 1 1 100%;
     order: 3;
     display: none;
     flex-direction: column;
-    gap: 0;
-    margin-top: 8px;
-    padding-top: 8px;
+    gap: 4px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
-    max-height: 80vh;
+    max-height: calc(100vh - var(--header-h, 64px) - 16px);
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .site-nav.open { display: flex; }
 .site-nav > a,
 .site-nav > .has-dropdown > a {
-    display: block;
-    padding: 14px 8px;
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 14px 14px;
     color: var(--text);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.02rem;
+    line-height: 1.2;
     text-decoration: none;
-    border-radius: 0;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s, color 0.15s;
+    border-radius: 10px;
+    border-bottom: none;
+    background: white;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
 }
-.site-nav a:hover { background: var(--primary-light); color: var(--primary); }
-.site-nav a.active { color: var(--primary); background: var(--primary-light); }
+.site-nav > a + a,
+.site-nav > .has-dropdown + a,
+.site-nav > a + .has-dropdown > a,
+.site-nav > .has-dropdown + .has-dropdown > a { margin-top: 2px; }
+.site-nav a:hover,
+.site-nav a:focus-visible {
+    background: var(--primary-light);
+    color: var(--primary);
+    outline: none;
+}
+.site-nav a:active { transform: scale(0.985); }
+.site-nav a.active {
+    color: var(--primary);
+    background: var(--primary-light);
+    font-weight: 700;
+}
 
 /* ============ SEARCHBAR (kidsvakantiegids-stijl) ============ */
 .searchbar-wrap {
@@ -265,7 +430,7 @@ button { font-family: inherit; cursor: pointer; }
     padding: 0 24px;
 }
 .searchbar {
-    background: white;
+    background: var(--bg-paper);
     border-radius: 16px;
     box-shadow: var(--shadow-md);
     padding: 10px;
@@ -350,22 +515,42 @@ button { font-family: inherit; cursor: pointer; }
 .searchbar.compact .searchbar-field select { font-size: 0.92rem; padding: 2px 18px 2px 0; }
 .searchbar.compact .searchbar-btn { padding: 0 22px; font-size: 0.92rem; }
 
-/* ============ HERO ============ */
+/* ============ HERO ============
+   Coastal navy atmospheric depth. The hero is one of the strongest
+   identity moments on the platform — it should read as premium
+   Mediterranean travel, not bright SaaS UI. Layered radial gradients
+   evoke coastal lighting; a deep navy base anchors the composition. */
 .hero {
     position: relative;
-    background: linear-gradient(135deg, var(--primary) 0%, #0095ff 100%);
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(77, 117, 163, 0.55), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 80% 80%, rgba(20, 47, 82, 0.65), transparent 55%),
+        linear-gradient(155deg, #1e4574 0%, #142f52 55%, #0e2340 100%);
     color: white;
-    padding: 72px 24px 96px;
+    padding: 88px 24px 110px;
     overflow: hidden;
 }
-.hero.big { padding: 100px 24px 140px; }
+.hero.big { padding: 110px 24px 150px; }
+.hero::before {
+    /* Soft golden coastal light from upper-right — adds warmth and
+       atmospheric depth to the navy base without going gold. */
+    content: '';
+    position: absolute;
+    top: -20%; right: -10%;
+    width: 60%; height: 80%;
+    background: radial-gradient(circle, rgba(200, 165, 103, 0.18), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
 .hero::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15), transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1), transparent 50%);
+    background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.10), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.06), transparent 50%);
     pointer-events: none;
+    z-index: 0;
 }
 .hero-inner {
     position: relative;
@@ -420,7 +605,7 @@ button { font-family: inherit; cursor: pointer; }
 .section {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 56px 24px;
+    padding: 88px 32px;
 }
 .section.tight { padding: 36px 24px; }
 .section-head {
@@ -432,35 +617,69 @@ button { font-family: inherit; cursor: pointer; }
     flex-wrap: wrap;
 }
 .section-head h2 {
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-size: var(--t-h2);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
     text-wrap: balance;
+    color: var(--ink);
 }
 .section-head .eyebrow {
     display: block;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 6px;
+    margin-bottom: 10px;
 }
 .section-head .lead {
-    font-size: 1rem;
-    color: var(--secondary);
+    font-size: var(--t-lead);
+    color: var(--text-muted);
     max-width: 620px;
     margin-top: 8px;
 }
 .section-head .link {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--brand);
     white-space: nowrap;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s, color 0.2s;
 }
+.section-head .link:hover { color: var(--brand-dark); border-bottom-color: var(--brand-dark); text-decoration: none; }
 .section-head .link:hover { text-decoration: underline; }
-.section-bg-alt { background: var(--bg-light); }
-.section-bg-alt-wrap { background: var(--bg-light); }
+/* Section background variants — drive visual rhythm.
+   - bg-alt: soft champagne wash for subtle pacing between ivory sections
+   - bg-dark: deep coastal navy for premium editorial moments
+     (use sparingly — 1 per page max — for a strong identity beat) */
+.section-bg-alt {
+    background:
+        radial-gradient(ellipse 90% 50% at 50% 0%, rgba(200, 165, 103, 0.10), transparent 60%),
+        var(--bg-light);
+}
+.section-bg-alt-wrap {
+    background:
+        radial-gradient(ellipse 90% 50% at 50% 0%, rgba(200, 165, 103, 0.10), transparent 60%),
+        var(--bg-light);
+}
+.section-bg-dark,
+.section-bg-dark-wrap {
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 30%, rgba(77, 117, 163, 0.35), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 80% 80%, rgba(20, 47, 82, 0.50), transparent 55%),
+        linear-gradient(155deg, #1e4574 0%, #142f52 55%, #0e2340 100%);
+    color: rgba(255,255,255,0.92);
+}
+.section-bg-dark .section-head h2,
+.section-bg-dark-wrap .section-head h2 { color: #fff; }
+.section-bg-dark .section-head .eyebrow,
+.section-bg-dark-wrap .section-head .eyebrow { color: var(--sand); }
+.section-bg-dark .section-head .lead,
+.section-bg-dark-wrap .section-head .lead { color: rgba(255,255,255,0.78); }
+.section-bg-dark .section-head .link,
+.section-bg-dark-wrap .section-head .link { color: var(--sand); }
+.section-bg-dark .section-head .link:hover,
+.section-bg-dark-wrap .section-head .link:hover { color: #fff; border-bottom-color: #fff; }
+.section-bg-dark .rail-wrap::before,
+.section-bg-dark-wrap .rail-wrap::before { background: linear-gradient(to right, #142f52, transparent); }
+.section-bg-dark .rail-wrap::after,
+.section-bg-dark-wrap .rail-wrap::after { background: linear-gradient(to left, #142f52, transparent); }
 
 /* ============ CATEGORY CAROUSEL (horizontale scroll met tegels) ============ */
 .carousel {
@@ -483,7 +702,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .cat-tile {
     scroll-snap-align: start;
-    background: white;
+    background: var(--bg-paper);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
@@ -516,7 +735,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cat-tile-body .meta {
     font-size: 0.82rem;
-    color: var(--secondary);
+    color: var(--text-muted);
     margin-top: auto;
 }
 /* Grid-varianten wanneer geen carrousel nodig */
@@ -581,25 +800,74 @@ button { font-family: inherit; cursor: pointer; }
     gap: 22px;
 }
 .listing-grid.cols-3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.listing-card {
-    background: white;
+
+/* ============================================================
+   CANONICAL CARD SYSTEM
+   One chrome shared by every card type on the platform:
+   listing-card, editorial-card, blog-card, ph-story-card.
+   Per-type differences live on the image slot, badge slot, and
+   meta row — not on the surface itself.
+   ============================================================ */
+.listing-card,
+.editorial-card,
+.blog-card,
+.ph-story-card {
+    background:
+        linear-gradient(180deg, rgba(231, 238, 247, 0.30) 0%, transparent 18%),
+        var(--bg-paper);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
     display: flex;
     flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.3s ease;
+    position: relative;
 }
-.listing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.listing-card::after,
+.editorial-card::after,
+.blog-card::after,
+.ph-story-card::after {
+    /* Top accent bar — reveals on hover. Coastal navy. */
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--brand) 20%, var(--brand-soft) 50%, var(--brand) 80%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+.listing-card:hover,
+.editorial-card:hover,
+.blog-card:hover,
+.ph-story-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--brand-light);
+}
+.listing-card:hover::after,
+.editorial-card:hover::after,
+.blog-card:hover::after,
+.ph-story-card:hover::after {
+    opacity: 1;
+}
+.listing-card { cursor: pointer; }
+
 .listing-card-img {
     aspect-ratio: 16 / 10;
+    position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 3rem;
     color: white;
-    position: relative;
 }
 .listing-card-badge {
     position: absolute;
@@ -618,13 +886,13 @@ button { font-family: inherit; cursor: pointer; }
     flex-direction: column;
 }
 .listing-card-body h3 {
-    font-size: 1.05rem;
+    font-size: var(--t-h3);
     font-weight: 700;
     margin-bottom: 4px;
     color: var(--text);
 }
 .listing-card-loc {
-    color: var(--secondary);
+    color: var(--text-muted);
     font-size: 0.88rem;
     margin-bottom: 8px;
 }
@@ -633,32 +901,42 @@ button { font-family: inherit; cursor: pointer; }
     gap: 6px;
     flex-wrap: wrap;
     margin-bottom: 12px;
+    /* Beperk tot 1 visuele rij — voorkomt 2-3 regelige tag-blokken
+       op smalle (240-300px) card-widths op tablet/mobile. Surplus
+       tags worden gewoon verborgen; de eerste 2-3 dragen de
+       discoverable signal. */
+    max-height: 26px;
+    overflow: hidden;
 }
+/* Op brede cards (>=320px usable) mogen tags wrappen — daar is
+   genoeg horizontal room dat 4 tags op 1 of 2 nette rijen passen. */
+@media (min-width: 1280px) {
+    .listing-card-tags { max-height: none; overflow: visible; }
+}
+/* Tag styling — enkele bron, geen conflict met de override
+   later in dit bestand (zie ============ TAG CHIPS sectie). De
+   override daar wint qua font/color; deze regel houdt alleen het
+   layout-skelet. */
 .listing-card-tags .tag {
-    background: var(--primary-light);
-    color: var(--primary);
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.72rem;
-    font-weight: 600;
+    border-radius: 999px;
 }
 .listing-card-foot {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-top: auto;
-    padding-top: 10px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
 }
 .listing-card-rating { font-size: 0.88rem; color: var(--accent-dark); font-weight: 700; }
 .listing-card-price { font-size: 1.05rem; font-weight: 800; color: var(--text); }
-.listing-card-price small { font-size: 0.72rem; color: var(--secondary); font-weight: 500; margin-left: 2px; }
+.listing-card-price small { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; margin-left: 2px; }
 
 .listing-empty {
     grid-column: 1 / -1;
     padding: 48px 24px;
     text-align: center;
-    color: var(--secondary);
+    color: var(--text-muted);
     background: var(--bg-light);
     border-radius: var(--radius);
 }
@@ -738,15 +1016,9 @@ button { font-family: inherit; cursor: pointer; }
     gap: 22px;
 }
 .editorial-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: box-shadow 0.15s, transform 0.15s;
+    /* chrome inherited from canonical card system */
 }
-.editorial-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.editorial-author { color: var(--brand); letter-spacing: 0.12em; }
 .editorial-card-img {
     aspect-ratio: 16 / 9;
     display: flex;
@@ -764,13 +1036,13 @@ button { font-family: inherit; cursor: pointer; }
     font-weight: 600;
 }
 .editorial-card h3 {
-    font-size: 1.1rem;
+    font-size: var(--t-h3);
     font-weight: 700;
-    line-height: 1.35;
+    line-height: var(--lh-snug);
     text-wrap: balance;
     margin: 0;
 }
-.editorial-card p { font-size: 0.92rem; line-height: 1.55; color: var(--text-muted); margin: 0; }
+.editorial-card p { font-size: var(--t-meta); line-height: var(--lh-relaxed); color: var(--text-muted); margin: 0; }
 .editorial-card .link { margin-top: auto; padding-top: 6px; font-weight: 500; }
 
 /* ============ GENERIC HORIZONTAL RAIL (blog/offer/listing/editorial) ============ */
@@ -837,7 +1109,7 @@ button { font-family: inherit; cursor: pointer; }
     gap: 22px;
 }
 .offer-card {
-    background: white;
+    background: var(--bg-paper);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
@@ -898,47 +1170,106 @@ button { font-family: inherit; cursor: pointer; }
     font-weight: 600;
 }
 
-/* ============ DROPDOWN NAV (accordeon in drawer) ============ */
+/* ============ DROPDOWN NAV — premium accordion ============
+   Accordion-toggle voor expandable secties (Vakantietypen,
+   Bestemmingen, Reisgezelschap). Verbeterde mobiele leesbaarheid:
+   schone chevron-iconen i.p.v. +/-, ruimere tap-targets, sub-items
+   in 2-koloms grid op landscape phones zodat opgevouwen labels niet
+   over de hele kolombreedte uitsmeren. */
 .site-nav .has-dropdown { display: block; }
-.site-nav .has-dropdown > a::after {
-    content: '+';
-    float: right;
-    font-size: 1.15rem;
-    color: var(--secondary);
-    margin-left: 8px;
-    line-height: 1;
+.site-nav .has-dropdown > a {
+    position: relative;
+    padding-right: 44px;
 }
-.site-nav .has-dropdown.open > a::after { content: '−'; }
+.site-nav .has-dropdown > a::after {
+    content: '';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid var(--secondary);
+    border-bottom: 2px solid var(--secondary);
+    transform: translateY(-65%) rotate(45deg);
+    transition: transform 0.22s ease, border-color 0.18s ease;
+}
+.site-nav .has-dropdown.open > a {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+.site-nav .has-dropdown.open > a::after {
+    transform: translateY(-30%) rotate(-135deg);
+    border-color: var(--primary);
+}
 .nav-dropdown {
     display: none;
     grid-template-columns: 1fr;
-    background: var(--bg-light);
-    padding: 10px 16px 14px;
-    border-bottom: 1px solid var(--border);
+    background: transparent;
+    padding: 6px 4px 10px 12px;
+    margin: 2px 0 8px;
+    border-left: 2px solid var(--primary-light);
     gap: 12px;
 }
 .nav-dropdown.wide { grid-template-columns: 1fr; }
-.site-nav .has-dropdown.open .nav-dropdown { display: grid; }
+.site-nav .has-dropdown.open .nav-dropdown {
+    display: grid;
+    animation: navDropFade 0.22s ease;
+}
+@keyframes navDropFade {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.nav-dd-col + .nav-dd-col { margin-top: 4px; }
 .nav-dd-col h5 {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted, #555);
+    letter-spacing: 0.10em;
+    color: var(--secondary);
     font-weight: 700;
-    margin: 0 0 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
+    margin: 6px 0 6px;
+    padding: 0;
+    border-bottom: none;
 }
 .nav-dd-col a {
-    display: block;
-    padding: 6px 8px;
-    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 9px 12px;
+    font-size: 0.95rem;
     color: var(--text);
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: 8px;
     background: transparent !important;
+    line-height: 1.25;
 }
-.nav-dd-col a:hover { background: var(--primary-light) !important; color: var(--primary); }
+.nav-dd-col a:hover,
+.nav-dd-col a:focus-visible {
+    background: var(--primary-light) !important;
+    color: var(--primary);
+    outline: none;
+}
+
+/* Op landscape phones / kleine tablets (>= 520px) plaatsen we de
+   sub-items in 2 kolommen zodat lange lijsten compacter passen. */
+@media (min-width: 520px) {
+    .nav-dropdown { grid-template-columns: 1fr 1fr; column-gap: 16px; }
+    .nav-dropdown.wide { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 880px) {
+    .nav-dropdown.wide { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* Heel kleine schermen (oudere phones < 360px): verklein de
+   padding zodat alles netjes past zonder horizontale scroll. */
+@media (max-width: 359px) {
+    .site-nav > a,
+    .site-nav > .has-dropdown > a {
+        padding: 12px 10px;
+        font-size: 0.96rem;
+    }
+    .nav-dropdown { padding-left: 10px; }
+    .nav-dd-col a { font-size: 0.9rem; padding: 8px 10px; }
+}
 
 /* ============ BLOG PREVIEW ============ */
 .blog-grid {
@@ -947,17 +1278,9 @@ button { font-family: inherit; cursor: pointer; }
     gap: 20px;
 }
 .blog-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    transition: box-shadow 0.15s, transform 0.15s;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
+    /* chrome inherited from canonical card system */
 }
-.blog-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.blog-card:hover { /* hover inherited */ }
 .blog-img {
     aspect-ratio: 16 / 10;
     display: flex;
@@ -970,17 +1293,18 @@ button { font-family: inherit; cursor: pointer; }
 .blog-tag {
     font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent-dark);
-    font-weight: 700;
-    margin-bottom: 6px;
+    letter-spacing: 0.14em;
+    color: var(--brand);
+    font-weight: 600;
+    margin-bottom: 8px;
 }
+.editorial-author { color: var(--brand) !important; font-weight: 600; }
 .blog-body h3 {
-    font-size: 1.05rem;
+    font-size: var(--t-h3);
     margin-bottom: 6px;
     text-wrap: pretty;
 }
-.blog-body p { font-size: 0.9rem; color: var(--secondary); }
+.blog-body p { font-size: var(--t-meta); color: var(--text-muted); }
 
 /* ============ KEUZEHULP CTA ============ */
 .keuzehulp-cta {
@@ -1003,64 +1327,153 @@ button { font-family: inherit; cursor: pointer; }
     background: rgba(255,255,255,0.2);
     padding: 6px 12px; border-radius: 20px;
 }
-.btn-accent {
-    display: inline-block;
-    background: var(--accent);
-    color: white;
-    font-weight: 700;
-    padding: 14px 28px;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: background 0.15s, transform 0.15s;
-    border: none;
-    font-size: 1rem;
-    white-space: nowrap;
-}
-.btn-accent:hover { background: var(--accent-dark); transform: translateY(-2px); }
+/* ============================================================
+   CANONICAL BUTTON SYSTEM
+   Three semantic intents shared across the platform:
+     .btn-primary   navy brand fill   — main CTA
+     .btn-secondary sandstone fill    — supporting CTA
+     .btn-ghost     transparent+border — tertiary
+   Size modifier: .btn-large
+   Legacy aliases: .btn-accent → secondary, .btn-ghost-white → ghost-on-dark
+   Per-page utilities (.btn-text, .btn-restart, .btn-review, .btn-book)
+   live with their own page CSS.
+   ============================================================ */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-accent,
 .btn-ghost-white {
-    display: inline-block;
-    background: white;
-    color: var(--primary);
-    font-weight: 700;
-    padding: 14px 28px;
-    border-radius: 10px;
-    text-decoration: none;
-}
-
-/* ============ NEWSLETTER + SOCIAL ============ */
-.news-social {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 24px;
-}
-.news-block, .social-block {
-    background: var(--bg-light);
-    border-radius: 16px;
-    padding: 32px 28px;
-    border: 1px solid var(--border);
-}
-.news-block h3, .social-block h3 { font-size: 1.3rem; margin-bottom: 6px; }
-.news-block p, .social-block p { color: var(--secondary); margin-bottom: 16px; }
-.news-form { display: flex; gap: 8px; }
-.news-form input {
-    flex: 1; padding: 12px 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 600;
     font-size: 0.95rem;
     font-family: inherit;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    white-space: nowrap;
+}
+.btn-primary {
+    /* Lighter premium blue — calmer than the old saturated travel-blue.
+       Uses --brand-soft → --brand as the gradient stops so the CTA reads
+       light and modern instead of heavy royal-blue. Hover deepens to
+       --brand for the standard depth-on-interaction cue. */
+    background: linear-gradient(180deg, var(--brand-soft, #4d75a3) 0%, var(--brand, #1e4574) 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 1px 2px rgba(15, 25, 50, 0.08), 0 2px 4px rgba(15, 25, 50, 0.05);
+    letter-spacing: 0.005em;
+    font-weight: 600;
+}
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, var(--brand, #1e4574) 0%, var(--brand-dark, #14365a) 100%);
+    border-color: transparent;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(15, 25, 50, 0.12), 0 6px 14px rgba(15, 25, 50, 0.10);
+}
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(15, 25, 50, 0.14);
+}
+.btn-secondary,
+.btn-accent { background: var(--sand); color: var(--ink); border-color: var(--sand); }
+.btn-secondary:hover:not(:disabled),
+.btn-accent:hover { background: var(--accent-dark); color: #fff; border-color: var(--accent-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--border-strong); }
+.btn-ghost:hover:not(:disabled) { background: var(--bg-light); border-color: var(--ink); }
+.btn-ghost-white { background: rgba(255,255,255,0.96); color: var(--ink); border-color: rgba(255,255,255,0.96); }
+.btn-ghost-white:hover { background: #fff; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-large { padding: 16px 36px; font-size: 1.05rem; min-width: 240px; }
+.btn:disabled,
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-ghost:disabled,
+.btn-accent:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ============ NEWSLETTER + SOCIAL — mobile-first ============
+   Two soft cards, equal weight, generous padding on desktop and
+   comfortable stacking on mobile. Clean white surface, restrained
+   border, brand-blue CTA. */
+.news-social {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.news-block, .social-block {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 32px 32px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.news-block h3, .social-block h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.018em;
+    margin: 0;
+    color: var(--text);
+}
+.news-block p, .social-block p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+.news-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+.news-form input {
+    flex: 1;
+    min-width: 0;        /* allows shrink on narrow viewports */
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--text);
+}
+.news-form input:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(30,108,214,0.18);
 }
 .news-form button {
-    padding: 12px 22px;
-    background: var(--primary);
-    color: white; border: none;
-    border-radius: 8px; font-weight: 700;
+    padding: 12px 20px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background 0.18s ease;
+    white-space: nowrap;
 }
-.news-form button:hover { background: var(--primary-dark); }
-.social-icons { display: flex; gap: 12px; flex-wrap: wrap; }
+.news-form button:hover { background: var(--brand-dark); }
+.social-icons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
 .social-icons a {
     width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
-    background: white;
+    background: #fff;
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text);
@@ -1070,17 +1483,51 @@ button { font-family: inherit; cursor: pointer; }
 .social-icons a svg { display: block; }
 .social-icons a:hover {
     transform: translateY(-2px);
-    border-color: var(--primary);
-    color: var(--primary);
-    background: var(--primary-light);
+    border-color: var(--brand);
+    color: var(--brand);
+    background: var(--brand-light);
+}
+@media (max-width: 720px) {
+    .news-social { grid-template-columns: 1fr; gap: 14px; }
+    .news-block, .social-block { padding: 24px 20px; gap: 12px; }
+    .news-block h3, .social-block h3 { font-size: 1.05rem; }
+    .news-form { flex-direction: column; gap: 10px; }
+    .news-form input { padding: 13px 14px; }
+    .news-form button { width: 100%; padding: 13px 20px; }
 }
 
-/* ============ FOOTER ============ */
+/* ============ FOOTER — clean, calm, editorial =================
+   Off-white surface (matches the platform's clean register) with
+   subtle top divider. Charcoal type, muted secondary links,
+   disciplined spacing, mobile-stacking columns. */
 .site-footer {
-    background: #0a2540;
-    color: #d0d9e4;
-    padding: 56px 24px 28px;
-    margin-top: 56px;
+    background: var(--bg-light);
+    color: var(--text);
+    padding: 88px 24px 36px;
+    margin-top: 0;
+    border-top: 1px solid var(--border);
+}
+.site-footer a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.site-footer a:hover { color: var(--brand); }
+.site-footer .footer-col h4 {
+    color: var(--text);
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+}
+.site-footer .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.site-footer .footer-col li a { font-size: 0.92rem; }
+.site-footer .footer-col > p { color: var(--text-muted); font-size: 0.92rem; }
+.site-footer .footer-bottom {
+    color: var(--text-muted);
+    border-top-color: var(--border);
+    font-size: 0.82rem;
 }
 .footer-inner {
     max-width: 1280px;
@@ -1140,8 +1587,11 @@ button { font-family: inherit; cursor: pointer; }
     .editorial-block { grid-template-columns: 1fr; }
     .keuzehulp-cta { grid-template-columns: 1fr; }
     .news-social { grid-template-columns: 1fr; }
+    /* 280px minmax i.p.v. 240px — op iPad-portrait (768-900px)
+       geeft dit 2 ruimere cards i.p.v. 3 cramped ones; image en
+       body-typografie krijgen genoeg ademruimte. */
     .listing-grid, .listing-grid.cols-3 {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
     .offer-grid { grid-template-columns: 1fr; }
 }
@@ -1154,28 +1604,294 @@ button { font-family: inherit; cursor: pointer; }
     .hero.big { padding: 56px 18px 100px; }
     .hero h1 { letter-spacing: -0.01em; }
     .searchbar-floating { padding: 0 14px; margin-top: -44px; }
-    .section { padding: 32px 14px; }
-    .section.tight { padding: 22px 14px; }
-    .section-head { margin-bottom: 18px; }
+    .section { padding: 36px 16px; }
+    .section.tight { padding: 24px 16px; }
+    .section-head { margin-bottom: 20px; }
     .searchbar, .searchbar.compact { grid-template-columns: 1fr; }
     .searchbar-field { padding: 10px 14px; }
     .editorial-block { padding: 22px 18px; }
     .keuzehulp-cta { padding: 26px 20px; }
     .listing-grid, .listing-grid.cols-3 {
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 16px;
     }
     .cat-grid, .cat-grid.small {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
     }
     .breadcrumb { padding: 14px 14px 0; font-size: 0.82rem; }
-    /* Horizontale rails: kleinere kaartbreedte op mobiel */
+    /* Horizontale rails: kleinere kaartbreedte op mobiel + scroll-snap voor app-gevoel */
+    .hrail {
+        scroll-snap-type: x mandatory;
+        scroll-padding-left: 16px;
+        -webkit-overflow-scrolling: touch;
+    }
     .hrail > * {
         flex: 0 0 min(85vw, var(--hrail-min, 300px));
         min-width: min(85vw, var(--hrail-min, 300px));
+        scroll-snap-align: start;
     }
+    /* Tap-target floor — alle interactieve chrome ≥44px voor duim-comfort */
+    .site-action,
+    .nav-toggle,
+    .btn-primary,
+    .btn-secondary,
+    .btn-ghost,
+    .btn-accent,
+    .btn-ghost-white,
+    .btn-large,
+    .sn-tab,
+    .filter-chip,
+    .carousel-btn,
+    .country-pill {
+        min-height: 44px;
+    }
+    /* Editorial card-bodies krijgen iets meer breathing op mobiel.
+       18-19px horizontal padding voelt natuurlijker dan 16 op een
+       full-width card (358px @ 390 viewport). */
+    .listing-card-body,
+    .editorial-card-body,
+    .blog-body { padding: 18px 18px 20px; }
+    /* Listing-grid op mobile: iets ruimere gap (18 i.p.v. 16) voor
+       duidelijker card-separation zonder hero-style verspilling. */
+    .listing-grid, .listing-grid.cols-3 { gap: 18px; }
     .footer-inner { gap: 20px; }
     .footer-col h4 { font-size: 0.85rem; }
+}
+
+
+/* ============================================================
+   KEUZEHULP HERO — Booking/Airbnb-style clarity entry.
+   Clean white card, brand-blue accent, generous whitespace,
+   single clear CTA. Geen gradient, geen gold, geen decoratieve
+   glow-blobs. Trustworthy modern travel-platform register.
+   ============================================================ */
+/* ============================================================
+   KEUZEHULP DISCOVERY MODULE — integrated, not a hero.
+   Calm horizontal strip that sits inside the homepage flow at
+   the same width and rhythm as other sections. Soft blue-tinted
+   surface (Airbnb warmth via colour, not gradient), clear CTA
+   (Booking clarity), restrained typography. Reads as "premium
+   onboarding helper", not "marketing banner".
+   ============================================================ */
+.kh-hero {
+    position: relative;
+    max-width: 1280px;
+    margin: 28px auto 8px;
+    padding: 0 24px;
+}
+.kh-hero-content {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 36px;
+    row-gap: 16px;
+    padding: 22px 28px;
+    background: var(--brand-light);
+    border: 1px solid #d9e4f3;
+    border-radius: 14px;
+    box-shadow: none;
+    color: var(--text);
+}
+.kh-hero-eyebrow {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin: 0;
+}
+.kh-hero-eyebrow::before {
+    content: "";
+    width: 14px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+}
+.kh-hero-title {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    line-height: 1.3;
+    margin: 0;
+    color: var(--text);
+    text-wrap: balance;
+    grid-column: 1;
+}
+.kh-hero-lead {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 4px 0 0;
+    max-width: 580px;
+    grid-column: 1;
+}
+.kh-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    align-self: center;
+}
+.kh-hero-cta {
+    padding: 11px 22px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.kh-hero-note {
+    display: none;            /* opgenomen in eyebrow-rij; geen extra ruis */
+}
+
+@media (max-width: 760px) {
+    .kh-hero { margin: 18px auto 4px; padding: 0 16px; }
+    .kh-hero-content {
+        grid-template-columns: 1fr;
+        padding: 18px 18px 20px;
+        row-gap: 12px;
+    }
+    .kh-hero-title  { font-size: 1.05rem; grid-column: 1; }
+    .kh-hero-lead   { font-size: 0.88rem; grid-column: 1; }
+    .kh-hero-actions { grid-column: 1; grid-row: auto; width: 100%; }
+    .kh-hero-cta { width: 100%; justify-content: center; text-align: center; }
+}
+
+/* ============================================================
+   HP DISCOVERY BANNER — VERWIJDERD
+   ============================================================
+   De oude .hp-discovery banner (sunset-cream layered card +
+   "Begin je zoektocht" pill + destination-chips) is bewust
+   verwijderd. De homepage gebruikt nu één discovery-systeem: het
+   dark .kh-hero blok (Keuzehulp CTA) is het centrale onboarding-
+   blok. Geen duplicate search-UI meer.
+
+   Wat resteert is alleen de body.hp-home sn-bar hide-regel
+   hieronder, zodat de oorspronkelijke search-navigation "Begin je
+   zoektocht" pill verborgen blijft op de homepage terwijl de
+   sticky cat-tabs zichtbaar blijven.
+   ============================================================ */
+/* GLOBAL — de "Begin je zoektocht" sn-bar pill is platform-breed
+   afgevoerd vanuit search-navigation.js (collapsedBarHTML rendert
+   nu alleen .sn-tabs). De volledige flush + sticky chrome leeft
+   nu in search-navigation.css op de basis-class `.sn-bar-wrap`,
+   zodat de source-order winnaar (search-navigation.css loadt na
+   site.css) automatisch de juiste styling toepast. Geen modifier
+   override meer nodig. */
+
+/* ============ PHASE 3 — REAL TRAVEL PHOTOGRAPHY ============
+   Card image containers (.listing-card-img, .blog-img, .editorial-card-img)
+   keep their gradient background as a graceful fallback; on top, a real
+   <img> is layered absolutely and uses object-fit: cover to fill. The
+   emoji-as-glyph treatment is suppressed when an img is present.        */
+.listing-card-img,
+.blog-img,
+.editorial-card-img {
+    position: relative;
+    overflow: hidden;
+}
+.listing-card-img > img,
+.blog-img > img,
+.editorial-card-img > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: transform 0.6s ease;
+}
+.listing-card:hover .listing-card-img > img,
+.editorial-card:hover .editorial-card-img > img,
+.blog-card:hover .blog-img > img { transform: scale(1.04); }
+/* Badges/labels go above the image */
+.listing-card-img > .listing-card-badge { z-index: 2; }
+/* Soft gradient overlay for legibility of any overlaid badges */
+.listing-card-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 35%);
+    pointer-events: none;
+}
+.listing-card-img > img { z-index: 1; }
+.listing-card-img::after { z-index: 2; }
+.listing-card-img > .listing-card-badge { z-index: 3; }
+
+/* ============ CURATED EMOJI ANCHORS (Phase 3 refinement) ============
+   Small ivory disk pinned top-right on listing/blog cards. Acts as
+   an emotional anchor + scannability cue — never decoration. Blue
+   ring nods to the brand without dominating. */
+.listing-card-emoji,
+.blog-img-emoji,
+.editorial-card-img-emoji {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 4;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(253, 250, 243, 0.96);
+    box-shadow: 0 4px 14px rgba(30, 74, 122, 0.18), 0 0 0 1px rgba(30, 74, 122, 0.08);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    font-size: 20px;
+    line-height: 1;
+    transition: transform 0.3s ease;
+}
+.listing-card:hover .listing-card-emoji,
+.blog-card:hover .blog-img-emoji,
+.editorial-card:hover .editorial-card-img-emoji {
+    transform: scale(1.08) rotate(-3deg);
+}
+.blog-img-emoji { top: 14px; right: 14px; }
+
+/* Inspiratie-tabs: blue accent for the active tab and contextual chips */
+.itab-btn.active,
+.inspiration-tab.active,
+button.inspiration-tab[aria-selected="true"] {
+    color: var(--brand) !important;
+    border-bottom-color: var(--brand) !important;
+}
+
+/* Listing card body — brand-blue rating star for premium emphasis */
+.listing-card-rating { color: var(--brand-dark); font-weight: 600; }
+.listing-card-price { color: var(--ink); font-weight: 700; }
+.listing-card-price small { color: var(--text-muted); font-weight: 500; }
+.listing-card h3 { color: var(--ink); }
+/* Locatie-rij: 0.92rem op mobile (14.7px — ruim boven de 14px
+   leesbaarheid-floor), 0.88rem op desktop (uniform met rating). */
+.listing-card-loc { color: var(--text-muted); font-size: 0.92rem; }
+@media (min-width: 768px) {
+    .listing-card-loc { font-size: 0.88rem; }
+}
+
+/* Tag chips — subtle blue tint instead of flat grey. Font bumped
+   van 0.74rem (11.8px) naar 0.78rem (12.5px) zodat ze leesbaar
+   blijven op smalle mobiele cards. Padding-y van 3 naar 4 zodat
+   de chip-hoogte (≈22px) niet meer onleesbaar plat is. */
+.listing-card-tags .tag,
+.tag {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    border: 1px solid rgba(30, 74, 122, 0.08);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    /* Voorkom dat een lang label de tag forceert te wrappen —
+       binnen een single-row tag-cluster moet elke pill 1 regel zijn. */
+    white-space: nowrap;
 }
 

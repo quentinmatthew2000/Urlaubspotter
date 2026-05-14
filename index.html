@@ -4,56 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter · Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="search-navigation.css?v=11">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=7">
 </head>
-<body>
+<body class="hp-home">
 
 <header class="site-header"><div class="inner"></div></header>
 
-<!-- HERO met searchbar -->
-<section class="hero big">
-    <div class="hero-inner">
-        <h1>Vind de vakantie die bij jou past</h1>
-        <p class="lead">Onafhankelijke gids met duizenden accommodaties — van camping in Drenthe tot chalet in Oostenrijk. Filter op wie, wat en waar en start je zoektocht.</p>
-    </div>
-</section>
+<!-- Search-navigation mount. Op .hp-home wordt de oude "Begin je
+     zoektocht"-pill verborgen (zie site.css); wat zichtbaar blijft
+     zijn de sticky category-tabs (Resorts & Hotels / Campings /
+     Vakantieparken) — fungeren als hero/top-strip. -->
+<div id="hero-searchbar"></div>
 
-<div class="searchbar-floating" id="hero-searchbar"></div>
+<!-- MAIN DISCOVERY ENTRY — de dark premium Keuzehulp-CTA is nu
+     hét centrale onboarding-blok van de homepage. Vervangt de
+     oude "Begin je zoektocht" search-flow + de tegel-rijen
+     onderaan. Eén premium discovery-systeem, geen duplicatie.
+     Wordt gevuld door renderKeuzehulpHero('keuzehulp-block'). -->
+<div id="keuzehulp-block"></div>
 
-<!-- 1. WIE — Kies je reisgezelschap -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Voor wie ga je?</span>
-            <h2>Kies je reisgezelschap</h2>
-        </div>
-        <a class="link" href="Niveau2-Wie.html">Alle gezelschappen →</a>
-    </div>
-    <div class="cat-grid small" id="home-who-tiles"></div>
-</section>
+<!-- Inspiratie-tabs (Populair / Reisgezelschap / Vakantietype / Bestemmingen) -->
+<div id="inspiration-tabs"></div>
 
-<!-- 2. POPULAIRE COMBINATIES -->
-<div class="section-bg-alt-wrap">
-<section class="section tight">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Vaak gezocht</span>
-            <h2>Populaire combinaties</h2>
-        </div>
-    </div>
-    <div class="chips">
-        <a class="chip" href="alle-vakanties.html?who=families-kids&what=camping">👨‍👩‍👧 Gezin + Camping</a>
-        <a class="chip" href="alle-vakanties.html?who=families-kids&what=holiday-park">👨‍👩‍👧 Gezin + Vakantiepark</a>
-        <a class="chip" href="alle-vakanties.html?who=couples&what=wellness">💑 Koppels + Wellness</a>
-        <a class="chip" href="alle-vakanties.html?who=couples&what=glamping">💑 Koppels + Glamping</a>
-        <a class="chip" href="alle-vakanties.html?who=friends&what=winter">👫 Vrienden + Wintersport</a>
-        <a class="chip" href="alle-vakanties.html?who=seniors&what=hotel">👴 Senioren + Hotel</a>
-        <a class="chip" href="alle-vakanties.html?who=pets&what=camping">🐕 Huisdier + Camping</a>
-        <a class="chip" href="alle-vakanties.html?where=zeeland&what=camping">📍 Zeeland + Camping</a>
-        <a class="chip" href="alle-vakanties.html?where=oostenrijk&what=winter">📍 Oostenrijk + Wintersport</a>
-    </div>
-</section>
-</div>
+<!-- "Populaire combinaties" verwijderd — content leeft nu in
+     "Inspiratie voor jou" (tab Populair) hierboven. -->
 
 <!-- 3. BLOG — Blogs & Tips (sleepbaar) -->
 <section class="section">
@@ -67,184 +43,10 @@
     <div class="blog-grid" id="blog-preview" data-rail="260"></div>
 </section>
 
-<!-- 4. WAT voor vakantie -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Wat voor vakantie?</span>
-            <h2>Wat voor vakantie zoek je?</h2>
-        </div>
-        <a class="link" href="Niveau2-Wat.html">Alle types →</a>
-    </div>
-    <div class="cat-grid small" id="home-what-tiles"></div>
-</section>
-</div>
-
-<!-- 5. POPULAIRE ACCOMMODATIES (sleepbaar) -->
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Nu populair</span>
-            <h2>Populaire accommodaties</h2>
-        </div>
-        <a class="link" href="Navigatie.html">Bekijk alle →</a>
-    </div>
-    <div class="listing-grid" id="popular-listing" data-rail="280"></div>
-</section>
-
-<!-- 6. WAAR wil je naartoe -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Waar wil je naartoe?</span>
-            <h2>Kies een bestemming</h2>
-        </div>
-        <a class="link" href="Niveau2-Waar.html">Alle bestemmingen →</a>
-    </div>
-    <div class="cat-grid small" id="home-where-tiles"></div>
-</section>
-</div>
-
-<!-- 7. KEUZEHULP -->
-<section class="section" id="keuzehulp-block"></section>
-
-<!-- 8. AANBIEDINGEN (sleepbaar) -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div class="offer-head">
-            <span class="offer-icon">€</span>
-            <div>
-                <span class="eyebrow">Deals</span>
-                <h2>De beste kindervakantie aanbiedingen</h2>
-            </div>
-        </div>
-        <a class="link" href="Navigatie.html?tag=aanbiedingen">Bekijk alle aanbiedingen →</a>
-    </div>
-    <div class="offer-grid" data-rail="380">
-        <a class="offer-card" href="Navigatie.html?tag=aanbiedingen">
-            <div class="offer-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">
-                <span class="offer-badge">-€300 p.p.</span>
-                🏖️
-            </div>
-            <div class="offer-body">
-                <p>Tot € 300 korting p.p. op je zonvakantie bij Sunweb</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=aanbiedingen">
-            <div class="offer-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                <span class="offer-badge">-35%</span>
-                🌊
-            </div>
-            <div class="offer-body">
-                <p>Meivakantie Deals met korting tot 35% | Voordeeluitjes</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=aanbiedingen">
-            <div class="offer-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                <span class="offer-badge">-20%</span>
-                🏕️
-            </div>
-            <div class="offer-body">
-                <p>Vroegboekkorting: 20% korting op campings in Zeeland</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=aanbiedingen">
-            <div class="offer-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span class="offer-badge">Gratis upgrade</span>
-                🏨
-            </div>
-            <div class="offer-body">
-                <p>Gratis upgrade naar familiekamer bij Landal parken</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=aanbiedingen">
-            <div class="offer-img" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
-                <span class="offer-badge">Kids gratis</span>
-                👶
-            </div>
-            <div class="offer-body">
-                <p>Kinderen tot 12 gratis op geselecteerde Spanje-reizen</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-    </div>
-</section>
-</div>
-
-<!-- 9. LAST MINUTES (sleepbaar) -->
-<section class="section">
-    <div class="section-head">
-        <div class="offer-head">
-            <span class="offer-icon">⏱</span>
-            <div>
-                <span class="eyebrow">Laatste plekken</span>
-                <h2>Last minute reizen</h2>
-            </div>
-        </div>
-        <a class="link" href="Navigatie.html?tag=lastminute">Bekijk alle last minutes →</a>
-    </div>
-    <div class="offer-grid" data-rail="380">
-        <a class="offer-card" href="Navigatie.html?tag=lastminute">
-            <div class="offer-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <span class="offer-badge">Vertrek deze week</span>
-                ☀️
-            </div>
-            <div class="offer-body">
-                <p>8 dagen Costa Brava vanaf € 389 p.p. — all-inclusive</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=lastminute">
-            <div class="offer-img" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
-                <span class="offer-badge">Dit weekend</span>
-                🏡
-            </div>
-            <div class="offer-body">
-                <p>Last minute weekend Veluwe — bungalow voor 4 personen</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=lastminute">
-            <div class="offer-img" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
-                <span class="offer-badge">Nog 2 plekken</span>
-                ⛰️
-            </div>
-            <div class="offer-body">
-                <p>Last minute wandelweek Zuid-Tirol — incl. halfpension</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=lastminute">
-            <div class="offer-img" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-                <span class="offer-badge">Vertrek morgen</span>
-                🛳️
-            </div>
-            <div class="offer-body">
-                <p>Mini-cruise Kiel — 3 dagen vanaf € 149 p.p.</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-        <a class="offer-card" href="Navigatie.html?tag=lastminute">
-            <div class="offer-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span class="offer-badge">-40%</span>
-                🏨
-            </div>
-            <div class="offer-body">
-                <p>Last minute citytrip Berlijn — 3 sterren hotel incl. ontbijt</p>
-                <span class="offer-arrow">›</span>
-            </div>
-        </a>
-    </div>
-</section>
-
-<!-- 10. REDACTIE — Reisverslagen (sleepbaar) -->
+<!-- REDACTIE — Reisverslagen (sleepbaar). Verplaatst boven
+     Populaire accommodaties zodat inspiration-first de homepage-
+     tonaliteit zet i.p.v. catalog-first. Beide blokken blijven
+     horizontaal swipeable op mobiel via data-rail. -->
 <div class="section-bg-alt-wrap">
 <section class="section">
     <div class="section-head">
@@ -304,6 +106,157 @@
 </section>
 </div>
 
+<!-- POPULAIRE ACCOMMODATIES (sleepbaar) -->
+<section class="section">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Nu populair</span>
+            <h2>Populaire accommodaties</h2>
+        </div>
+        <a class="link" href="Navigatie.html">Bekijk alle →</a>
+    </div>
+    <div class="listing-grid" id="popular-listing" data-rail="280"></div>
+</section>
+
+<!-- 8. AANBIEDINGEN (sleepbaar) -->
+<div class="section-bg-alt-wrap">
+<section class="section">
+    <div class="section-head">
+        <div class="offer-head">
+            <span class="offer-icon">€</span>
+            <div>
+                <span class="eyebrow">Deals</span>
+                <h2>De beste kindervakantie aanbiedingen</h2>
+            </div>
+        </div>
+        <a class="link" href="alle-vakanties.html?deal=aanbieding">Bekijk alle aanbiedingen →</a>
+    </div>
+    <div class="offer-grid" data-rail="380">
+        <a class="offer-card" href="alle-vakanties.html?deal=aanbieding">
+            <div class="offer-img" style="background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);">
+                <span class="offer-badge">-€300 p.p.</span>
+                🏖️
+            </div>
+            <div class="offer-body">
+                <p>Tot € 300 korting p.p. op je zonvakantie bij Sunweb</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=aanbieding">
+            <div class="offer-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <span class="offer-badge">-35%</span>
+                🌊
+            </div>
+            <div class="offer-body">
+                <p>Meivakantie Deals met korting tot 35% | Voordeeluitjes</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=aanbieding">
+            <div class="offer-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <span class="offer-badge">-20%</span>
+                🏕️
+            </div>
+            <div class="offer-body">
+                <p>Vroegboekkorting: 20% korting op campings in Zeeland</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=aanbieding">
+            <div class="offer-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <span class="offer-badge">Gratis upgrade</span>
+                🏨
+            </div>
+            <div class="offer-body">
+                <p>Gratis upgrade naar familiekamer bij Landal parken</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=aanbieding">
+            <div class="offer-img" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                <span class="offer-badge">Kids gratis</span>
+                👶
+            </div>
+            <div class="offer-body">
+                <p>Kinderen tot 12 gratis op geselecteerde Spanje-reizen</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+    </div>
+</section>
+</div>
+
+<!-- 9. LAST MINUTES (sleepbaar) -->
+<section class="section">
+    <div class="section-head">
+        <div class="offer-head">
+            <span class="offer-icon">⏱</span>
+            <div>
+                <span class="eyebrow">Laatste plekken</span>
+                <h2>Last minute reizen</h2>
+            </div>
+        </div>
+        <a class="link" href="alle-vakanties.html?deal=lastminute">Bekijk alle last minutes →</a>
+    </div>
+    <div class="offer-grid" data-rail="380">
+        <a class="offer-card" href="alle-vakanties.html?deal=lastminute">
+            <div class="offer-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <span class="offer-badge">Vertrek deze week</span>
+                ☀️
+            </div>
+            <div class="offer-body">
+                <p>8 dagen Costa Brava vanaf € 389 p.p. — all-inclusive</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=lastminute">
+            <div class="offer-img" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
+                <span class="offer-badge">Dit weekend</span>
+                🏡
+            </div>
+            <div class="offer-body">
+                <p>Last minute weekend Veluwe — bungalow voor 4 personen</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=lastminute">
+            <div class="offer-img" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                <span class="offer-badge">Nog 2 plekken</span>
+                ⛰️
+            </div>
+            <div class="offer-body">
+                <p>Last minute wandelweek Zuid-Tirol — incl. halfpension</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=lastminute">
+            <div class="offer-img" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                <span class="offer-badge">Vertrek morgen</span>
+                🛳️
+            </div>
+            <div class="offer-body">
+                <p>Mini-cruise Kiel — 3 dagen vanaf € 149 p.p.</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+        <a class="offer-card" href="alle-vakanties.html?deal=lastminute">
+            <div class="offer-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <span class="offer-badge">-40%</span>
+                🏨
+            </div>
+            <div class="offer-body">
+                <p>Last minute citytrip Berlijn — 3 sterren hotel incl. ontbijt</p>
+                <span class="offer-arrow">›</span>
+            </div>
+        </a>
+    </div>
+</section>
+
+<!-- De drie tegel-rijen onderaan (Wie / Wat / Waar) zijn verwijderd
+     omdat ze het oude discovery-systeem dupliceerden. De Keuzehulp-
+     CTA bovenaan is nu het primaire onboarding-blok; Inspiratie-tabs
+     verzorgen de granulaire navigatie. -->
+
 <!-- NIEUWSBRIEF + SOCIAL -->
 <section class="section">
     <div class="news-social" id="news-social"></div>
@@ -314,27 +267,19 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="site.js?v=20"></script>
+<script src="search-navigation.js?v=9"></script>
+<script src="inspiration-tabs.js?v=21"></script>
 <script>
     renderHeader('home');
-    renderSearchbar('hero-searchbar', { big: true });
-
-    renderCategoryTiles('home-who-tiles', DATA.who(), {
-        linkBuilder: (v) => `Niveau2-Wie.html?who=${v}`,
-        gradient: SITE_DATA.gradients.who
-    });
-    renderCategoryTiles('home-what-tiles', DATA.what(), {
-        linkBuilder: (v) => `Niveau2-Wat.html?what=${v}`,
-        gradient: SITE_DATA.gradients.what
-    });
-    renderCategoryTiles('home-where-tiles', DATA.whereAll().slice(0, 8), {
-        linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
-        gradient: SITE_DATA.gradients.where
-    });
+    renderSearchNavigation('hero-searchbar');
+    renderInspirationTabs('inspiration-tabs');
 
     renderListingPreview('popular-listing', SITE_DATA.accommodations.slice(0, 8), { limit: 8 });
-    renderKeuzehulpCTA('keuzehulp-block');
+    // Homepage gebruikt de emotionele hero-banner i.p.v. de compacte
+    // CTA-kaart. Andere pagina's blijven renderKeuzehulpCTA gebruiken.
+    renderKeuzehulpHero('keuzehulp-block');
     renderBlogPreview('blog-preview', 'Vakantie');
     renderNewsSocial('news-social');
     renderFooter();

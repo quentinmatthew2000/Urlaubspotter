@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wie + Wat · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=7">
+    <!-- Premium category hero — applyPremiumPage() overlay'd op deze
+         pagina via premium-page.js. Themes adapteren zich aan {who,
+         what, sub} context. Hero verbergt de vanilla breadcrumb +
+         section.tight kop, mountet de inspiratie-tabs (sub-aware),
+         en injecteert de Tips + Stories carousels gescoord tegen
+         de actieve context. -->
+    <link rel="stylesheet" href="premium-hero.css?v=2">
 </head>
 <body>
 
@@ -21,6 +32,14 @@
         </div>
     </div>
 </section>
+
+<!-- Inspiratie voor jou — sub-aware tabs, gemount door
+     applyPremiumPage() of door de directe renderInspirationTabs
+     fallback onderaan. Op deze pagina staat het mount-punt al in
+     de HTML zodat de volgorde (hero → tabs → matches) gegarandeerd
+     is, ook wanneer de premium-overlay om wat voor reden niet
+     activeert. -->
+<div id="inspiration-tabs"></div>
 
 <!-- Actieve filter-chips -->
 <section class="section tight">
@@ -81,19 +100,8 @@
 <!-- KEUZEHULP -->
 <section class="section" id="keuzehulp-block"></section>
 
-<!-- Populaire regio's NL -->
-<div class="section-bg-alt-wrap">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Of kies direct een regio in Nederland</span>
-            <h2>Populaire regio's</h2>
-            <p class="lead">Voor wie meteen weet welke Nederlandse provincie.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="regions-tiles"></div>
-</section>
-</div>
+<!-- Legacy Populaire regio's NL section removed — vervangen door
+     contextuele Inspiratie voor jou tabs. -->
 
 <!-- REDACTIE — direct boven de nieuwsbrief (sleepbaar) -->
 <div class="section-bg-alt-wrap">
@@ -147,18 +155,37 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
+<script src="site.js?v=20"></script>
+<script src="inspiration-tabs.js?v=21"></script>
+<script src="premium-page.js?v=3"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const who = params.get('who') || '';
     const what = params.get('what') || '';
+    const sub = params.get('sub') || '';
 
     renderHeader('');
 
     // Breadcrumb + title
     const whoLabel = who ? DATA.label('who', who) : null;
     const whatLabel = what ? DATA.label('what', what) : null;
+    // Sub-type label via safeSubLabel (fallback uit sub-context.js).
+    // Beschermt tegen stale site-data.js zonder DATA.subLabel.
+    const subLabel = (what && sub) ? window.safeSubLabel(what, sub) : '';
+    console.log('[Niveau3-WieWat]', { who, what, sub, whoLabel, whatLabel, subLabel });
+    // Display-WAT: bij sub overschrijven we het label zodat de
+    // pagina "Wellness Hotels voor koppels" toont i.p.v.
+    // "Hotel voor koppels".
+    const displayWatLabel = subLabel || whatLabel;
+    // Bij sub-context is het sub-label de primaire WAT-identiteit; we
+    // tonen dan in de breadcrumb / chips alleen de sub (niet de
+    // parent-WAT erbovenop) zodat de pagina als zichzelf presenteert
+    // ("Wellness Hotels voor Koppels") i.p.v. "Hotel + Wellness +
+    // Koppels". document.title volgt dezelfde logica voor SEO/share.
+    const crumbCurrent = `${whoLabel || 'Iedereen'} · ${displayWatLabel || 'Alle types'}`;
     const crumb = [
         `<a href="Homepagina.html">Home</a>`,
         `<span class="sep">›</span>`,
@@ -166,36 +193,46 @@
         `<span class="sep">›</span>`,
         `<a href="Niveau2-Wat.html">Wat</a>`,
         `<span class="sep">›</span>`,
-        `<span class="current">${whoLabel || 'Iedereen'} · ${whatLabel || 'Alle types'}</span>`
+        `<span class="current">${crumbCurrent}</span>`
     ];
     document.getElementById('bc').innerHTML = crumb.join('');
 
-    if (whoLabel && whatLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} voor ${whoLabel}`;
-        document.getElementById('page-lead').textContent = `Je zocht op ${whoLabel.toLowerCase()} + ${whatLabel.toLowerCase()}. Kies nu een bestemming of bekijk het aanbod.`;
+    // Contextuele intro-copy: per sub × WIE een eigen NL-zin.
+    const _lead = (typeof window.buildContextLead === 'function'
+        ? window.buildContextLead({ what, sub, who })
+        : '');
+    if (whoLabel && displayWatLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} voor ${whoLabel}`;
+        document.getElementById('page-lead').textContent = _lead
+            || `${displayWatLabel} voor ${whoLabel.toLowerCase()}. Kies nu een bestemming of bekijk het aanbod.`;
+        document.title = `${displayWatLabel} voor ${whoLabel} · Urlaubspotter`;
     } else if (whoLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel || 'Vakantie'} voor ${whoLabel}`;
-    } else if (whatLabel) {
-        document.getElementById('page-title').textContent = `${whatLabel} voor elk gezelschap`;
+        document.getElementById('page-title').textContent = `${displayWatLabel || 'Vakantie'} voor ${whoLabel}`;
+        if (_lead) document.getElementById('page-lead').textContent = _lead;
+    } else if (displayWatLabel) {
+        document.getElementById('page-title').textContent = `${displayWatLabel} voor elk gezelschap`;
+        if (_lead) document.getElementById('page-lead').textContent = _lead;
     }
 
-    // Active filters
+    // Active filters: alleen het actieve context — WIE en WAT (primair
+    // label). Geen "Verander X" navigatie-chips meer; de breadcrumb
+    // voert al terug naar het juiste niveau.
     const chips = [];
-    if (whoLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel} ✕</span>`);
-    if (whatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${whatLabel} ✕</span>`);
-    chips.push(`<a class="chip" href="Niveau2-Wie.html">+ Verander gezelschap</a>`);
-    chips.push(`<a class="chip" href="Niveau2-Wat.html">+ Verander type</a>`);
+    if (whoLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(who)} ${whoLabel}</span>`);
+    if (displayWatLabel) chips.push(`<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(what)} ${displayWatLabel}</span>`);
     document.getElementById('active-filters').innerHTML = chips.join('');
 
-    // Derde dimensie: WAAR — op LAND-niveau ipv provincies
+    // Derde dimensie: WAAR — op LAND-niveau ipv provincies. Sub-type
+    // gaat als & sub= mee zodat de gebruiker bijvoorbeeld vanaf
+    // "Wellness Hotels voor koppels" doorklikt naar "Wellness Hotels
+    // voor koppels in Italië" zonder z'n sub-context te verliezen.
+    const subParam = sub ? `&sub=${sub}` : '';
     renderCategoryTiles('where-tiles', DATA.countries(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}`,
+        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}${subParam}`,
         gradient: SITE_DATA.gradients.where
     });
-    renderCategoryTiles('regions-tiles', DATA.whereNL(), {
-        linkBuilder: (v) => `Niveau4-WieWatWaar.html?who=${who}&what=${what}&where=${v}`,
-        gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    });
+    // Legacy regions-tiles NL carousel removed \u2014 vervangen door
+    // contextuele Inspiratie voor jou tabs.
 
     // Subcategorie bij camping
     if (what === 'camping') {
@@ -206,8 +243,11 @@
         });
     }
 
-    // Geschikte accommodaties
-    const filtered = DATA.filter({ who, what });
+    // Geschikte accommodaties — sub-aware zodat een Glamping-pagina
+    // ook werkelijk Glamping-accommodaties toont (niet de hele
+    // Camping-pool). Soft-match valt terug op WAT-resultaat als
+    // descriptor-sub geen tag-treffers oplevert.
+    const filtered = DATA.filterWithSub({ who, what, sub });
     renderListingPreview('listing', filtered, { limit: 9 });
     document.getElementById('listing-title').textContent = `${filtered.length} geschikte accommodaties`;
     document.getElementById('all-link').href = `Navigatie.html?${new URLSearchParams({who, what}).toString()}`;
@@ -216,6 +256,32 @@
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Overlay de editorial hero + Tips/Stories rails op deze Niveau 3
+    // pagina. applyPremiumPage detecteert de bestaande
+    // #inspiration-tabs mount, scoort blogs/stories tegen de
+    // {who, what, sub} context en verplaatst keuzehulp onder het
+    // listing-blok. Vanilla flow blijft de fallback voor wanneer
+    // de helper niet geladen kan worden.
+    if (typeof window.applyPremiumPage === 'function' && (who || what)) {
+        window.applyPremiumPage({
+            who:  who  || null,
+            what: what || null,
+            sub:  sub  || null,
+            root: [
+                { href: 'Homepagina.html',   text: 'Home' },
+                { href: 'Niveau2-Wie.html',  text: 'Wie' },
+                { href: 'Niveau2-Wat.html',  text: 'Wat' },
+            ],
+        });
+    } else if (typeof renderInspirationTabs === 'function' && what) {
+        // Fallback: zonder premium-page toch de sub-aware tabs.
+        renderInspirationTabs('inspiration-tabs', {
+            contextWhat: what,
+            contextSub:  sub || null,
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

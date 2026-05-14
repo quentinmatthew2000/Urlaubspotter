@@ -3,14 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Vakantie voor wie? · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=7">
+    <!-- Premium category hero — Niveau 2 — Wie › <gezelschap> krijgt
+         de NIEUWE contextuele landing-template (sticky nav, editorial
+         hero, WIE-aware Inspiratie-tabs, gescoorde Tips + Stories).
+         Zonder WIE-preset blijft de vanilla overzichts-pagina staan
+         zodat de gebruiker eerst een gezelschap moet kiezen. -->
+    <link rel="stylesheet" href="premium-hero.css?v=2">
 </head>
 <body>
 
 <header class="site-header"><div class="inner"></div></header>
 
 <nav class="breadcrumb" id="bc"></nav>
+
+<!-- Mount-punt voor de premium contextuele Inspiratie-tabs. Wordt
+     ingevuld door applyPremiumPage() wanneer een WIE-preset actief is
+     (Vakantietype + Bestemmingen + Populair voor de gekozen WIE). -->
+<div id="inspiration-tabs"></div>
 
 <section class="section tight">
     <div class="section-head">
@@ -164,8 +179,12 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
+<script src="site.js?v=20"></script>
+<script src="inspiration-tabs.js?v=21"></script>
+<script src="premium-page.js?v=3"></script>
 <script>
     renderHeader('wie');
 
@@ -188,10 +207,12 @@
         document.getElementById('who-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
-        document.getElementById('active-filters').innerHTML = [
-            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whoPre)} ${whoLabel}</span>`,
-            `<a class="chip" href="Niveau2-Wie.html">✕ Andere keuze</a>`
-        ].join('');
+        // Active filter: alleen het WIE-chip. "Andere keuze" navigatie-
+        // chip weg — breadcrumb biedt al de terugweg naar het Wie-
+        // overzicht. Premium hero (applyPremiumPage onderaan) toont
+        // dezelfde chip in zijn eigen chip-strip.
+        document.getElementById('active-filters').innerHTML =
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whoPre)} ${whoLabel}</span>`;
 
         // Geschikte accommodaties (filter op who)
         const matches = DATA.filter({ who: whoPre });
@@ -229,6 +250,22 @@
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('who-carousel');
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Alleen activeren bij een gekozen WIE — zonder context blijft
+    // de vanilla overzichts-pagina staan zodat de WIE-keuze-carousel
+    // de primaire interactie is. applyPremiumPage detecteert de
+    // WIE-context, kiest het generic-thema, mountet de WIE-aware
+    // Inspiratie-tabs en surfaced Tips/Stories gescoord op WIE.
+    if (whoPre && typeof window.applyPremiumPage === 'function') {
+        window.applyPremiumPage({
+            who: whoPre,
+            root: [
+                { href: 'Homepagina.html',  text: 'Home' },
+                { href: 'Niveau2-Wie.html', text: 'Wie gaat er mee?' },
+            ],
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

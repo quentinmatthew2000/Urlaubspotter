@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter — Keuzehulp</title>
-    <link rel="stylesheet" href="site.css?v=14">
-    <link rel="stylesheet" href="keuzehulp.css?v=2">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="keuzehulp.css?v=5">
 </head>
-<body>
+<body data-no-searchnav>
     <!-- Unified site header — gedeeld via renderHeader() uit site.js -->
     <header class="site-header"><div class="inner"></div></header>
 
@@ -33,42 +33,16 @@
                 <h1>Wie reizen er mee?</h1>
                 <p class="subtitle">Selecteer je reisgezelschap (meerdere opties mogelijk)</p>
                 <div class="options-grid">
-                    <div class="option-card" data-value="families-babies">
-                        <div class="card-icon">👶</div>
-                        <h3>Gezinnen met baby's</h3>
-                    </div>
-                    <div class="option-card" data-value="families-kids">
-                        <div class="card-icon">👧</div>
-                        <h3>Gezinnen met kinderen</h3>
-                    </div>
-                    <div class="option-card" data-value="families-teens">
-                        <div class="card-icon">👦</div>
-                        <h3>Gezinnen met tieners</h3>
-                    </div>
-                    <div class="option-card" data-value="couples">
-                        <div class="card-icon">💑</div>
-                        <h3>Koppels</h3>
-                    </div>
-                    <div class="option-card" data-value="friends">
-                        <div class="card-icon">👫</div>
-                        <h3>Vrienden</h3>
-                    </div>
-                    <div class="option-card" data-value="seniors">
-                        <div class="card-icon">👴</div>
-                        <h3>Senioren</h3>
-                    </div>
-                    <div class="option-card" data-value="pets">
-                        <div class="card-icon">🐕</div>
-                        <h3>Met huisdieren</h3>
-                    </div>
-                    <div class="option-card" data-value="solo">
-                        <div class="card-icon">🧑</div>
-                        <h3>Alleen reizend</h3>
-                    </div>
-                    <div class="option-card no-preference" data-value="geen-voorkeur">
-                        <div class="card-icon">❓</div>
-                        <h3>Geen voorkeur</h3>
-                    </div>
+                    <div class="option-card" data-value="families-babies"><div class="card-icon">👶</div><h3>Gezinnen met baby's</h3></div>
+                    <div class="option-card" data-value="families-kids"><div class="card-icon">👧</div><h3>Gezinnen met kinderen</h3></div>
+                    <div class="option-card" data-value="families-teens"><div class="card-icon">👦</div><h3>Gezinnen met tieners</h3></div>
+                    <div class="option-card" data-value="volwassenen"><div class="card-icon">🧑‍🤝‍🧑</div><h3>Volwassenen</h3></div>
+                    <div class="option-card" data-value="seniors"><div class="card-icon">👴</div><h3>Senioren</h3></div>
+                    <div class="option-card" data-value="couples"><div class="card-icon">💑</div><h3>Koppels</h3></div>
+                    <div class="option-card" data-value="friends"><div class="card-icon">👫</div><h3>Vrienden</h3></div>
+                    <div class="option-card" data-value="solo"><div class="card-icon">🧑</div><h3>Alleen reizend</h3></div>
+                    <div class="option-card" data-value="pets"><div class="card-icon">🐕</div><h3>Met huisdieren</h3></div>
+                    <div class="option-card no-preference" data-value="geen-voorkeur"><div class="card-icon">❓</div><h3>Geen voorkeur</h3></div>
                 </div>
             </div>
 
@@ -77,46 +51,16 @@
                 <h1>Wat voor soort vakantie?</h1>
                 <p class="subtitle">Selecteer het vakantietype (meerdere opties mogelijk)</p>
                 <div class="options-grid">
-                    <div class="option-card" data-value="camping">
-                        <div class="card-icon">⛺</div>
-                        <h3>Kamperen</h3>
-                    </div>
-                    <div class="option-card" data-value="hotel">
-                        <div class="card-icon">🏨</div>
-                        <h3>Hotel</h3>
-                    </div>
-                    <div class="option-card" data-value="holiday-park">
-                        <div class="card-icon">🎡</div>
-                        <h3>Vakantiepark</h3>
-                    </div>
-                    <div class="option-card" data-value="glamping">
-                        <div class="card-icon">✨</div>
-                        <h3>Glamping</h3>
-                    </div>
-                    <div class="option-card" data-value="wellness">
-                        <div class="card-icon">💆</div>
-                        <h3>Wellness</h3>
-                    </div>
-                    <div class="option-card" data-value="adventure-trip">
-                        <div class="card-icon">🧗</div>
-                        <h3>Actief / Avontuur</h3>
-                    </div>
-                    <div class="option-card" data-value="city-trip">
-                        <div class="card-icon">🏙️</div>
-                        <h3>Weekendje weg</h3>
-                    </div>
-                    <div class="option-card" data-value="sun">
-                        <div class="card-icon">☀️</div>
-                        <h3>Zonvakantie</h3>
-                    </div>
-                    <div class="option-card" data-value="winter">
-                        <div class="card-icon">⛷️</div>
-                        <h3>Wintervakantie</h3>
-                    </div>
-                    <div class="option-card no-preference" data-value="geen-voorkeur">
-                        <div class="card-icon">❓</div>
-                        <h3>Geen voorkeur</h3>
-                    </div>
+                    <div class="option-card" data-value="hotel"><div class="card-icon">🏨</div><h3>Hotels</h3></div>
+                    <div class="option-card" data-value="camping"><div class="card-icon">⛺</div><h3>Campings</h3></div>
+                    <div class="option-card" data-value="holiday-park"><div class="card-icon">🎡</div><h3>Vakantieparken</h3></div>
+                    <div class="option-card" data-value="city-trip"><div class="card-icon">🏙️</div><h3>Weekendjes weg</h3></div>
+                    <div class="option-card" data-value="sun"><div class="card-icon">☀️</div><h3>Zonvakanties</h3></div>
+                    <div class="option-card" data-value="winter"><div class="card-icon">⛷️</div><h3>Wintervakanties</h3></div>
+                    <div class="option-card" data-value="adult-only-trip"><div class="card-icon">🥂</div><h3>Adult Only</h3></div>
+                    <div class="option-card" data-value="ontspanning-vakantie"><div class="card-icon">💆</div><h3>Ontspanning</h3></div>
+                    <div class="option-card" data-value="actief-vakantie"><div class="card-icon">🧗</div><h3>Actief</h3></div>
+                    <div class="option-card no-preference" data-value="geen-voorkeur"><div class="card-icon">❓</div><h3>Geen voorkeur</h3></div>
                 </div>
             </div>
 
@@ -163,40 +107,39 @@
             <div id="step-4" class="step">
                 <h1>Waar wil je naartoe?</h1>
                 <p class="subtitle">Selecteer een bestemming (meerdere opties mogelijk)</p>
-                <h2 class="section-sub">Nederland</h2>
                 <div class="options-grid">
-                    <div class="option-card" data-value="drenthe"><div class="card-icon">🌲</div><h3>Drenthe</h3></div>
-                    <div class="option-card" data-value="gelderland"><div class="card-icon">🏞️</div><h3>Gelderland</h3></div>
-                    <div class="option-card" data-value="limburg"><div class="card-icon">⛰️</div><h3>Limburg</h3></div>
-                    <div class="option-card" data-value="zeeland"><div class="card-icon">🏖️</div><h3>Zeeland</h3></div>
-                    <div class="option-card" data-value="noord-holland"><div class="card-icon">🚴</div><h3>Noord-Holland</h3></div>
-                    <div class="option-card" data-value="overijssel"><div class="card-icon">💧</div><h3>Overijssel</h3></div>
-                    <div class="option-card" data-value="flevoland"><div class="card-icon">🌾</div><h3>Flevoland</h3></div>
-                    <div class="option-card" data-value="friesland"><div class="card-icon">🚣</div><h3>Friesland</h3></div>
-                    <div class="option-card" data-value="groningen"><div class="card-icon">🌌</div><h3>Groningen</h3></div>
-                    <div class="option-card" data-value="noord-brabant"><div class="card-icon">🎭</div><h3>Noord-Brabant</h3></div>
-                    <div class="option-card" data-value="zuid-holland"><div class="card-icon">🌷</div><h3>Zuid-Holland</h3></div>
-                    <div class="option-card" data-value="utrecht"><div class="card-icon">🏰</div><h3>Utrecht</h3></div>
-                </div>
-                <h2 class="section-sub">Europa</h2>
-                <div class="options-grid">
-                    <div class="option-card" data-value="belgie"><div class="card-icon">🇧🇪</div><h3>België</h3></div>
                     <div class="option-card" data-value="duitsland"><div class="card-icon">🇩🇪</div><h3>Duitsland</h3></div>
+                    <div class="option-card" data-value="netherlands"><div class="card-icon">🇳🇱</div><h3>Nederland</h3></div>
                     <div class="option-card" data-value="frankrijk"><div class="card-icon">🇫🇷</div><h3>Frankrijk</h3></div>
-                    <div class="option-card" data-value="spanje"><div class="card-icon">🇪🇸</div><h3>Spanje</h3></div>
                     <div class="option-card" data-value="italie"><div class="card-icon">🇮🇹</div><h3>Italië</h3></div>
-                    <div class="option-card" data-value="oostenrijk"><div class="card-icon">🇦🇹</div><h3>Oostenrijk</h3></div>
-                    <div class="option-card" data-value="portugal"><div class="card-icon">🇵🇹</div><h3>Portugal</h3></div>
-                    <div class="option-card" data-value="kroatie"><div class="card-icon">🇭🇷</div><h3>Kroatië</h3></div>
-                    <div class="option-card no-preference" data-value="geen-voorkeur">
-                        <div class="card-icon">❓</div>
-                        <h3>Geen voorkeur</h3>
-                    </div>
+                    <div class="option-card" data-value="spanje"><div class="card-icon">🇪🇸</div><h3>Spanje</h3></div>
+                    <div class="option-card" data-value="europa"><div class="card-icon">🌍</div><h3>In Europa</h3></div>
+                    <div class="option-card" data-value="azie"><div class="card-icon">🌏</div><h3>In Azië</h3></div>
+                    <div class="option-card" data-value="afrika"><div class="card-icon">🦁</div><h3>In Afrika</h3></div>
+                    <div class="option-card" data-value="amerika"><div class="card-icon">🗽</div><h3>In Amerika</h3></div>
+                    <div class="option-card no-preference" data-value="geen-voorkeur"><div class="card-icon">❓</div><h3>Geen voorkeur</h3></div>
                 </div>
             </div>
 
-            <!-- STEP 5: Verblijfstype -->
+            <!-- STEP 5: Ligging (was Step 6) — gaat nu vóór verblijfstype.
+                 De gebruiker kiest eerst de SETTING (aan zee, in de bergen,
+                 centrum-stad, afgelegen) en daarna pas het type verblijf. -->
             <div id="step-5" class="step">
+                <h1>Waar wil je verblijven?</h1>
+                <p class="subtitle">Selecteer de ligging (meerdere opties mogelijk)</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="aan-zee"><div class="card-icon">🌊</div><h3>Aan Zee</h3></div>
+                    <div class="option-card" data-value="in-bergen"><div class="card-icon">⛰️</div><h3>In de bergen</h3></div>
+                    <div class="option-card" data-value="aan-meer"><div class="card-icon">🏞️</div><h3>Aan een meer</h3></div>
+                    <div class="option-card" data-value="natuur"><div class="card-icon">🌲</div><h3>Nabij natuur</h3></div>
+                    <div class="option-card" data-value="centrum"><div class="card-icon">🏙️</div><h3>In de buurt van het centrum</h3></div>
+                    <div class="option-card" data-value="afgelegen"><div class="card-icon">🗻</div><h3>Afgelegen</h3></div>
+                    <div class="option-card no-preference" data-value="geen-voorkeur"><div class="card-icon">❓</div><h3>Geen voorkeur</h3></div>
+                </div>
+            </div>
+
+            <!-- STEP 6: Verblijfstype (was Step 5) — content ongewijzigd. -->
+            <div id="step-6" class="step">
                 <h1>Welk verblijfstype?</h1>
                 <p class="subtitle">Selecteer je voorkeur (meerdere opties mogelijk)</p>
                 <div class="options-grid">
@@ -209,28 +152,7 @@
                     <div class="option-card" data-value="villa"><div class="card-icon">🏛️</div><h3>Villa</h3></div>
                     <div class="option-card" data-value="hotel-kamer"><div class="card-icon">🛏️</div><h3>Hotelkamer</h3></div>
                     <div class="option-card" data-value="appartement"><div class="card-icon">🏢</div><h3>Appartement</h3></div>
-                    <div class="option-card no-preference" data-value="geen-voorkeur">
-                        <div class="card-icon">❓</div>
-                        <h3>Geen voorkeur</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 6: Ligging -->
-            <div id="step-6" class="step">
-                <h1>Waar wil je verblijven?</h1>
-                <p class="subtitle">Selecteer de ligging (meerdere opties mogelijk)</p>
-                <div class="options-grid">
-                    <div class="option-card" data-value="aan-zee"><div class="card-icon">🌊</div><h3>Aan zee</h3></div>
-                    <div class="option-card" data-value="aan-meer"><div class="card-icon">🏞️</div><h3>Aan een meer</h3></div>
-                    <div class="option-card" data-value="in-bergen"><div class="card-icon">⛰️</div><h3>In de bergen</h3></div>
-                    <div class="option-card" data-value="natuur"><div class="card-icon">🌲</div><h3>Nabij natuur</h3></div>
-                    <div class="option-card" data-value="stad"><div class="card-icon">🏙️</div><h3>In de stad</h3></div>
-                    <div class="option-card" data-value="afgelegen"><div class="card-icon">🗻</div><h3>Afgelegen</h3></div>
-                    <div class="option-card no-preference" data-value="geen-voorkeur">
-                        <div class="card-icon">❓</div>
-                        <h3>Geen voorkeur</h3>
-                    </div>
+                    <div class="option-card no-preference" data-value="geen-voorkeur"><div class="card-icon">❓</div><h3>Geen voorkeur</h3></div>
                 </div>
             </div>
 
@@ -239,21 +161,23 @@
                 <h1>Welke faciliteiten zijn belangrijk?</h1>
                 <p class="subtitle">Je mag er meerdere kiezen</p>
                 <div class="options-grid">
-                    <div class="option-card" data-value="water"><div class="card-icon">🏄</div><h3>Wateractiviteiten</h3></div>
+                    <div class="option-card" data-value="binnenzwembad"><div class="card-icon">🏊</div><h3>Binnenzwembad</h3></div>
+                    <div class="option-card" data-value="glijbanen"><div class="card-icon">🛝</div><h3>Glijbanen</h3></div>
                     <div class="option-card" data-value="kids-fun"><div class="card-icon">🎠</div><h3>Kinderpret</h3></div>
-                    <div class="option-card" data-value="all-inclusive"><div class="card-icon">🍽️</div><h3>All inclusive</h3></div>
-                    <div class="option-card" data-value="sports-games"><div class="card-icon">⚽</div><h3>Sport en spel</h3></div>
-                    <div class="option-card" data-value="adventure"><div class="card-icon">🧗</div><h3>Avontuur</h3></div>
+                    <div class="option-card" data-value="all-inclusive"><div class="card-icon">🍽️</div><h3>All-inclusive</h3></div>
+                    <div class="option-card" data-value="sports-games"><div class="card-icon">⚽</div><h3>Sport &amp; Spel</h3></div>
+                    <div class="option-card" data-value="outdoor"><div class="card-icon">🧗</div><h3>Outdoor activiteiten</h3></div>
                     <div class="option-card" data-value="relax"><div class="card-icon">💆</div><h3>Ontspanning</h3></div>
+                    <div class="option-card" data-value="bezienswaardigheden"><div class="card-icon">🏛️</div><h3>Bezienswaardigheden</h3></div>
+                    <div class="option-card" data-value="fietsroutes"><div class="card-icon">🚴</div><h3>Fietsroutes</h3></div>
+                    <div class="option-card" data-value="looproutes"><div class="card-icon">🥾</div><h3>Looproutes</h3></div>
                     <div class="option-card" data-value="pet-friendly"><div class="card-icon">🐾</div><h3>Diervriendelijk</h3></div>
-                    <div class="option-card" data-value="adult-only"><div class="card-icon">🔞</div><h3>Adult Only</h3></div>
                     <div class="option-card" data-value="facility-luxe"><div class="card-icon">👑</div><h3>Luxe</h3></div>
-                    <div class="option-card" data-value="nature"><div class="card-icon">🌲</div><h3>Natuur</h3></div>
-                    <div class="option-card" data-value="festive"><div class="card-icon">🎉</div><h3>Feestelijk</h3></div>
-                    <div class="option-card no-preference" data-value="geen-voorkeur">
-                        <div class="card-icon">❓</div>
-                        <h3>Geen voorkeur</h3>
-                    </div>
+                    <div class="option-card" data-value="entertainment"><div class="card-icon">🎭</div><h3>Entertainment</h3></div>
+                    <div class="option-card" data-value="open-bar"><div class="card-icon">🍹</div><h3>Open bar</h3></div>
+                    <div class="option-card" data-value="live-muziek"><div class="card-icon">🎤</div><h3>Live muziek</h3></div>
+                    <div class="option-card" data-value="aan-strand"><div class="card-icon">🏖️</div><h3>Aan het strand</h3></div>
+                    <div class="option-card no-preference" data-value="geen-voorkeur"><div class="card-icon">❓</div><h3>Geen voorkeur</h3></div>
                 </div>
             </div>
 
@@ -298,9 +222,10 @@
     </div>
     </main>
 
-    <script src="site-data.js?v=5"></script>
-    <script src="site.js?v=14"></script>
-    <script src="keuzehulp.js?v=2"></script>
+    <script src="site-data.js?v=13"></script>
+    <script src="site.js?v=20"></script>
+    <script src="keuzehulp-data.js?v=1"></script>
+    <script src="keuzehulp.js?v=6"></script>
     <script>renderHeader('keuzehulp');</script>
 </body>
 </html>

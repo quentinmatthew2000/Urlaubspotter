@@ -3,8 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- no-cache: voorkomt dat een browser/CDN deze HTML pagina blijft
+         serveren met een verouderde inline-script (waardoor sub-context
+         rendering verloren ging op cached visits). Assets blijven via
+         ?v=N gebuste, alleen de HTML zelf moet altijd vers zijn. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wat voor vakantie? · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=14">
+    <link rel="stylesheet" href="site.css?v=25">
+    <link rel="stylesheet" href="inspiration-tabs.css?v=7">
+    <!-- Premium category hero — geactiveerd voor alle WAT-presets
+         (hotel / camping / vakantiepark, met of zonder sub) via
+         premium-page.js applyPremiumPage(). Generiek thema-systeem;
+         valt terug op de vanilla pagina-flow wanneer er geen WAT
+         gekozen is. -->
+    <link rel="stylesheet" href="premium-hero.css?v=2">
 </head>
 <body>
 
@@ -22,6 +36,13 @@
     </div>
     <div class="chips" id="active-filters" style="margin-top:16px"></div>
 </section>
+
+<!-- Inspiratie voor jou — context-aware refinements per WAT-type.
+     Geplaatst BOVEN het "8 geschikte accommodaties" blok zodat de
+     gebruiker eerst opties tot verdieping ziet (Populair / Reis-
+     gezelschap / Vakantietype / Bestemmingen) en daarna scrollt
+     naar de concrete accommodatie-suggesties. -->
+<div id="inspiration-tabs"></div>
 
 <!-- WAT CAROUSEL — alleen zichtbaar als GEEN vakantietype gekozen is -->
 <div class="section-bg-alt-wrap" id="what-section">
@@ -67,7 +88,9 @@
     <div class="cat-grid small" id="who-tiles"></div>
 </section>
 
-<!-- BLOG — Tips & reisverhalen (sleepbaar) -->
+<!-- BLOG — Tips & reisverhalen (sleepbaar). Wordt verborgen door
+     applyPremiumPage() wanneer een premium-hero actief is — de
+     premium Tips-carousel vervangt deze strook. -->
 <div class="section-bg-alt-wrap">
 <section class="section">
     <div class="section-head">
@@ -112,7 +135,9 @@
 </section>
 </div>
 
-<!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset) -->
+<!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset).
+     Wordt verborgen door applyPremiumPage() wanneer een premium-
+     stories carousel actief is. -->
 <div class="section-bg-alt-wrap preset-only" style="display:none">
 <section class="section">
     <div class="section-head">
@@ -164,40 +189,59 @@
     <div class="footer-bottom"></div>
 </footer>
 
-<script src="site-data.js?v=5"></script>
-<script src="site.js?v=14"></script>
+<script src="site-data.js?v=13"></script>
+<script src="sub-context.js?v=1"></script>
+<script src="context-copy.js?v=1"></script>
+<script src="site.js?v=20"></script>
+<script src="inspiration-tabs.js?v=21"></script>
+<script src="premium-page.js?v=3"></script>
 <script>
     renderHeader('wat');
 
     const params = new URLSearchParams(location.search);
     const whatPre = params.get('what') || '';
+    const subPre  = params.get('sub') || '';
     const whatLabel = whatPre ? DATA.label('what', whatPre) : '';
+    const subLabel = safeSubLabel(whatPre, subPre);
 
+    // mainLabel = het LABEL DAT DE PAGINA IDENTIFICEERT. Bij sub-
+    // context is dat het sub-label, anders het WAT-label. Wordt
+    // gebruikt voor de fallback (vanilla) pagina-rendering wanneer
+    // applyPremiumPage NIET geactiveerd wordt. Bij een premium-preset
+    // overschrijft applyPremiumPage de hele bovenkant van de pagina.
+    const mainLabel = subLabel || whatLabel;
+    console.log('[Niveau2-Wat]', { whatPre, subPre, whatLabel, subLabel, mainLabel });
+
+    // Vanilla breadcrumb / page-head: wordt alleen ECHT zichtbaar als
+    // we onder de premium-flow uit komen (geen preset → overzichts-
+    // pagina). Bij premium-preset verbergt applyPremiumHero deze.
     document.getElementById('bc').innerHTML = whatPre
         ? [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<a href="Niveau2-Wat.html">Wat voor vakantie?</a>`, `<span class="sep">›</span>`,
-           `<span class="current">${whatLabel}</span>`].join('')
+           `<span class="current">${mainLabel}</span>`].join('')
         : [`<a href="Homepagina.html">Home</a>`, `<span class="sep">›</span>`,
            `<span class="current">Wat voor vakantie?</span>`].join('');
 
     if (whatPre) {
-        document.getElementById('page-title').textContent = `${whatLabel}`;
-        document.getElementById('page-lead').textContent = `Je zocht op ${whatLabel.toLowerCase()}. Kies nu met wie je gaat of waar je heen wilt.`;
-        document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${whatLabel}`;
-        // Verberg de algemene "Alle vakantietypes" carousel als het type al gekozen is
+        document.getElementById('page-title').textContent = mainLabel;
+        document.title = `${mainLabel} · Urlaubspotter`;
+        const lead = (typeof window.buildContextLead === 'function'
+            ? window.buildContextLead({ what: whatPre, sub: subPre })
+            : '') || `Bekijk onze selectie ${(subLabel || whatLabel).toLowerCase()}.`;
+        document.getElementById('page-lead').textContent = lead;
+        document.getElementById('eyebrow').textContent = `Niveau 2 — Wat › ${mainLabel}`;
         document.getElementById('what-section').style.display = 'none';
         document.getElementById('where-section').style.display = '';
         document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
-        document.getElementById('active-filters').innerHTML = [
-            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${whatLabel}</span>`,
-            `<a class="chip" href="Niveau2-Wat.html">✕ Andere keuze</a>`
-        ].join('');
+        document.getElementById('active-filters').innerHTML =
+            `<span class="chip" style="border-color:var(--primary);color:var(--primary);background:var(--primary-light)">${DATA.icon(whatPre)} ${mainLabel}</span>`;
 
-        // Geschikte accommodaties (filter op what)
-        const matches = DATA.filter({ what: whatPre });
+        // Geschikte accommodaties — sub-aware filtering.
+        const matches = DATA.filterWithSub({ what: whatPre, sub: subPre });
         document.getElementById('matches-title').textContent = `${matches.length} geschikte accommodaties`;
-        document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${whatLabel.toLowerCase()}.`;
-        document.getElementById('matches-all-link').href = `Navigatie.html?what=${whatPre}`;
+        document.getElementById('matches-lead').textContent = `Accommodaties die passen bij ${mainLabel.toLowerCase()}.`;
+        const allLinkParams = subPre ? `?what=${whatPre}&sub=${subPre}` : `?what=${whatPre}`;
+        document.getElementById('matches-all-link').href = `Navigatie.html${allLinkParams}`;
         renderListingPreview('matches-listing', matches, { limit: 6 });
     } else {
         document.getElementById('active-filters').style.display = 'none';
@@ -207,24 +251,56 @@
         linkBuilder: (v) => `Niveau2-Wat.html?what=${v}`,
         gradient: SITE_DATA.gradients.what
     });
+    const subParam = subPre ? `&sub=${subPre}` : '';
     renderCategoryTiles('who-tiles', DATA.who(), {
-        linkBuilder: (v) => whatPre ? `Niveau3-WieWat.html?who=${v}&what=${whatPre}` : `Niveau2-Wie.html?who=${v}`,
+        linkBuilder: (v) => whatPre
+            ? `Niveau3-WieWat.html?who=${v}&what=${whatPre}${subParam}`
+            : `Niveau2-Wie.html?who=${v}`,
         gradient: SITE_DATA.gradients.who
     });
     renderCategoryTiles('countries-tiles', DATA.countries(), {
-        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}`,
+        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}${subParam}`,
         gradient: SITE_DATA.gradients.where
     });
     renderCategoryTiles('regions-tiles', DATA.whereNL(), {
-        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}`,
+        linkBuilder: (v) => `Niveau3-WaarWat.html?what=${whatPre}&where=${v}${subParam}`,
         gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
     });
 
     renderBlogPreview('blog-preview', whatLabel || 'Vakantietype');
     renderKeuzehulpCTA('keuzehulp-block');
+    // Inspiratie-tabs alleen mounten bij een gekozen WAT. Geen
+    // context = geen contextuele refinements.
+    if (whatPre && typeof renderInspirationTabs === 'function') {
+        renderInspirationTabs('inspiration-tabs', {
+            contextWhat: whatPre,
+            contextSub:  subPre || null,
+        });
+    }
     renderNewsSocial('news-social');
     renderFooter();
     bindCarousel('what-carousel');
+
+    // ---- PREMIUM CATEGORY PAGE ----
+    // Activeer applyPremiumPage() voor elke gekozen WAT (met of
+    // zonder sub). De helper bouwt zelf de hero, mountet de
+    // inspiration-tabs (al gerenderd hierboven — applyPremiumPage
+    // detecteert de bestaande mount en skip't hercreatie), voegt
+    // de premium Tips- en Stories-rails toe, en verplaatst de
+    // keuzehulp naar onder het matches-blok.
+    //
+    // Wanneer er GEEN WAT gekozen is blijft de vanilla overzichts-
+    // pagina overeind ("Wat voor vakantie zoek jij?" + alle types).
+    if (whatPre && typeof window.applyPremiumPage === 'function') {
+        window.applyPremiumPage({
+            what: whatPre,
+            sub:  subPre || null,
+            root: [
+                { href: 'Homepagina.html',  text: 'Home' },
+                { href: 'Niveau2-Wat.html', text: 'Wat voor vakantie?' },
+            ],
+        });
+    }
 
     // Activeer sleepbare rails op [data-rail]-blokken (blog, redactie)
     document.querySelectorAll('[data-rail]').forEach(el => {

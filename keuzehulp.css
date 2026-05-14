@@ -1,33 +1,35 @@
-/* CSS voor Keuzehulp — gesynchroniseerd met site-brand (blauw/wit) */
+/* ============================================================
+   keuzehulp.css — Premium guided-discovery refinement pass.
+
+   Filosofie:
+   - GEEN saturated blue gradient body. Het Keuzehulp-flow leeft
+     op de ivoor-canvas van het platform — net als alle andere
+     pages. De blauwe gradient + zware drop-shadow voelde als een
+     SaaS onboarding-wizard; we willen "intelligent travel
+     guidance".
+   - Lichte oppervlakken, subtiele borders, kalme typografie.
+   - Buttons (Primary / Secondary) leven canoniek in site.css —
+     we overriden hier alleen layout-specifics (flex, full-width
+     op mobile).
+   - Eén centraal kaart-frame met ivory border + zachte schaduw,
+     niet een witte kaart op een hard-blauwe achtergrond.
+   ============================================================ */
 
 :root {
-    --primary: #007bff;
-    --primary-dark: #0056b3;
-    --primary-light: #e8f2ff;
-    --secondary: #6c757d;
-    --success: #28a745;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --light: #f8f9fa;
-    --dark: #212529;
-    --border: #e9ecef;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --card-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
-    --radius: 12px;
-    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --kh-radius: 16px;
+    --kh-shadow: 0 1px 2px rgba(20, 30, 50, 0.04), 0 8px 24px rgba(20, 30, 50, 0.06);
+    --kh-transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);
-    color: var(--dark);
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+    background: var(--bg, #fbf8f0);          /* ivory canvas — geen blauwe gradient meer */
+    color: var(--text, #1a2236);
     overflow-x: clip;
 }
 
-/* Body is nu een flex-kolom: unified .site-header staat bovenaan,
-   daaronder centreert .kh-main het quiz-kaartje verticaal. */
 body {
     display: flex;
     flex-direction: column;
@@ -35,308 +37,384 @@ body {
     line-height: 1.5;
 }
 
-/* Witte header-strip bovenaan, zodat de site-header leesbaar is op de
-   blauwe gradient-achtergrond. */
 .site-header { background: #fff; }
 
 .kh-main {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    padding: 32px 20px 48px;
+}
+@media (max-width: 640px) {
+    .kh-main { padding: 18px 14px 32px; }
 }
 
+/* Centraal flow-kaartje — wit oppervlak, zachte editorial schaduw,
+   subtiele border. Geen 20px radius / drop-shadow van SaaS-wizards. */
 .app {
     width: 100%;
-    max-width: 960px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 920px;
+    background: #fff;
+    border: 1px solid var(--border, #ece4d3);
+    border-radius: var(--kh-radius);
+    box-shadow: var(--kh-shadow);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 600px;
+    min-height: 520px;
 }
 
-/* Mini-header met terug-link naar home */
-.kh-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 24px;
-    background: white;
-    border-bottom: 1px solid var(--border);
-}
-.kh-topbar a {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-.kh-topbar .brand { font-weight: 700; color: var(--dark); }
-
-/* Topbar: terug-link + titel */
-.keuzehulp-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    background: white;
-    border-bottom: 1px solid var(--border);
-}
-.keuzehulp-topbar .back-link {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    transition: var(--transition);
-}
-.keuzehulp-topbar .back-link:hover { color: var(--primary-dark); }
-.keuzehulp-topbar .topbar-title {
-    font-weight: 700;
-    color: var(--dark);
-    font-size: 15px;
-    letter-spacing: 0.02em;
-}
-
-/* Subkoppen binnen een stap (bv. Nederland / Europa in bestemming) */
-.section-sub {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--secondary);
-    margin: 24px 0 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
-.step > .section-sub:first-of-type { margin-top: 8px; }
-
-/* Progress */
+/* ---------- Progress bar (kalmer) ---------- */
 .progress-container {
-    background: var(--light);
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
+    background: var(--bg, #fbf8f0);
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--border, #ece4d3);
+}
+@media (max-width: 640px) {
+    .progress-container { padding: 14px 18px; }
 }
 .progress-bar {
     width: 100%;
-    height: 8px;
-    background: var(--border);
-    border-radius: 10px;
+    height: 4px;                              /* dunner — minder visueel zwaar */
+    background: var(--border, #ece4d3);
+    border-radius: 999px;
     overflow: hidden;
     margin-bottom: 10px;
 }
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary) 0%, #00c6ff 100%);
-    border-radius: 10px;
-    transition: width 0.5s ease;
+    background: var(--brand, #1e4574);        /* solid coastal navy, geen gradient */
+    border-radius: 999px;
+    transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
     width: 14.28%;
 }
 .progress-text {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.85rem;
-    color: var(--secondary);
+    font-size: 0.82rem;
+    color: var(--text-muted, #5a6478);
     font-weight: 600;
+    letter-spacing: 0.02em;
 }
-.progress-text .step-label { color: var(--primary); }
+.progress-text .step-label { color: var(--brand, #1e4574); }
 
-/* Container */
+/* ---------- Step container ---------- */
 .container {
     flex: 1;
-    padding: 40px 30px;
+    padding: 44px 36px;
     overflow-y: auto;
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) {
+    .container { padding: 30px 22px; }
+}
+@media (max-width: 480px) {
+    .container { padding: 24px 16px; }
 }
 
-/* Step */
-.step { display: none; animation: slideIn 0.4s ease; }
+.step { display: none; animation: kh-slide-in 0.4s ease; }
 .step.active { display: block; }
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(16px); }
-    to { opacity: 1; transform: translateX(0); }
+@keyframes kh-slide-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .step h1 {
-    font-size: 1.75rem;
+    /* Refined modern humanist sans — Inter, matched aan de rest van
+       het platform. De oude serif (Lora) voelde editorial-dramatic en
+       visueel disconnected; Inter geeft een premium-travel uitstraling
+       à la Airbnb/Booking. */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(1.4rem, 3.2vw, 1.85rem);
     margin-bottom: 8px;
-    color: var(--dark);
-    font-weight: 700;
+    color: var(--ink, var(--text, #1a2236));
+    font-weight: 600;
+    letter-spacing: -0.022em;
     text-wrap: pretty;
+    line-height: 1.18;
 }
 .subtitle {
-    color: var(--secondary);
+    color: var(--text-muted, #5a6478);
     margin-bottom: 28px;
-    font-size: 1rem;
+    font-size: 0.98rem;
+    line-height: 1.5;
 }
 
-/* Options grid */
+/* ---------- Options grid — discovery-rich (NIET single column) ----
+   Belangrijk: het Keuzehulp-grid is een onderdeel van de discovery
+   atmosphere — meerdere kaarten zichtbaar tegelijk. Op mobile dus
+   2 kolommen, niet 1. ---------- */
 .options-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 14px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+@media (max-width: 768px) {
+    .options-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+}
+@media (max-width: 480px) {
+    .options-grid {
+        /* Forceer 2 kolommen op smal mobile — discovery feel intact. */
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
 }
 
 .option-card {
-    background: white;
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 14px;
+    background: #fff;
+    border: 1.5px solid var(--border, #ece4d3);
+    border-radius: 12px;
+    padding: 18px 12px 16px;
     text-align: center;
     cursor: pointer;
-    transition: var(--transition);
+    transition: var(--kh-transition);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 130px;
+    min-height: 124px;
     position: relative;
 }
 .option-card:hover {
-    border-color: var(--primary);
-    box-shadow: var(--card-shadow);
-    transform: translateY(-3px);
+    border-color: var(--brand, #1e4574);
+    background: var(--brand-light, #e7eef7);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(30, 69, 116, 0.10);
 }
 .option-card.selected {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    box-shadow: var(--card-shadow);
+    background: var(--brand, #1e4574);
+    border-color: var(--brand, #1e4574);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(30, 69, 116, 0.18);
 }
-.option-card.selected .card-icon,
 .option-card.selected h3,
-.option-card.selected .card-description { color: white; }
+.option-card.selected .card-description,
+.option-card.selected .card-icon { color: #fff; }
 .option-card.selected::after {
     content: '✓';
     position: absolute;
     top: 8px; right: 8px;
-    background: white;
-    color: var(--primary);
-    width: 24px; height: 24px;
+    background: #fff;
+    color: var(--brand, #1e4574);
+    width: 22px; height: 22px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 13px;
 }
 .option-card.no-preference {
-    background: #fffaf0;
+    background: var(--bg, #fbf8f0);
     border-style: dashed;
 }
 .option-card.no-preference.selected {
-    background: var(--primary);
+    background: var(--brand, #1e4574);
     border-style: solid;
 }
 
 .card-icon {
-    font-size: 1.9rem;
+    font-size: 1.85rem;
     margin-bottom: 10px;
     line-height: 1;
 }
 .option-card h3 {
-    font-size: 0.92rem;
+    font-size: 0.94rem;
     font-weight: 600;
-    color: var(--dark);
+    color: var(--ink, var(--text, #1a2236));
     margin: 0;
-    line-height: 1.25;
+    line-height: 1.3;
+    text-wrap: pretty;
 }
 .card-description {
-    font-size: 0.78rem;
-    color: var(--secondary);
+    font-size: 0.8rem;
+    color: var(--text-muted, #5a6478);
     margin-top: 6px;
     font-weight: 500;
 }
+@media (max-width: 480px) {
+    .option-card { min-height: 112px; padding: 14px 10px 12px; }
+    .card-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .option-card h3 { font-size: 0.86rem; }
+}
 
-/* Selection summary — chips met reeds gekozen waarden (handig voor vervolgstappen) */
+/* ---------- Section sub heads (e.g. Nederland / Europa splits) ---------- */
+.section-sub {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted, #5a6478);
+    margin: 22px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.step > .section-sub:first-of-type { margin-top: 4px; }
+
+/* ---------- Selection summary chips ---------- */
 .selection-summary {
-    background: var(--primary-light);
-    padding: 14px 18px;
-    border-radius: var(--radius);
-    margin-bottom: 24px;
-    font-size: 0.88rem;
+    background: var(--brand-light, #e7eef7);
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    font-size: 0.86rem;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
 }
-.selection-summary .label { font-weight: 600; color: var(--primary); margin-right: 4px; }
+.selection-summary .label {
+    font-weight: 600;
+    color: var(--brand, #1e4574);
+    margin-right: 4px;
+}
 .selection-chip {
     display: inline-block;
-    background: white;
-    border: 1px solid var(--primary-light);
+    background: #fff;
+    border: 1px solid rgba(30, 69, 116, 0.18);
     padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.82rem;
-    color: var(--primary);
-    font-weight: 500;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: var(--brand, #1e4574);
+    font-weight: 600;
 }
 
-/* Results */
+/* ---------- Results step ---------- */
 .results-step { text-align: center; }
-.results-step h1 { font-size: 2rem; }
-.results-step .subtitle { font-size: 1.1rem; }
+.results-step h1 {
+    /* Resultaten-titel matcht het nieuwe Inter-systeem in plaats van
+       de oude Lora serif — zelfde reden als step h1: rustiger,
+       modernere premium-travel hierarchy. */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(1.55rem, 3.6vw, 2.05rem);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+}
+.results-step .subtitle { font-size: 1.05rem; }
 
 .accommodation-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
     margin-bottom: 36px;
     text-align: left;
 }
 .accommodation-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    background: #fff;
+    border: 1px solid var(--border, #ece4d3);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--card-shadow);
-    transition: var(--transition);
+    box-shadow: 0 1px 2px rgba(20, 30, 50, 0.03);
+    transition: var(--kh-transition);
     display: flex;
     flex-direction: column;
     cursor: pointer;
 }
 .accommodation-card:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(20, 30, 50, 0.10);
+    transform: translateY(-4px);
+    border-color: var(--brand, #1e4574);
 }
 .accommodation-card-image {
     width: 100%;
     height: 160px;
-    background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);
+    background: linear-gradient(135deg, var(--brand-light, #e7eef7), var(--bg-light, #f1ecdf));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
+    font-size: 2.8rem;
 }
 .accommodation-card-image.has-img { background: #eee; }
-.accommodation-card-image img {
-    width: 100%; height: 100%; object-fit: cover;
-}
+.accommodation-card-image img { width: 100%; height: 100%; object-fit: cover; }
 .accommodation-card-content {
-    padding: 18px 20px;
+    padding: 16px 18px 18px;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 .accommodation-card h3 {
-    font-size: 1.05rem;
-    margin-bottom: 6px;
-    color: var(--dark);
+    font-size: 1.02rem;
+    margin-bottom: 4px;
+    color: var(--ink, var(--text, #1a2236));
+    font-weight: 700;
 }
 .accommodation-card-location {
-    color: var(--secondary);
+    color: var(--text-muted, #5a6478);
     font-size: 0.88rem;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
+/* ============================================================
+   MATCH EXPLANATION — choice-helper recommendation transparency.
+   Premium soft-green for positive matches, muted-red for non-matches.
+   Compact metadata rows, never a dashboard. The match-pct uses a
+   pill-shaped chip met dot indicator zodat de % positief leest als
+   recommendation, niet als data-readout.
+   ============================================================ */
 .accommodation-card-match {
-    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e8f5ee;                       /* soft premium green wash */
+    color: #1f7a4d;                            /* readable success green */
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 0.01em;
+    width: fit-content;
+    border: 1px solid rgba(31, 122, 77, 0.18);
+}
+.accommodation-card-match .match-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #2ea36a;
+    flex-shrink: 0;
+}
+.accommodation-card-match .match-pct { color: #1f7a4d; }
+.accommodation-card-match .match-label {
+    color: #1f7a4d;
+    opacity: 0.78;
     font-weight: 600;
-    color: var(--success);
-    margin-bottom: 10px;
+    text-transform: lowercase;
+    font-size: 0.74rem;
+}
+
+.match-explain {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.match-explain-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    line-height: 1.3;
+    font-weight: 500;
+    padding: 1px 0;
+}
+.match-explain-row--yes { color: #1f7a4d; }
+.match-explain-row--no  { color: #a76060; opacity: 0.78; }
+.match-explain-row .match-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: currentColor;
+}
+.match-explain-row--yes .match-icon { color: #2ea36a; }
+.match-explain-row--no  .match-icon { color: #b96a6a; }
+/* Subtiele scheiding tussen de checks-rij en de tags-rij eronder \u2014
+   zodat de twee lagen visueel als aparte information zones lezen
+   ("waarom past dit?" vs "wat zijn de eigenschappen?"). */
+.match-explain + .accommodation-card-tags {
+    padding-top: 10px;
+    border-top: 1px solid var(--border, #e9ecef);
+    margin-top: 2px;
 }
 .accommodation-card-tags {
     display: flex;
@@ -346,77 +424,137 @@ body {
     flex: 1;
 }
 .tag {
-    background: var(--primary-light);
-    color: var(--primary);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.72rem;
+    background: var(--brand-light, #e7eef7);
+    color: var(--brand, #1e4574);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.74rem;
     font-weight: 600;
 }
 .accommodation-card-button {
-    background: var(--primary);
-    color: white;
+    background: var(--brand, #1e4574);
+    color: #fff;
     border: none;
     padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: var(--transition);
+    transition: var(--kh-transition);
     align-self: flex-start;
     font-family: inherit;
     font-size: 0.9rem;
 }
-.accommodation-card-button:hover { background: var(--primary-dark); }
+.accommodation-card-button:hover { background: var(--brand-dark, #142f52); }
 
-/* Extra sections (newsletter + social) */
+/* ---------- Match-tier kleurstaffel ----------
+   Iedere tier krijgt een subtiele kleur-shift op de pill: perfect
+   matches lezen warmer/groener, zwakkere matches blijven neutraal.
+   Geen explosieve gradients — dit is een aanbeveling, niet een
+   gamification-badge. */
+.accommodation-card-match.tier-perfect {
+    background: rgba(31, 122, 77, 0.13);
+    border-color: rgba(31, 122, 77, 0.32);
+}
+.accommodation-card-match.tier-perfect .match-pct,
+.accommodation-card-match.tier-perfect .match-label,
+.accommodation-card-match.tier-perfect .match-dot { color: #176038; }
+.accommodation-card-match.tier-perfect .match-dot { background: #2ea36a; }
+
+.accommodation-card-match.tier-strong { /* default groen, geen override */ }
+
+.accommodation-card-match.tier-good {
+    background: rgba(214, 158, 46, 0.10);
+    border-color: rgba(214, 158, 46, 0.28);
+}
+.accommodation-card-match.tier-good .match-pct,
+.accommodation-card-match.tier-good .match-label { color: #8a6516; }
+.accommodation-card-match.tier-good .match-dot { background: #d69e2e; }
+
+.accommodation-card-match.tier-okay {
+    background: rgba(120, 120, 120, 0.10);
+    border-color: rgba(120, 120, 120, 0.22);
+}
+.accommodation-card-match.tier-okay .match-pct,
+.accommodation-card-match.tier-okay .match-label { color: #5a5a5a; }
+.accommodation-card-match.tier-okay .match-dot { background: #888; }
+
+/* ---------- Lege-resultaten-staat ----------
+   Verschijnt wanneer alle accos uitgesloten zijn of <40% scoren.
+   Eerlijker dan een lijst met halfslachtige aanbevelingen. */
+.kh-empty {
+    grid-column: 1 / -1;
+    background: #fff;
+    border: 1px dashed var(--border, #e9ecef);
+    border-radius: 14px;
+    padding: 32px 28px;
+    text-align: center;
+    color: var(--text, #1c1810);
+}
+.kh-empty h3 {
+    margin: 0 0 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+.kh-empty p {
+    margin: 0;
+    color: var(--secondary, #5a6478);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+/* ---------- Extra sections (newsletter + social) ---------- */
 .extra-sections {
     margin: 32px 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 22px;
+    gap: 20px;
 }
 .newsletter-section, .social-section {
-    background: var(--light);
-    padding: 26px 24px;
-    border-radius: var(--radius);
+    background: var(--bg-light, #f1ecdf);
+    padding: 24px 22px;
+    border-radius: 12px;
     text-align: center;
 }
 .newsletter-section h2, .social-section h2 {
-    font-size: 1.2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.15rem;
     margin-bottom: 6px;
-    color: var(--dark);
+    color: var(--ink, var(--text, #1a2236));
+    font-weight: 700;
+    letter-spacing: -0.018em;
 }
 .newsletter-section p, .social-section p {
-    color: var(--secondary);
-    margin-bottom: 16px;
+    color: var(--text-muted, #5a6478);
+    margin-bottom: 14px;
     font-size: 0.9rem;
 }
 .newsletter-form { display: flex; gap: 8px; }
 .newsletter-form input {
     flex: 1;
     padding: 10px 14px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border, #ece4d3);
     border-radius: 8px;
     font-size: 0.9rem;
     font-family: inherit;
+    background: #fff;
 }
 .newsletter-form button {
     padding: 10px 18px;
-    background: var(--primary);
-    color: white;
+    background: var(--brand, #1e4574);
+    color: #fff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     white-space: nowrap;
-    transition: var(--transition);
+    transition: var(--kh-transition);
     font-family: inherit;
 }
-.newsletter-form button:hover { background: var(--primary-dark); }
+.newsletter-form button:hover { background: var(--brand-dark, #142f52); }
 
 .social-buttons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
 }
@@ -424,99 +562,103 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
-    background: white;
-    border: 2px solid var(--border);
+    padding: 9px 16px;
+    background: #fff;
+    border: 1.5px solid var(--border, #ece4d3);
     border-radius: 8px;
     text-decoration: none;
-    color: var(--dark);
+    color: var(--text, #1a2236);
     font-weight: 600;
-    transition: var(--transition);
-    font-size: 0.9rem;
+    transition: var(--kh-transition);
+    font-size: 0.88rem;
 }
 .social-button:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    transform: translateY(-2px);
+    border-color: var(--brand, #1e4574);
+    color: var(--brand, #1e4574);
+    transform: translateY(-1px);
 }
-.social-button span { font-size: 1.1rem; }
+.social-button span { font-size: 1.05rem; }
 
-/* Restart */
-.restart-container { text-align: center; margin-top: 24px; }
+/* ---------- Restart button ---------- */
 .btn-restart {
-    background: white;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-    padding: 12px 30px;
-    border-radius: 8px;
+    background: transparent;
+    color: var(--brand, #1e4574);
+    border: 1.5px solid var(--border-strong, #d4c8ad);
+    padding: 10px 22px;
+    border-radius: 999px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.92rem;
     font-weight: 600;
-    transition: var(--transition);
+    transition: var(--kh-transition);
     font-family: inherit;
 }
-.btn-restart:hover { background: var(--primary); color: white; }
+.btn-restart:hover {
+    background: var(--brand, #1e4574);
+    color: #fff;
+    border-color: var(--brand, #1e4574);
+}
 
-/* Nav buttons */
+/* ---------- Nav buttons (Terug / Volgende) ---------------------
+   "Volgende" gebruikt de canonical .btn-primary (coastal navy)
+   uit site.css — die wordt behouden zoals gevraagd.
+
+   "Terug" wordt herschreven naar een rustige ghost-secondary:
+   transparante achtergrond, hairline border, ink-color text. Geen
+   harde grijze SaaS-knop meer. ---------- */
 .nav-buttons {
     display: flex;
     gap: 12px;
-    padding: 22px 30px;
-    background: var(--light);
-    border-top: 1px solid var(--border);
+    padding: 20px 32px 22px;
+    background: var(--bg, #fbf8f0);
+    border-top: 1px solid var(--border, #ece4d3);
 }
-.btn {
-    flex: 1;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: inherit;
-}
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
-.btn-secondary {
-    background: white;
-    color: var(--secondary);
-    border: 2px solid var(--border);
-}
-.btn-secondary:hover:not(:disabled) {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.nav-buttons .btn { flex: 1; }
 
-/* Responsive */
+/* Lokale override: zachtere secondary specifiek voor Keuzehulp,
+   zonder de globale .btn-secondary aan te raken. */
+.nav-buttons .btn-secondary,
+#btnPrevious {
+    background: transparent;
+    color: var(--text-muted, #5a6478);
+    border: 1px solid var(--border-strong, #d4c8ad);
+    box-shadow: none;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: var(--kh-transition);
+}
+.nav-buttons .btn-secondary:hover,
+#btnPrevious:hover {
+    background: var(--brand-light, #e7eef7);
+    color: var(--brand, #1e4574);
+    border-color: var(--brand, #1e4574);
+    transform: none;
+}
+.nav-buttons .btn-secondary:disabled,
+#btnPrevious:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: transparent;
+}
+
 @media (max-width: 768px) {
-    .container { padding: 30px 20px; }
-    .step h1 { font-size: 1.4rem; }
-    .options-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 10px;
-    }
-    .option-card { min-height: 115px; padding: 14px 10px; }
-    .card-icon { font-size: 1.6rem; }
-    .option-card h3 { font-size: 0.85rem; }
-    .extra-sections { grid-template-columns: 1fr; }
-    .nav-buttons { flex-direction: column-reverse; }
-    .newsletter-form { flex-direction: column; }
-    .newsletter-form button { width: 100%; }
+    .nav-buttons { padding: 16px 18px; gap: 10px; }
 }
 @media (max-width: 480px) {
     body { padding: 0; }
-    .app { min-height: 100vh; max-width: 100%; border-radius: 0; box-shadow: none; }
-    .container { padding: 22px 16px; }
-    .options-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    .app {
+        min-height: 100vh;
+        max-width: 100%;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        box-shadow: none;
+    }
+    .nav-buttons {
+        flex-direction: column-reverse;
+        padding: 14px 16px 18px;
         gap: 8px;
     }
-    .option-card { min-height: 110px; padding: 12px 8px; }
-    .card-icon { font-size: 1.5rem; margin-bottom: 6px; }
-    .option-card h3 { font-size: 0.8rem; }
-    .card-description { font-size: 0.72rem; }
-    .nav-buttons { padding: 16px; gap: 8px; }
-    .btn { padding: 12px 16px; font-size: 0.95rem; }
+    .nav-buttons .btn { width: 100%; }
+    .newsletter-form { flex-direction: column; }
+    .newsletter-form button { width: 100%; }
 }
