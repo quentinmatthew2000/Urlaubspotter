@@ -1324,25 +1324,82 @@ button { font-family: inherit; cursor: pointer; }
 .blog-body p { font-size: var(--t-meta); color: var(--text-muted); }
 
 /* ============ KEUZEHULP CTA ============ */
+/* "De ultieme zoektool" — warm cream/gold premium CTA. Matched op
+   .kh-hero (homepage Keuzehulp banner) en .ph-hero--hotel zodat de
+   premium-voice consistent is door het platform. Voorheen koud-blauw
+   (linear-gradient(var(--primary), #5e72e4)) wat als SaaS/tech aanvoelde
+   — nu cream-base + champagne-glow + gold CTA voor editorial luxe. */
 .keuzehulp-cta {
-    background: linear-gradient(135deg, var(--primary) 0%, #5e72e4 100%);
-    color: white;
-    border-radius: 16px;
+    position: relative;
+    border-radius: 22px;
     padding: 40px 36px;
     display: grid;
     grid-template-columns: 1.2fr auto;
     gap: 28px;
     align-items: center;
+    color: #2a2417;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+        radial-gradient(ellipse 55% 70% at 92% 8%, rgba(220, 180, 130, 0.42) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 65% at 4% 96%, rgba(190, 155, 100, 0.22) 0%, transparent 65%),
+        linear-gradient(135deg, #faf3e6 0%, #f0e6d4 48%, #e7dac0 100%);
+    box-shadow:
+        0 1px 0 rgba(255, 252, 240, 0.85) inset,
+        0 0 0 1px rgba(139, 105, 20, 0.07),
+        0 18px 44px -20px rgba(120, 90, 40, 0.20),
+        0 6px 16px -8px rgba(120, 90, 40, 0.10);
 }
-.keuzehulp-cta h3 { font-size: clamp(1.2rem, 2.5vw, 1.7rem); margin-bottom: 8px; }
-.keuzehulp-cta p { opacity: 0.95; font-size: 1rem; margin-bottom: 14px; }
+.keuzehulp-cta h3 {
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+    margin-bottom: 10px;
+    color: #1f1810;
+    letter-spacing: -0.014em;
+    font-weight: 800;
+}
+.keuzehulp-cta p {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: rgba(82, 68, 48, 0.85);
+    margin-bottom: 16px;
+}
 .keuzehulp-cta .benefits {
-    display: flex; gap: 14px; flex-wrap: wrap;
-    font-size: 0.88rem; font-weight: 600;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 .keuzehulp-cta .benefits span {
-    background: rgba(255,255,255,0.2);
-    padding: 6px 12px; border-radius: 20px;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(139, 105, 20, 0.12);
+    color: #6b5532;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+/* Gold-gradient CTA-button override binnen de cream context. .btn-
+   ghost-white was bedoeld voor dark backgrounds; binnen .keuzehulp-cta
+   krijgt 'ie een passende gold treatment + cream text. */
+.keuzehulp-cta .btn-ghost-white {
+    background: linear-gradient(135deg, #b48848 0%, #8b6914 100%);
+    color: #fdf6ed;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.008em;
+    text-decoration: none;
+    box-shadow:
+        0 1px 0 rgba(255, 240, 200, 0.30) inset,
+        0 10px 22px rgba(139, 105, 20, 0.30);
+    transition: transform 0.18s ease, box-shadow 0.22s ease, filter 0.18s ease;
+}
+.keuzehulp-cta .btn-ghost-white:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow:
+        0 1px 0 rgba(255, 240, 200, 0.30) inset,
+        0 14px 28px rgba(139, 105, 20, 0.42);
 }
 /* ============================================================
    CANONICAL BUTTON SYSTEM
@@ -1517,34 +1574,18 @@ button { font-family: inherit; cursor: pointer; }
    Off-white surface (matches the platform's clean register) with
    subtle top divider. Charcoal type, muted secondary links,
    disciplined spacing, mobile-stacking columns. */
+/* ============ FOOTER — wit / editorial / premium ============
+   Witte achtergrond + donkere tekst voor maximale contrast en
+   leesbaarheid. Subtiele top-divider markeert de overgang van
+   pagina-content naar footer-chrome. Eerdere iteratie had dubbele
+   regelsets (één licht, één donker) die op elkaar interfereerden —
+   die zijn samengetrokken tot één coherente light-mode footer. */
 .site-footer {
-    background: var(--bg-light);
-    color: var(--text);
-    padding: 88px 24px 36px;
+    background: #ffffff;
+    color: #1a1f2c;
+    padding: 80px 24px 36px;
     margin-top: 0;
-    border-top: 1px solid var(--border);
-}
-.site-footer a {
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.15s ease;
-}
-.site-footer a:hover { color: var(--brand); }
-.site-footer .footer-col h4 {
-    color: var(--text);
-    letter-spacing: 0.08em;
-    font-weight: 700;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    margin: 0 0 14px;
-}
-.site-footer .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.site-footer .footer-col li a { font-size: 0.92rem; }
-.site-footer .footer-col > p { color: var(--text-muted); font-size: 0.92rem; }
-.site-footer .footer-bottom {
-    color: var(--text-muted);
-    border-top-color: var(--border);
-    font-size: 0.82rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 .footer-inner {
     max-width: 1280px;
@@ -1553,28 +1594,45 @@ button { font-family: inherit; cursor: pointer; }
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 32px;
 }
+.site-footer .footer-col h4,
 .footer-col h4 {
-    color: white;
-    font-size: 0.92rem;
+    color: #1a1f2c;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-size: 0.78rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 14px;
+    margin: 0 0 14px;
 }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.site-footer .footer-col ul,
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.site-footer a,
 .footer-col a {
-    color: #d0d9e4;
-    font-size: 0.9rem;
+    color: #4d5466;
+    font-size: 0.92rem;
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color 0.15s ease;
 }
-.footer-col a:hover { color: white; }
+.site-footer a:hover,
+.footer-col a:hover { color: var(--brand, #1e6fff); }
+.site-footer .footer-col > p {
+    color: #4d5466;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
 .footer-bottom {
     max-width: 1280px;
     margin: 36px auto 0;
     padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     font-size: 0.82rem;
-    color: #8a9aae;
+    color: #6a7280;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;

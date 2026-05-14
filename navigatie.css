@@ -297,23 +297,71 @@ img { max-width: 100%; height: auto; }
     border-radius: 20px;
     font-size: 0.75rem;
 }
-/* Contextuele tag-pills onder de USP-iconrij op de detail-pagina.
-   Visueel identiek aan de listing-card tags (zelfde .tag class) maar
-   met ruimere gap + iets royaler font omdat ze de hoofd-glance van
-   het accommodatie-overzicht zijn. Wordt door renderDetail() gevuld
-   met de geünifieerde tags via _buildDisplayTags(). */
+/* Contextuele tag-feature-cards onder de USP-iconrij op de detail-
+   pagina. Visueel afgestemd op de .usp-item-cards (Wateractiviteiten,
+   Kinderpret, Sport & Spel, ...) zodat de detail-pagina één
+   feature-card vocabulaire heeft i.p.v. flat-pill chips. Schaalt
+   gracefully op mobiel: korte labels = smalle cards, lange labels
+   = bredere cards; flex-wrap zorgt voor organisch wrappen. Wordt
+   door renderDetail() gevuld via window.__urlaubsTagIcons map.
+   Listing-card pills (site.js / landing.js / accommodaties.html)
+   blijven de compacte flat-pill .tag stijl gebruiken — alleen het
+   detail-overzicht krijgt het rijkere feature-card uiterlijk. */
 .detail-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 10px 0 20px;
-}
-.detail-tags .tag {
-    padding: 6px 12px;
-    font-size: 0.82rem;
-    font-weight: 600;
+    gap: 10px;
+    margin: 16px 0 24px;
 }
 .detail-tags:empty { display: none; }
+.detail-tag {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 14px;
+    min-width: 84px;
+    background: var(--bg-light, #f6f7f9);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text, #1a1f2c);
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: transform 0.15s ease, box-shadow 0.18s ease, background 0.15s ease;
+}
+.detail-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+}
+.detail-tag-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--primary-light, #e8efff);
+    background: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+.detail-tag-label {
+    max-width: 140px;
+    overflow-wrap: break-word;
+}
+@media (max-width: 540px) {
+    /* Op mobiel iets compacter zodat 8-15 tags niet de hele
+       schermhoogte opslokken. Cards behouden hun feature-card
+       gevoel maar passen netter in een 2-3 koloms organisch grid. */
+    .detail-tags { gap: 8px; margin: 12px 0 18px; }
+    .detail-tag { min-width: 76px; padding: 10px 10px; font-size: 0.72rem; border-radius: 12px; }
+    .detail-tag-circle { width: 34px; height: 34px; font-size: 1rem; }
+    .detail-tag-label { max-width: 110px; }
+}
 
 .no-results {
     display: none;

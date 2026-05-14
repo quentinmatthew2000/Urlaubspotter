@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Vakantie voor wie? · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=26">
+    <link rel="stylesheet" href="site.css?v=27">
     <link rel="stylesheet" href="inspiration-tabs.css?v=7">
     <!-- Premium category hero — Niveau 2 — Wie › <gezelschap> krijgt
          de NIEUWE contextuele landing-template (sticky nav, editorial
@@ -96,36 +96,12 @@
 </section>
 </div>
 
-<!-- WAAR — Kies een land (alleen bij preset) -->
-<div id="where-section" style="display:none">
-    <section class="section">
-        <div class="section-head">
-            <div>
-                <span class="eyebrow">Waar wil je naartoe?</span>
-                <h2>Kies een land</h2>
-                <p class="lead">Start breed met een land — op de volgende stap kun je per regio verfijnen.</p>
-            </div>
-        </div>
-        <div class="cat-grid small" id="countries-tiles"></div>
-    </section>
-</div>
+<!-- Legacy "Kies een land" + "Populaire regio's" tegel-rijen
+     verwijderd — de Bestemmingen-tab in Inspiratie voor jou +
+     de search-navigation modal nemen die taak nu over. -->
 
 <!-- KEUZEHULP -->
 <section class="section" id="keuzehulp-block"></section>
-
-<!-- WAAR — Populaire regio's (alleen bij preset) -->
-<div class="section-bg-alt-wrap where-regio-wrap" style="display:none">
-<section class="section">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Of kies een regio in Nederland</span>
-            <h2>Populaire regio's</h2>
-            <p class="lead">Direct zoeken in een specifieke Nederlandse provincie.</p>
-        </div>
-    </div>
-    <div class="cat-grid small" id="regions-tiles"></div>
-</section>
-</div>
 
 <!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset) -->
 <div class="section-bg-alt-wrap preset-only" style="display:none">
@@ -205,8 +181,10 @@
         document.getElementById('page-lead').textContent = `Je zocht op ${whoLabel.toLowerCase()}. Kies nu een vakantietype of bestemming om je keuze te verfijnen.`;
         document.getElementById('eyebrow').textContent = `Niveau 2 — Wie › ${whoLabel}`;
         document.getElementById('who-section').style.display = 'none';
-        document.getElementById('where-section').style.display = '';
-        document.querySelectorAll('.preset-only, .where-regio-wrap').forEach(el => el.style.display = '');
+        // Legacy where-section / where-regio-wrap mounts zijn uit de
+        // HTML verwijderd; alleen de overblijvende preset-only blokken
+        // (matches-listing, redactie-stories) worden hier zichtbaar.
+        document.querySelectorAll('.preset-only').forEach(el => el.style.display = '');
         // Active filter: alleen het WIE-chip. "Andere keuze" navigatie-
         // chip weg — breadcrumb biedt al de terugweg naar het Wie-
         // overzicht. Premium hero (applyPremiumPage onderaan) toont
@@ -236,14 +214,8 @@
         gradient: SITE_DATA.gradients.what
     });
 
-    renderCategoryTiles('countries-tiles', DATA.countries(), {
-        linkBuilder: (v) => `Niveau3-WieWaar.html?who=${whoPre}&where=${v}`,
-        gradient: SITE_DATA.gradients.where
-    });
-    renderCategoryTiles('regions-tiles', DATA.whereNL(), {
-        linkBuilder: (v) => `Niveau3-WieWaar.html?who=${whoPre}&where=${v}`,
-        gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    });
+    // Legacy countries-tiles / regions-tiles renderers verwijderd —
+    // de bijbehorende <section> blokken zijn uit de HTML weggehaald.
 
     renderBlogPreview('blog-preview', whoLabel || 'Reisgezelschap');
     renderKeuzehulpCTA('keuzehulp-block');

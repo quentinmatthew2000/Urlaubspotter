@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Waar wil je heen? · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=26">
+    <link rel="stylesheet" href="site.css?v=27">
     <link rel="stylesheet" href="inspiration-tabs.css?v=7">
     <!-- Premium category hero — Niveau 2 — Waar › <bestemming> krijgt
          de NIEUWE contextuele landing-template (sticky nav, editorial
@@ -78,46 +78,14 @@
 </section>
 </div>
 
-<!-- 4. WAAR — Kies een land (Europa carousel, altijd zichtbaar) -->
-<section class="section" id="eu-wrap">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Waar wil je naartoe?</span>
-            <h2>Kies een land</h2>
-            <p class="lead">Verder weg — Europese bestemmingen.</p>
-        </div>
-        <div class="carousel-nav">
-            <button class="carousel-btn" data-dir="prev">‹</button>
-            <button class="carousel-btn" data-dir="next">›</button>
-        </div>
-    </div>
-    <div class="carousel" id="eu-carousel">
-        <div class="carousel-track" id="eu-tiles"></div>
-    </div>
-</section>
+<!-- Legacy discovery-sliders ("Kies een land" Europa + "Populaire
+     regio's" NL) verwijderd — die functioneerden als oude tegelrijen
+     uit het pre-2.0 systeem en dupliceren nu wat de Bestemmingen-tab
+     in de Inspiratie-voor-jou + de search-navigation modal al bieden.
+     Het keuzehulp-block blijft staan als de primaire CTA. -->
 
-<!-- 5. KEUZEHULP -->
+<!-- KEUZEHULP -->
 <section class="section" id="keuzehulp-block"></section>
-
-<!-- 6. WAAR — Populaire regio's NL (altijd zichtbaar) -->
-<div class="section-bg-alt-wrap">
-<section class="section" id="nl-wrap">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Of kies een regio in Nederland</span>
-            <h2>Populaire regio's</h2>
-            <p class="lead">Dichtbij op vakantie — kies een Nederlandse provincie.</p>
-        </div>
-        <div class="carousel-nav">
-            <button class="carousel-btn" data-dir="prev">‹</button>
-            <button class="carousel-btn" data-dir="next">›</button>
-        </div>
-    </div>
-    <div class="carousel" id="nl-carousel">
-        <div class="carousel-track" id="nl-tiles"></div>
-    </div>
-</section>
-</div>
 
 <!-- REDACTIE — direct boven de nieuwsbrief (alleen bij preset) -->
 <div class="section-bg-alt-wrap preset-only" style="display:none">
@@ -239,14 +207,8 @@
     // Carry-forward: deeper navigatie (Niveau 3) behoudt region OF
     // where zodat de identity niet wegvalt.
     const destinationCarry = regionPre ? `region=${regionPre}` : (wherePre ? `where=${wherePre}` : '');
-    renderCategoryTiles('nl-tiles', DATA.whereNL(), {
-        linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
-        gradient: SITE_DATA.gradients.where
-    });
-    renderCategoryTiles('eu-tiles', DATA.whereEU(), {
-        linkBuilder: (v) => `Niveau2-Waar.html?where=${v}`,
-        gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    });
+    // Legacy nl-tiles / eu-tiles renderers verwijderd — de bijbehorende
+    // <section> blokken zijn uit de HTML weggehaald.
     renderCategoryTiles('what-tiles', DATA.what(), {
         linkBuilder: (v) => destinationCarry
             ? `Niveau3-WaarWat.html?${destinationCarry}&what=${v}`
@@ -258,8 +220,8 @@
     renderKeuzehulpCTA('keuzehulp-block');
     renderNewsSocial('news-social');
     renderFooter();
-    bindCarousel('nl-carousel');
-    bindCarousel('eu-carousel');
+    // Legacy nl-carousel / eu-carousel bindings verwijderd — de
+    // bijbehorende DOM-mounts bestaan niet meer.
 
     // ---- PREMIUM CATEGORY PAGE ----
     // Alleen activeren bij een gekozen bestemming (where of region) —
