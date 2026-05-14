@@ -269,17 +269,23 @@ const HUMAN_POSITIVES = [
       say: "Centraal gelegen in de stad" },
     { when: (a, x) => a.ligging.includes('afgelegen') && x.settings.includes('afgelegen'),
       say: "Afgelegen — heerlijk rustig" },
-    // Bestemming match — country en continent
-    { when: (a, x) => a.bestemming.includes(x.country),
-      say: (a, x) => "In " + (COUNTRY_LABELS[x.country] || x.country) },
-    { when: (a, x) => a.bestemming.includes('europa') && CONTINENT_OF[x.country] === 'europa' && !a.bestemming.includes(x.country),
-      say: "Centraal in Europa" },
-    { when: (a, x) => a.bestemming.includes('azie') && CONTINENT_OF[x.country] === 'azie',
-      say: "Verre reis in Azië" },
-    { when: (a, x) => a.bestemming.includes('afrika') && CONTINENT_OF[x.country] === 'afrika',
-      say: "Bijzondere bestemming in Afrika" },
-    { when: (a, x) => a.bestemming.includes('amerika') && CONTINENT_OF[x.country] === 'amerika',
-      say: "Op het Amerikaanse continent" },
+    // Bestemming — toon de echte regio + land, geen artificiële
+    // "Centraal in Europa"-zinnen meer. Iedere keuzehulp-acco heeft
+    // een location-veld in "Regio, Land" formaat (bv. "Costa Brava,
+    // Spanje", "Toscane, Italië", "Tirol, Oostenrijk", "Algarve,
+    // Portugal"); die tonen we letterlijk. Werkt ook voor de
+    // continent-keuzes (europa/azie/afrika/amerika) omdat we via
+    // CONTINENT_OF de match leggen naar de specifieke acco-locatie.
+    // Eén geconsolideerde rule — voorheen vijf aparte zinnen die
+    // allemaal generiek bleven.
+    { when: (a, x) => !!x.location && (
+            a.bestemming.includes(x.country)
+            || (a.bestemming.includes('europa')  && CONTINENT_OF[x.country] === 'europa')
+            || (a.bestemming.includes('azie')    && CONTINENT_OF[x.country] === 'azie')
+            || (a.bestemming.includes('afrika')  && CONTINENT_OF[x.country] === 'afrika')
+            || (a.bestemming.includes('amerika') && CONTINENT_OF[x.country] === 'amerika')
+      ),
+      say: (a, x) => x.location },
     // Faciliteiten — alleen tonen als de gebruiker er om vraagt
     { when: (a, x) => a.faciliteiten.includes('all-inclusive') && (x.facilities.includes('all-inclusive') || hasTheme(x, ['all-inclusive'])),
       say: "All-inclusive beschikbaar" },
@@ -422,13 +428,17 @@ function evaluateMatch(acc, answers) {
         vals.forEach(v => {
             const intents = TAG_INTENTS[v] || [];
             const overlap = intersection(intents, x.themes).length;
+            // Audience-bonus: voorheen +0.4, dat duwde elke
+            // doelgroep-match boven 90% via de ease-out hieronder.
+            // 0.25 voelt eerlijker: een audience-fit telt mee, maar
+            // overstemt de inhoudelijke thema-overlap niet meer.
             const audienceBonus =
-                (v === 'pets' && x.audience.petFriendly) ? 0.4 :
-                (v.startsWith('families-') && x.audience.kidFriendly && !x.audience.adultOnly) ? 0.4 :
-                (v === 'couples' && (x.audience.adultOnly || hasTheme(x, ['romantic','intimate']))) ? 0.4 :
-                (v === 'seniors' && hasTheme(x, ['rust','quiet','comfort'])) ? 0.4 :
-                (v === 'friends' && hasTheme(x, ['social','entertainment'])) ? 0.4 :
-                (v === 'solo' && hasTheme(x, ['centrum','safe-solo','flexible'])) ? 0.4 :
+                (v === 'pets' && x.audience.petFriendly) ? 0.25 :
+                (v.startsWith('families-') && x.audience.kidFriendly && !x.audience.adultOnly) ? 0.25 :
+                (v === 'couples' && (x.audience.adultOnly || hasTheme(x, ['romantic','intimate']))) ? 0.25 :
+                (v === 'seniors' && hasTheme(x, ['rust','quiet','comfort'])) ? 0.25 :
+                (v === 'friends' && hasTheme(x, ['social','entertainment'])) ? 0.25 :
+                (v === 'solo' && hasTheme(x, ['centrum','safe-solo','flexible'])) ? 0.25 :
                 0;
             // Cap op 1.0; thema-overlap weegt mee + audience-bonus
             const s = Math.min(1, overlap / Math.max(1, intents.length) * 0.7 + audienceBonus);
@@ -520,9 +530,18 @@ function evaluateMatch(acc, answers) {
         pct = 50;
     } else {
         const raw = earned / possible;
-        // Ease-out: bevoordeelt sterke matches richting 90%+ zonder
-        // 100% te raken (ruimte voor "perfect maar niet perfect").
-        pct = Math.round((1 - Math.pow(1 - raw, 1.5)) * 100);
+        // Lineaire mapping: pct = raw * 100. Voorheen werd hier een
+        // ease-out (^1.5) toegepast die ALLE redelijke matches naar
+        // 85-98% duwde (raw 0.6 → 75%, raw 0.8 → 91%, raw 0.9 → 97%),
+        // wat ervoor zorgde dat accommodaties nauwelijks meer
+        // differentieerden — een 80%-match en een 95%-match zagen er
+        // visueel hetzelfde uit en de tier-labels ("Perfecte match",
+        // "Sterke match") werden te ruim toegekend. Linear voelt
+        // eerlijker: 50% is écht middelmatig, 90% is écht sterk, 95%
+        // is bijna ideaal. Cap blijft 98% — 100% is gereserveerd voor
+        // een theoretisch perfecte overlap die we bewust niet
+        // toekennen ("perfect maar niet perfect").
+        pct = Math.round(raw * 100);
     }
     pct = Math.max(0, Math.min(98, pct));
 
