@@ -617,8 +617,38 @@ function autoMountSearchNavigation() {
     //     hij niet door GC verdwijnt zodra deze functie returnt — de
     //     cat-nav-content laadt namelijk async, dus de meting die
     //     telt komt PAS na een volgende layout-cycle.
+    //
+    // === DRAWER-OPEN GUARD (drawer-flicker root cause fix) ===
+    // De .site-nav drawer leeft als flex-child IN de .site-header.
+    // Wanneer hij opent groeit de header met de drawer-content erbij
+    // (van ~64px naar ~580px). Zonder guard zou syncHeaderHeight die
+    // grote waarde naar --header-h schrijven, waarna site.css
+    // ".site-nav { max-height: calc(100vh - var(--header-h) - 16px) }"
+    // een tiny max-height berekent → drawer shrinks → header shrinks
+    // → ResizeObserver fires opnieuw → --header-h wordt kleiner →
+    // max-height grows → drawer expands → header grows → loop. Dit
+    // is een klassieke RO ⇄ CSS-var feedback-loop en is de visuele
+    // oorzaak van het "flicker / jitter / shrink / collapse"-gedrag
+    // dat de gebruiker rapporteerde (desktop én mobiel).
+    //
+    // De fix: als de drawer open is, schrijf NIET naar --header-h.
+    // De laatst-gemeten closed-header-waarde blijft staan — wat alle
+    // consumers (max-height calc, sticky-offsets in search-
+    // navigation.css, premium-hero.css, accommodaties.html,
+    // alle-vakanties.html) feitelijk verwachten: --header-h = de
+    // chrome-hoogte BOVEN de drawer, niet inclusief de drawer zelf.
+    // Wanneer de drawer sluit triggert de header-shrink een nieuwe
+    // RO-callback; op dat moment is .open weg en wordt de waarde
+    // weer correct ge-sync't. Geen extra timers nodig.
+    //
+    // Bijwerking: scroll op iOS (address-bar collapse → window.resize)
+    // raakt --header-h niet meer mid-drawer-open. Dat lost het
+    // "scrollen achter de drawer veroorzaakt instabiliteit" symptoom
+    // op zonder body-scroll-lock toe te voegen.
     const syncHeaderHeight = () => {
         if (!headerEl) return;
+        const nav = headerEl.querySelector('.site-nav');
+        if (nav && nav.classList.contains('open')) return;
         const h = headerEl.getBoundingClientRect().height;
         if (h) document.documentElement.style.setProperty('--header-h', `${Math.round(h)}px`);
     };
