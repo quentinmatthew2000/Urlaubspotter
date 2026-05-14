@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accommodatie · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=30">
+    <link rel="stylesheet" href="site.css?v=31">
     <link rel="stylesheet" href="search-navigation.css?v=11">
     <style>
         .acd-wrap {
@@ -42,6 +42,18 @@
            experiences gebruiken nu de gedeelde .detail-tags feature-
            card stijl (zie site.css). Eén premium visuele taal voor
            Navigatie.html?acc= én accommodatie.html?slug=. */
+        .acd-title {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 800;
+            letter-spacing: -0.022em;
+            line-height: 1.2;
+            color: var(--text, #1a2230);
+            margin: 0 0 8px;
+            text-wrap: balance;
+        }
+        @media (max-width: 600px) {
+            .acd-title { font-size: clamp(1.2rem, 5.4vw, 1.5rem); margin-bottom: 6px; }
+        }
         .acd-meta-row {
             display: flex; justify-content: space-between; align-items: baseline;
             gap: 12px; flex-wrap: wrap;
@@ -80,7 +92,7 @@
 </footer>
 
 <script src="site-data.js?v=14"></script>
-<script src="site.js?v=26"></script>
+<script src="site.js?v=27"></script>
 <script src="search-navigation.js?v=9"></script>
 <script>
     renderHeader('nav');
@@ -137,7 +149,10 @@
             </div>
             <div class="acd-grid">
                 <div>
-                    <h1 style="font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 6px;">${acc.name}</h1>
+                    <!-- Title-zone afgestemd op Navigatie.html?acc=
+                         premium-stijl: charcoal text, dezelfde clamp
+                         font-size, geen sterren naast de titel. -->
+                    <h1 class="acd-title">${acc.name}</h1>
                     <p class="lead">📍 ${acc.location} · ${whereLabel}</p>
                     <!-- Premium feature-card tags i.p.v. de oude flat blauwe
                          .acd-tag pills. Gerendeerd door renderFeatureTags()

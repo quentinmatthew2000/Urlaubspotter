@@ -350,15 +350,14 @@ img { max-width: 100%; height: auto; }
 }
 .detail-header-bar > .icon-btn { flex-shrink: 0; align-self: center; }
 
-/* Titel-kolom: neemt beschikbare ruimte, titel clampt netjes op 2 regels,
-   sterren komen daar direct onder. Geen awkward wrapping meer. */
+/* Titel-kolom: neemt beschikbare ruimte, titel clampt netjes op
+   2 regels. Sterren-rij is verwijderd — alleen de h1 hangt nu in
+   deze kolom, dus geen gap meer en horizontal-only ruimte
+   reservatie. */
 .detail-header-title {
     flex: 1 1 auto;
     min-width: 0;              /* nodig zodat text-overflow/clamp werken binnen flex */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    display: block;
 }
 .detail-header-title h1 {
     margin: 0;
@@ -455,6 +454,10 @@ img { max-width: 100%; height: auto; }
     border-radius: 12px;
     margin-bottom: 20px;
 }
+/* USP-row is samengevoegd met #detail-tags — wanneer renderDetail()
+   de mount leegt verbergt deze rule de hele container zodat er geen
+   lege bordered box bovenaan de detail-pagina blijft staan. */
+.usp-row:empty { display: none; }
 .usp-item {
     display: flex;
     flex-direction: column;

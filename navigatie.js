@@ -876,12 +876,14 @@ const app = {
         if (!acc) return;
         this.state.currentSlide = 0;
 
-        // Header
+        // Header — title only. De oude #detail-stars span naast de
+        // titel is verwijderd uit Navigatie.html: die concurreerde
+        // met de actie-iconen op mobile en perste de title-breedte.
+        // Sterren-rating is nog steeds zichtbaar in "In het Kort"
+        // (acc.rating/10) + de reviews-rail verderop.
         document.getElementById('detail-title').textContent = acc.name;
         const starsEl = document.getElementById('detail-stars');
-        if (starsEl && acc.stars) {
-            starsEl.innerHTML = '★'.repeat(acc.stars) + '<span style="color:#dee2e6">' + '★'.repeat(5 - acc.stars) + '</span>';
-        }
+        if (starsEl) starsEl.innerHTML = '';
 
         // Slider
         document.getElementById('detail-main-image').src = acc.images[0];
@@ -893,39 +895,22 @@ const app = {
             </div>
         `).join('');
 
-        // USP-rij: iconen voor de belangrijkste faciliteiten. Het icoon
-        // komt uit deze map; het label wordt ALTIJD uit this.labels.
-        // facilities[k] gehaald zodat USP-iconen en de listing-card-
-        // tags één en dezelfde tag-vocabulaire delen. Geen
-        // afgekorte inline labels meer ('Adult'/'All-in'/'Relax/etc.).
-        const uspIconMap = {
-            'water':         { icon: '🌊' },
-            'kids-fun':      { icon: '🎠' },
-            'all-inclusive': { icon: '🍽️' },
-            'sports-games':  { icon: '⚽' },
-            'adventure':     { icon: '🧗' },
-            'relax':         { icon: '🧘' },
-            'pet-friendly':  { icon: '🐕' },
-            'adult-only':    { icon: '🥂' },
-            'luxe':          { icon: '✨' },
-            'nature':        { icon: '🌲' },
-            'festive':       { icon: '🎉' }
-        };
-        // Render alle tags; CSS verbergt op mobiel de items vanaf de 7e tot de
-        // gebruiker "Meer" aantikt. Op desktop blijft het grid alles tonen.
+        // USP-row is samengevoegd met #detail-tags hieronder: alle
+        // feature-cards (facilities, type, doelgroep, sfeer, ligging,
+        // context) komen nu in ÉÉN canonical .detail-tags grid. De
+        // oude tweede rij was visueel verwarrend omdat het dezelfde
+        // accommodatie-traits als feature-cards toonde, alleen
+        // verdeeld over 2 visueel-gelijke blokken. We leegen de
+        // #usp-row mount zodat hij niet rendert (CSS `.usp-row:empty
+        // { display: none }`). Facility-labels worden mee opgenomen
+        // in de unified tag-list verderop. De TAG_ICONS map hieronder
+        // bevat al alle facility-emoji's via de canonieke labels.
         const facilityKeys = acc.facilityKeys || [];
-        const uspItems = facilityKeys.map(k => {
-            const icon  = (uspIconMap[k] && uspIconMap[k].icon) || '•';
-            const label = this.labels.facilities[k] || k;
-            return `<div class="usp-item"><div class="usp-circle">${icon}</div><span class="usp-label">${label}</span></div>`;
-        }).join('');
         const uspRow = document.getElementById('usp-row');
-        const hasOverflow = facilityKeys.length > 6;
-        uspRow.classList.toggle('has-overflow', hasOverflow);
-        uspRow.classList.remove('expanded');
-        uspRow.innerHTML = uspItems + (hasOverflow
-            ? `<button type="button" class="usp-item usp-more" onclick="app.toggleUspExpanded()"><div class="usp-circle">⋯</div><span class="usp-label">Meer</span></button>`
-            : '');
+        if (uspRow) {
+            uspRow.innerHTML = '';
+            uspRow.classList.remove('has-overflow', 'expanded');
+        }
 
         // Contextuele feature-card tags. Bouwt één geünifieerde lijst
         // op uit:
@@ -978,25 +963,24 @@ const app = {
         };
         const tagsEl = document.getElementById('detail-tags');
         if (tagsEl) {
-            // Strikte deduplicatie met USP-row: alle labels die hierboven
-            // al als experiential feature-card icon staan (facilityKeys
-            // → labels.facilities[k]) worden uit detail-tags weggelaten.
-            // Detail-tags = type / doelgroep / sfeer / ligging / context;
-            // USP-row = facilities / experiential highlights. Zonder
-            // overlap, twee duidelijke informatie-zones.
-            const uspLabels = new Set(
-                (acc.facilityKeys || [])
-                    .map(k => this.labels.facilities[k])
-                    .filter(Boolean)
-            );
+            // EENE canonieke feature-tag grid voor de hele detail-pagina.
+            // Bouwt 1 geünifieerde lijst op uit:
+            //   • acc.facilityKeys  → this.labels.facilities[k]  (was usp-row)
+            //   • acc.tags           (canonieke string-labels)
+            //   • acc.whatKeys       → this.labels.what[k]
+            //   • acc.locationKeys   → this.labels.location[k]
+            // Set-dedupe zodat we geen "Hotel · Hotel" of "Adult Only ·
+            // Adult Only" krijgen wanneer een tag-string en een
+            // facility-key naar dezelfde label resolven.
+            //
             // Recommendation-phrasings die NIET in de feature-tag grid
             // horen — die zijn redactionele aanbevelings-context
             // (eerder thuis in "Ideaal voor" of de editorial-card),
             // geen harde accommodatie-trait. "Weekendje weg" is ook
             // de canonieke label voor what='city-trip' — we remappen
-            // dat naar "Stedentrip" (een echte verblijfsstijl) in de
-            // WHAT_FEATURE_REMAP hieronder zodat de what-key visueel
-            // blijft maar niet meer als marketing-phrase leest.
+            // dat naar "Stedentrip" (een echte verblijfsstijl) zodat
+            // de what-key visueel blijft maar niet als marketing-
+            // phrase leest.
             const RECOMMENDATION_PHRASES = new Set([
                 'Weekendje weg',
                 'Korte vakantie',
@@ -1010,18 +994,18 @@ const app = {
             const seen = new Set();
             const displayTags = [];
             const add = (txt) => {
-                if (!txt || seen.has(txt) || uspLabels.has(txt)) return;
+                if (!txt || seen.has(txt)) return;
                 if (RECOMMENDATION_PHRASES.has(txt)) return;
                 seen.add(txt); displayTags.push(txt);
             };
-            (acc.tags || []).forEach(add);
+            // Volgorde-strategie: type eerst (geeft direct context),
+            // dan ligging, dan facilities/sfeer/context (acc.tags),
+            // dan resterende facility-keys. Dat geeft een natuurlijke
+            // lees-volgorde op de feature-card grid.
             (acc.whatKeys || []).forEach(k => add(WHAT_FEATURE_REMAP[k] || this.labels.what[k]));
             (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
-            // facilityKeys bewust NIET toegevoegd — die hangen al in de
-            // USP-row hierboven als feature-card icon. Surfacen ze hier
-            // ook = dubbele info-laag. Synth-records uit SITE_DATA
-            // (facilityKeys: []) blijven werken: dan filtert uspLabels
-            // niks weg en zien we hun acc.tags-array volledig.
+            (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));
+            (acc.tags || []).forEach(add);
             tagsEl.innerHTML = displayTags
                 .map(t => `
                     <div class="detail-tag">

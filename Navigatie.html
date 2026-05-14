@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=30">
-    <link rel="stylesheet" href="navigatie.css?v=19">
+    <link rel="stylesheet" href="site.css?v=31">
+    <link rel="stylesheet" href="navigatie.css?v=20">
 </head>
 <body>
 <!-- Unified site header — gerenderd via renderHeader() uit site.js -->
@@ -152,12 +152,15 @@
     <!-- PAGE: DETAIL (Niveau 5) -->
     <div id="page-detail" class="page">
         <div class="detail-container">
-            <!-- Compacte header met titel, sterren en actie-iconen -->
+            <!-- Compacte header — alleen titel + back/share/favoriet
+                 acties. Sterren-rij naast de titel is verwijderd:
+                 die brak op mobile de title-breedte en concurreerde
+                 met de actie-iconen. De rating staat al in "In het
+                 Kort" + bij de reviews. -->
             <div class="detail-header-bar">
                 <button class="icon-btn" onclick="app.goBack()" aria-label="Terug">←</button>
                 <div class="detail-header-title">
                     <h1 id="detail-title"></h1>
-                    <span id="detail-stars" class="detail-stars"></span>
                 </div>
                 <div class="detail-header-actions">
                     <button class="icon-btn" aria-label="Delen">⇪</button>
@@ -309,7 +312,7 @@
 </div>
 
 <script src="site-data.js?v=14"></script>
-<script src="site.js?v=26"></script>
-<script src="navigatie.js?v=21"></script>
+<script src="site.js?v=27"></script>
+<script src="navigatie.js?v=22"></script>
 </body>
 </html>
