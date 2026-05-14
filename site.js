@@ -278,6 +278,71 @@ function bindCarousel(carouselId) {
 }
 
 // ============ RENDER HELPERS ============
+
+// ---- Match signals voor "Voor jou geselecteerd" cards --------------
+// Vervangt de oude blauwe .tag-pill chips met een curatie-gevoel:
+// elke kaart krijgt 3 compacte ✓-rijen — 1 doelgroep, 1 locatie/ligging,
+// 1 sfeer/vibe. Visuele taal afgestemd op de keuzehulp-result cards
+// (.match-explain-row--yes) zodat "Voor jou geselecteerd" daadwerkelijk
+// recommendation-driven voelt i.p.v. een random metadata-chip-strip.
+//
+// IMPORTANT: blijf bewust onder 3-4 rijen. Cards moeten readable,
+// scanbaar en visueel rustig blijven — geen tag-overload meer.
+const _MATCH_LIGGING = new Set([
+    'Aan zee','Aan het strand','In de bergen','Aan een meer',
+    'Nabij natuur','Nabij natuur/bos','Centraal gelegen','Afgelegen',
+    'Stad','In de stad','Bos','Natuur','Bergen'
+]);
+const _MATCH_WHO_PHRASE = {
+    'couples':         'Ideaal voor koppels',
+    'families-kids':   'Voor gezinnen met kinderen',
+    'families-babies': 'Voor jonge gezinnen',
+    'families-teens':  'Voor gezinnen met tieners',
+    'friends':         'Top voor vriendengroepen',
+    'seniors':         'Comfortabel voor senioren',
+    'solo':            'Fijn voor solo-reizigers',
+    'pets':            'Welkom met huisdier'
+};
+const _MATCH_VIBE_PHRASE = {
+    'Wellness':        'Wellness sfeer',
+    'Romantisch':      'Romantische setting',
+    'Adult Only':      'Volwassenen-only',
+    'Luxe':            'Luxe verblijf',
+    'All-inclusive':   'All-inclusive comfort',
+    'Sport & Spel':    'Actief & sportief',
+    'Cultuur':         'Cultureel rijke omgeving',
+    'Avontuur':        'Avontuurlijke setting',
+    'Kinderpret':      'Veel voor kinderen',
+    'Ontspanning':     'Rustige, ontspannen sfeer',
+    'Diervriendelijk': 'Diervriendelijk',
+    'Feestelijk':      'Feestelijke sfeer',
+    'Stedentrip':      'Sfeervolle stedentrip',
+    'Citytrip':        'Sfeervolle stedentrip',
+    'Weekendje weg':   'Perfect voor een weekendje',
+    'Bezienswaardigheden': 'Veel te ontdekken'
+};
+function buildMatchSignals(a) {
+    const signals = [];
+    const used = new Set();
+    const add = (text) => { if (text && !used.has(text)) { used.add(text); signals.push(text); } };
+
+    // 1. Doelgroep — eerste who-key, natuurlijke NL-frasering.
+    const who = (a.who || [])[0];
+    if (who) add(_MATCH_WHO_PHRASE[who] || `Ideaal voor ${(DATA.label('who', who) || who).toLowerCase()}`);
+
+    // 2. Locatie / ligging — ligging-tag uit acc.tags; anders where-label.
+    const lig = (a.tags || []).find(t => _MATCH_LIGGING.has(t));
+    if (lig) add(lig);
+    else if (a.where) add(DATA.label('where', a.where));
+
+    // 3. Sfeer / vibe — eerste matchende vibe-tag uit phrase-map.
+    const vibe = (a.tags || []).find(t => _MATCH_VIBE_PHRASE[t]);
+    if (vibe) add(_MATCH_VIBE_PHRASE[vibe]);
+
+    return signals.slice(0, 3);
+}
+const _MATCH_CHECK_SVG = '<svg class="match-check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
 function renderListingPreview(containerId, accommodations, { limit = 6 } = {}) {
     const el = document.getElementById(containerId);
     if (!el) return;
@@ -286,7 +351,9 @@ function renderListingPreview(containerId, accommodations, { limit = 6 } = {}) {
         el.innerHTML = `<div class="listing-empty">Geen accommodaties gevonden — <a href="Navigatie.html">bekijk alle</a></div>`;
         return;
     }
-    el.innerHTML = list.map(a => `
+    el.innerHTML = list.map(a => {
+        const signals = buildMatchSignals(a);
+        return `
         <a class="listing-card" href="Navigatie.html?acc=${a.id}">
             <div class="listing-card-img" style="background: ${gradientFor(a)}">
                 <img src="${photoUrlFor(a, 640, 420)}" alt="${a.name}" loading="lazy" onerror="this.style.display='none'"/>
@@ -296,15 +363,67 @@ function renderListingPreview(containerId, accommodations, { limit = 6 } = {}) {
             <div class="listing-card-body">
                 <h3>${a.name}</h3>
                 <p class="listing-card-loc">📍 ${a.location}</p>
-                <div class="listing-card-tags">
-                    ${a.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-                </div>
+                <ul class="listing-card-matches" aria-label="Waarom dit past">
+                    ${signals.map(s => `<li class="listing-card-match-row">${_MATCH_CHECK_SVG}<span>${s}</span></li>`).join('')}
+                </ul>
                 <div class="listing-card-foot">
                     <span class="listing-card-rating">★ ${a.rating.toFixed(1)} · ${a.reviews}</span>
                     <span class="listing-card-price">€${a.price}<small>/nacht</small></span>
                 </div>
             </div>
-        </a>
+        </a>`;
+    }).join('');
+}
+
+// ---- Feature-card tags voor detail-pagina's ------------------------
+// Shared TAG_ICONS map + renderFeatureTags() helper. Gebruikt door
+// accommodatie.html (slug-based detail) voor consistente premium
+// visual language met Navigatie.html?acc= — geen oude blauwe
+// .acd-tag pills meer. Navigatie.html?acc= heeft een vrijwel
+// identieke map intern in navigatie.js voor strikte deduplicatie
+// met de USP-row; houd beide in sync.
+const FEATURE_TAG_ICONS = {
+    'Hotel': '🏨', 'Kamperen': '⛺', 'Camping': '⛺', 'Vakantiepark': '🎡',
+    'Glamping': '✨', 'Bungalow': '🏡', 'Chalet': '🏔️', 'Resort': '🌴',
+    'Villa': '🏛️', 'Appartement': '🏢', 'B&B': '🛌',
+    'Boutique': '🛎️', 'Design': '🎨',
+    'Aan zee': '🌊', 'Aan het strand': '🏖️', 'In de bergen': '⛰️',
+    'Aan een meer': '🚤', 'Nabij natuur': '🌲', 'Nabij natuur/bos': '🌲',
+    'Centraal gelegen': '📍', 'Afgelegen': '🌌', 'Stad': '🏙️',
+    'In de stad': '🏙️', 'Bos': '🌲', 'Natuur': '🌲',
+    'Bergen': '⛰️', 'Europa': '🌍',
+    'Binnenzwembad': '🏊', 'Glijbanen': '🛝', 'Kinderpret': '🎠',
+    'All-inclusive': '🍽️', 'Sport & Spel': '⚽', 'Outdoor activiteiten': '🧗',
+    'Ontspanning': '🧘', 'Bezienswaardigheden': '📷', 'Fietsroutes': '🚴',
+    'Looproutes': '🥾', 'Diervriendelijk': '🐕', 'Luxe': '✨',
+    'Entertainment': '🎭', 'Open bar': '🍸', 'Live muziek': '🎵',
+    'Wateractiviteiten': '🌊', 'Feestelijk': '🎉',
+    'Adult Only': '🥂', 'Volwassenen': '👥', 'Voor koppels': '💑',
+    'Voor gezinnen': '👨‍👩‍👧', 'Voor gezinnen met kinderen': '👨‍👩‍👧',
+    'Voor gezinnen met tieners': '🧑', "Voor gezinnen met baby's": '👶',
+    'Voor senioren': '👴', 'Voor vrienden': '👫', 'Voor solo': '🚶',
+    'Voor alleen reizenden': '🚶', 'Met huisdier': '🐕',
+    'Weekendje weg': '🗓️', 'Zonvakantie': '☀️', 'Wintervakantie': '❄️',
+    'Wintersport': '⛷️', 'Wellness': '💆', 'Cultuur': '🎭',
+    'Romantisch': '💕', 'Avontuur': '🧭', 'Stedentrip': '🌆',
+    'Citytrip': '🌆', 'Actief / Avontuur': '🧭', 'Actief': '🏃',
+    'Italië': '🍝', 'Spanje': '🥘', 'Frankrijk': '🗼', 'Duitsland': '🍺',
+    'Nederland': '🇳🇱', 'België': '🍫', 'Portugal': '🍷', 'Kroatië': '⛵',
+    'Oostenrijk': '🎿'
+};
+function renderFeatureTags(containerId, tags) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const seen = new Set();
+    const list = (tags || []).filter(t => {
+        if (!t || seen.has(t)) return false;
+        seen.add(t); return true;
+    });
+    el.innerHTML = list.map(t => `
+        <div class="detail-tag">
+            <span class="detail-tag-circle" aria-hidden="true">${FEATURE_TAG_ICONS[t] || '•'}</span>
+            <span class="detail-tag-label">${t}</span>
+        </div>
     `).join('');
 }
 

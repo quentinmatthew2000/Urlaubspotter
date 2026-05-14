@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accommodatie · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=27">
+    <link rel="stylesheet" href="site.css?v=28">
     <link rel="stylesheet" href="search-navigation.css?v=11">
     <style>
         .acd-wrap {
@@ -38,14 +38,10 @@
             border-radius: 14px;
             padding: 22px;
         }
-        .acd-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-        .acd-tag {
-            background: var(--bg-light, #f3f4f6);
-            border-radius: 999px;
-            padding: 4px 12px;
-            font-size: 0.85rem;
-            color: var(--secondary);
-        }
+        /* .acd-tags / .acd-tag verwijderd — accommodation-detail-
+           experiences gebruiken nu de gedeelde .detail-tags feature-
+           card stijl (zie site.css). Eén premium visuele taal voor
+           Navigatie.html?acc= én accommodatie.html?slug=. */
         .acd-meta-row {
             display: flex; justify-content: space-between; align-items: baseline;
             gap: 12px; flex-wrap: wrap;
@@ -84,7 +80,7 @@
 </footer>
 
 <script src="site-data.js?v=14"></script>
-<script src="site.js?v=23"></script>
+<script src="site.js?v=24"></script>
 <script src="search-navigation.js?v=9"></script>
 <script>
     renderHeader('nav');
@@ -143,9 +139,10 @@
                 <div>
                     <h1 style="font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 6px;">${acc.name}</h1>
                     <p class="lead">📍 ${acc.location} · ${whereLabel}</p>
-                    <div class="acd-tags">
-                        ${acc.tags.map(t => `<span class="acd-tag">${t}</span>`).join('')}
-                    </div>
+                    <!-- Premium feature-card tags i.p.v. de oude flat blauwe
+                         .acd-tag pills. Gerendeerd door renderFeatureTags()
+                         in site.js, deelt CSS met Navigatie.html?acc=. -->
+                    <div class="detail-tags" id="detail-tags"></div>
                     <div class="acd-card" style="margin-top: 18px;">
                         <h2 style="margin-bottom: 8px;">Over deze accommodatie</h2>
                         <p>${acc.name} is een populaire keuze voor ${acc.who.map(w => DATA.label('who', w)).join(', ')}.
@@ -163,6 +160,11 @@
                 </aside>
             </div>
         `;
+
+        // Feature-card tag-render (acc.tags = canonieke labels uit SITE_DATA).
+        if (typeof renderFeatureTags === 'function') {
+            renderFeatureTags('detail-tags', acc.tags || []);
+        }
     }
 </script>
 </body>

@@ -818,15 +818,31 @@ const app = {
         };
         const tagsEl = document.getElementById('detail-tags');
         if (tagsEl) {
+            // Strikte deduplicatie met USP-row: alle labels die hierboven
+            // al als experiential feature-card icon staan (facilityKeys
+            // → labels.facilities[k]) worden uit detail-tags weggelaten.
+            // Detail-tags = type / doelgroep / sfeer / ligging / context;
+            // USP-row = facilities / experiential highlights. Zonder
+            // overlap, twee duidelijke informatie-zones.
+            const uspLabels = new Set(
+                (acc.facilityKeys || [])
+                    .map(k => this.labels.facilities[k])
+                    .filter(Boolean)
+            );
             const seen = new Set();
             const displayTags = [];
             const add = (txt) => {
-                if (txt && !seen.has(txt)) { seen.add(txt); displayTags.push(txt); }
+                if (!txt || seen.has(txt) || uspLabels.has(txt)) return;
+                seen.add(txt); displayTags.push(txt);
             };
             (acc.tags || []).forEach(add);
             (acc.whatKeys || []).forEach(k => add(this.labels.what[k]));
             (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
-            (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));
+            // facilityKeys bewust NIET toegevoegd — die hangen al in de
+            // USP-row hierboven als feature-card icon. Surfacen ze hier
+            // ook = dubbele info-laag. Synth-records uit SITE_DATA
+            // (facilityKeys: []) blijven werken: dan filtert uspLabels
+            // niks weg en zien we hun acc.tags-array volledig.
             tagsEl.innerHTML = displayTags
                 .map(t => `
                     <div class="detail-tag">
