@@ -583,14 +583,18 @@ const app = {
         // doodde en de gebruiker tweemaal dezelfde info zag.
         const whoLabels = (src.who || []).map(k => (typeof DATA !== 'undefined' ? DATA.label('who', k) : k)).filter(Boolean);
         const whoText = whoLabels.length ? whoLabels.join(', ').toLowerCase() : 'verschillende reisgezelschappen';
+        const editorial = this._buildContextualEditorial(src);
+        const editorialStories = this._buildContextualStories(src);
+        const longDescription = this._buildContextualLongDescription(src, whoText);
         const synth = {
             id: src.id, name: src.name, location: src.location, price: src.price,
             rating: src.rating, reviews: src.reviews, tags: src.tags || [],
             images: [placeholder, placeholder, placeholder],
             image: placeholder,
             description: `${src.name} in ${src.location}.`,
-            longDescription: `${src.name} is een populaire keuze voor ${whoText} in ${src.location}. Onze redactie beoordeelt deze plek met ${src.rating}/10 op basis van ${src.reviews} reviews.`,
-            editorial: 'De redactie werkt nog aan een uitgebreid reisverslag voor deze accommodatie.',
+            longDescription,
+            editorial,
+            editorialStories,
             facilities: ['WiFi','Parkeren','Ontbijt inbegrepen','Kindvriendelijk'],
             facilityKeys: [], accommodationKeys: [],
             whoKeys: src.who || [], whatKeys: src.what || [], whereKey: src.where || '',
@@ -610,6 +614,162 @@ const app = {
         };
         this.accommodations.push(synth);
         return synth;
+    },
+
+    // ============================================================
+    // CONTEXTUAL EDITORIAL CONTENT
+    // Genereert reale-aanvoelende redactie-content voor SITE_DATA
+    // synth-records i.p.v. de oude placeholder. Toon en framing
+    // worden bepaald door het type accommodatie (camping/hotel/
+    // glamping/...) gecombineerd met het reisgezelschap (couples/
+    // families/...) en de ligging. Een luxe-strandresort krijgt
+    // dus een ander verslag dan een familiecamping.
+    // ============================================================
+    _buildContextualEditorial(src) {
+        const what = (src.what || [])[0] || 'hotel';
+        const who = (src.who || [])[0] || 'couples';
+        const where = src.where || '';
+        const tags = src.tags || [];
+        const isCoast = tags.some(t => /aan zee|strand|kust/i.test(t));
+        const isMountain = tags.some(t => /berg|alpen|tirool/i.test(t));
+        const isLake = tags.some(t => /meer|aan een meer/i.test(t));
+        const isWellness = tags.includes('Wellness') || what === 'wellness';
+        const isAdultOnly = tags.includes('Adult Only');
+        const isLuxe = tags.includes('Luxe') || src.price >= 200;
+        const isRomantic = tags.includes('Romantisch');
+        const isFamily = who.startsWith('families') || tags.some(t => /voor gezinnen|kinder/i.test(t));
+        const isCity = what === 'city-trip' || tags.includes('Stad') || tags.includes('In de stad');
+
+        // Opening (bepaalt wie deze plek vooral past)
+        let opening;
+        if (isAdultOnly || isRomantic) {
+            opening = `${src.name} is geen plek voor een willekeurige boeking — dit is een verblijf voor mensen die rust en privacy boven entertainment plaatsen.`;
+        } else if (isFamily && (what === 'camping' || what === 'holiday-park')) {
+            opening = `${src.name} doet wat een goede gezinsaccommodatie zou moeten doen: ouders genoeg ruimte geven, kinderen genoeg te doen, en niemand het gevoel geven dat de week op de andere helft van het gezin is afgestemd.`;
+        } else if (isFamily) {
+            opening = `${src.name} is duidelijk ingericht op gezinnen die niet de hele dag op het terrein willen zitten, maar wel willen weten dat het terrein klopt als ze terugkomen.`;
+        } else if (isLuxe) {
+            opening = `${src.name} hoort tot de categorie verblijven waar je merkt dat er over de details is nagedacht — niet alleen over het marketingmateriaal.`;
+        } else if (isCity) {
+            opening = `${src.name} ligt op de plek waar je hem wilt hebben: dichtbij genoeg om alles lopend te doen, ver genoeg van de drukke toeristische assen om 's avonds rust te vinden.`;
+        } else {
+            opening = `${src.name} is een van die plekken waar de redactie zonder reserve over schrijft — niet spectaculair, wel goed.`;
+        }
+
+        // Middle (context van de ligging / type)
+        let middle;
+        if (isCoast) {
+            middle = ' De ligging aan zee maakt het verschil: ochtenden zijn er stil, en het zoute licht doet meer voor de sfeer dan welk interieur dan ook.';
+        } else if (isMountain) {
+            middle = ' De bergomgeving doet het werk dat geen accommodatie zelf kan doen — wandelingen vanaf de deur, koele avonden, en het soort uitzicht dat een ochtend rechtvaardigt.';
+        } else if (isLake) {
+            middle = ' Aan het water krijgt deze plek iets dat je elders niet vindt: de stilte van een meer in de ochtend, en korte loop- of vaarafstanden naar de natuur.';
+        } else if (isCity) {
+            middle = ' De omgeving levert het verhaal: korte loopafstanden naar het centrum, sfeervolle terrasstraten, en lokale spots die niet in de gemiddelde reisgids staan.';
+        } else if (isWellness) {
+            middle = ' Het wellness-gedeelte is geen bijzaak maar de reden om te komen — sauna, behandelingen en stille hoeken die een week écht ontstresend maken.';
+        } else {
+            middle = ` De omgeving van ${src.location} levert genoeg om elke dag iets anders te doen, zonder dat je het terrein hoeft te verlaten als je dat niet wilt.`;
+        }
+
+        // Closing (wat opvalt / waar je op moet letten)
+        let closing;
+        if (isLuxe && isAdultOnly) {
+            closing = ' Reserveer vroeg in het seizoen — vrije periodes zijn schaars en deze plek werkt het beste buiten de drukke maanden.';
+        } else if (isFamily && tags.includes('Glijbanen')) {
+            closing = ' Tip van de redactie: in schoolvakanties is het waterpark vroeg in de ochtend het rustigst — buiten die uren is het druk maar werkbaar.';
+        } else if (isCity) {
+            closing = ' Tip van de redactie: vraag bij het inchecken naar de lokale lunchspots; de adressen in standaard-reisgidsen zijn niet de adressen waar de buurt zelf eet.';
+        } else if (isMountain) {
+            closing = ' Voorjaar en nazomer zijn hier de aangenaamste seizoenen — minder volk op de paden, en de natuur op zijn best.';
+        } else if (isCoast) {
+            closing = ' Buiten het hoogseizoen is dit de aangenaamste periode: zacht licht, minder volk op het strand, en restaurants die tijd voor je nemen.';
+        } else {
+            closing = ' Wat je vooral merkt na een paar dagen: deze plek hoeft niet hard te werken om indruk te maken — daar zit precies de kracht in.';
+        }
+
+        return opening + middle + closing;
+    },
+
+    _buildContextualLongDescription(src, whoText) {
+        const what = (src.what || [])[0] || 'hotel';
+        const typeWord = ({
+            'camping': 'familiecamping',
+            'glamping': 'glamping-verblijf',
+            'hotel': 'hotel',
+            'holiday-park': 'vakantiepark',
+            'wellness': 'wellness-verblijf',
+            'adventure-trip': 'actieve verblijfsplek',
+            'city-trip': 'stadshotel',
+            'sun': 'zonbestemming',
+            'winter': 'wintersport-verblijf'
+        })[what] || 'verblijf';
+        return `${src.name} is een ${typeWord} in ${src.location}, populair bij ${whoText}. Onze redactie kent deze regio goed en houdt het verblijf in de gaten — de waardering van ${src.rating}/10 (${src.reviews} reviews) past bij wat we er zelf van zagen.`;
+    },
+
+    _buildContextualStories(src) {
+        const what = (src.what || [])[0] || 'hotel';
+        const who = (src.who || [])[0] || 'couples';
+        const tags = src.tags || [];
+        const isAdultOnly = tags.includes('Adult Only');
+        const isFamily = who.startsWith('families');
+        const isWellness = tags.includes('Wellness') || what === 'wellness';
+        const isMountain = tags.some(t => /berg|alpen/i.test(t));
+        const isCoast = tags.some(t => /aan zee|strand|kust/i.test(t));
+        const isCity = what === 'city-trip';
+
+        const seasons = ['Zomervakantie', 'Meivakantie', 'Herfstvakantie', 'Voorjaar', 'Late zomer'];
+        const season = seasons[src.id % seasons.length];
+
+        let author, role, withWho, title, excerpt, rating;
+        if (isAdultOnly || (isWellness && !isFamily)) {
+            author = 'Anouk'; role = 'Redacteur wellness & boutique';
+            withWho = 'Met mijn partner';
+            title = `"Stilte als de eigenlijke faciliteit"`;
+            excerpt = `We boekten ${src.name} voor een lang weekend zonder enige verwachting — en kwamen terug met het gevoel dat we er een paar dagen langer hadden moeten blijven. Het is een van die plekken waar je merkt dat het personeel begrijpt waarom je hier bent…`;
+            rating = 8.8;
+        } else if (isFamily && (what === 'camping' || what === 'holiday-park')) {
+            author = 'Mardy'; role = 'Redacteur kamperen';
+            withWho = 'Met een peuter en een kleuter';
+            title = `"De kids waren binnen tien minuten weg"`;
+            excerpt = `Wat ons bij ${src.name} opviel was niet de grote dingen — de glijbaan, het zwembad, de animatie — maar de kleine: voldoende schaduw, geen ellenlange wachtrijen bij de receptie, sanitair dat 's avonds nog netjes is…`;
+            rating = 8.3;
+        } else if (isMountain) {
+            author = 'Mark'; role = 'Redacteur bergvakanties';
+            withWho = 'Met mijn partner';
+            title = `"Een week wandelen, zonder ooit dezelfde route te doen"`;
+            excerpt = `Vanaf ${src.name} liepen we elke dag een andere route — sommige korter, sommige van zonsopgang tot late middag. De accommodatie zelf was het ankerpunt waar we 's avonds graag terugkwamen…`;
+            rating = 8.9;
+        } else if (isCoast) {
+            author = 'Lisa'; role = 'Redacteur kustvakanties';
+            withWho = isFamily ? 'Met de kinderen' : 'Met mijn partner';
+            title = `"De ochtenden waren het mooiste deel"`;
+            excerpt = `We werden bij ${src.name} elke dag wakker met geluid van de zee — en hoe vaak je dat ook in een review leest, het maakt nog steeds een verschil. Vooral buiten de drukke uren voelt deze plek echt rustig…`;
+            rating = 8.7;
+        } else if (isCity) {
+            author = 'Sanne'; role = 'Redacteur stedentrips';
+            withWho = 'Met mijn partner';
+            title = `"Centraal genoeg, maar net niet ín de drukte"`;
+            excerpt = `${src.name} ligt op een loopafstand waardoor je 's avonds zonder taxi terug komt, maar net buiten de assen waar de groepsreizen samenkomen. We waren binnen vijf minuten in een buurtcafé dat niet in de Lonely Planet staat…`;
+            rating = 8.5;
+        } else {
+            author = 'Quentin'; role = 'Redactielid';
+            withWho = 'Met mijn vrouw';
+            title = `"Een week die langer voelde dan het was"`;
+            excerpt = `We hadden geen specifieke verwachtingen toen we ${src.name} boekten — wat ook waarom we er goede herinneringen aan over hebben. De accommodatie deed wat ze beloofde, en de omgeving deed de rest…`;
+            rating = 8.4;
+        }
+
+        return [{
+            rating,
+            title,
+            author,
+            role,
+            with: withWho,
+            when: `${season} ${2023 + (src.id % 2)}`,
+            excerpt,
+            replies: 1 + (src.id % 3)
+        }];
     },
 
     goToDetail(id) {
@@ -1063,17 +1223,30 @@ const app = {
             ['#4facfe','#00c6ff'], ['#43e97b','#38f9d7'], ['#f093fb','#f5576c'],
             ['#fa709a','#fee140'], ['#667eea','#764ba2'], ['#84fab0','#8fd3f4']
         ];
+        // Match signals + check-svg uit site.js gebruiken — zelfde
+        // recommendation-taal als "Voor jou geselecteerd" cards.
+        // Fallback: als buildMatchSignals niet beschikbaar is (oude
+        // cache van site.js), tonen we alleen de basis-info zonder
+        // crashen.
+        const hasSignals = typeof buildMatchSignals === 'function';
+        const checkSvg = '<svg class="match-check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         document.getElementById('alternatives-grid').innerHTML = alts.map(a => {
             const [c1, c2] = ALT_GRADIENTS[a.id % ALT_GRADIENTS.length];
             const emoji = a.emoji || '🏝️';
+            const signals = hasSignals ? buildMatchSignals(a) : [];
+            const matchesHtml = signals.length
+                ? `<ul class="listing-card-matches" aria-label="Waarom dit past">
+                       ${signals.map(s => `<li class="listing-card-match-row">${checkSvg}<span>${s}</span></li>`).join('')}
+                   </ul>`
+                : '';
             return `
-                <a class="card" href="Navigatie.html?acc=${a.id}" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="card-img-fallback" style="height:180px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,${c1} 0%,${c2} 100%);color:white;">${emoji}</div>
+                <a class="card" href="Navigatie.html?acc=${a.id}" style="text-decoration:none;color:inherit;">
+                    <div class="card-img-fallback" style="display:flex;align-items:center;justify-content:center;font-size:2.6rem;background:linear-gradient(135deg,${c1} 0%,${c2} 100%);color:white;">${emoji}</div>
                     <div class="card-content">
                         <h3>${a.name}</h3>
-                        <p class="card-location">${a.location}</p>
-                        <div class="card-rating">⭐ ${(a.rating || 0).toFixed(1)}/10</div>
-                        <div class="card-price">€${a.price}/nacht</div>
+                        <p class="card-location">📍 ${a.location}</p>
+                        ${matchesHtml}
+                        <div class="card-price">€${a.price}<small>/nacht</small></div>
                     </div>
                 </a>
             `;

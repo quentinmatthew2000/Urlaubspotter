@@ -1,27 +1,37 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Navigatie-page palette is nu een THIN overlay op site.css —
+   we alignen de oude --primary (bright #007bff) op de canonical
+   travel-blue (--brand) en houden site.css's premium witte
+   canvas (--bg) i.p.v. de grijze --bg-light. Resultaat:
+   accommodation-detail pagina's voelen één met de rest van het
+   platform i.p.v. een aparte admin-zone met grijze huid en
+   bright-blue accenten. */
 :root {
-    --primary: #007bff;
-    --primary-dark: #0056b3;
-    --primary-light: #e8f2ff;
-    --secondary: #6c757d;
-    --accent: #28a745;
+    --primary: #1e6cd6;          /* canonical brand-blue (was bright #007bff) */
+    --primary-dark: #1554b0;
+    --primary-light: #eaf2fc;
+    --secondary: #6b7280;
+    --accent: #1e6cd6;           /* alias voor brand */
     --danger: #dc3545;
-    --bg-light: #f8f9fa;
     --bg-white: #ffffff;
-    --text: #212529;
-    --border: #dee2e6;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-    --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
-    --header-height: 64px;
+    /* --text + --border + --bg-light overerven van site.css zodat
+       we één palette hebben. Geen lokale override meer. */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+    /* --header-height is een alias voor de canonical --header-h
+       uit site.css, zodat alle sticky offsets met één token werken. */
+    --header-height: var(--header-h, 72px);
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-height) + 16px); overflow-x: clip; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h, 72px) + 16px); overflow-x: clip; }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* font-family + background erven we van site.css; geen lokale
+       override meer (was grijze --bg-light, gaf admin-dashboard
+       gevoel). De detail-pagina krijgt nu het clean witte
+       canvas dat de rest van het platform ook gebruikt. */
     color: var(--text);
-    background: var(--bg-light);
     line-height: 1.6;
     overflow-x: clip;
     max-width: 100vw;
@@ -347,11 +357,14 @@ img { max-width: 100%; height: auto; }
 }
 .detail-header-title h1 {
     margin: 0;
-    color: #f58220;
-    font-weight: 700;
-    font-size: clamp(1.1rem, 2.8vw, 1.5rem);
-    line-height: 1.25;
-    letter-spacing: -0.01em;
+    /* Titel-kleur was #f58220 (orange) — clashte met de blauwe
+       platform-identiteit. Nu charcoal-text als dominant en
+       brand-blue gereserveerd voor links/CTAs. */
+    color: var(--text, #1a2230);
+    font-weight: 800;
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+    line-height: 1.2;
+    letter-spacing: -0.022em;
     word-break: break-word;
     overflow-wrap: anywhere;
     /* 2-regelige line-clamp — progressive enhancement, andere browsers
@@ -480,20 +493,27 @@ button.usp-more:hover .usp-circle {
 .in-het-kort {
     background: white;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 20px;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
-.ihk-title { color: var(--primary); font-size: 1rem; letter-spacing: 1px; margin-bottom: 14px; }
+.ihk-title {
+    color: var(--brand, var(--primary));
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
 .ihk-title span { font-weight: 700; }
-.ihk-list { list-style: none; display: grid; grid-template-columns: 1fr; gap: 12px; }
+.ihk-list { list-style: none; display: grid; grid-template-columns: 1fr; gap: 10px; }
 .ihk-list li {
     display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--bg-light);
-    border-radius: 10px;
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-light, #f5f7fa);
+    border-radius: 12px;
     font-size: 0.95rem;
     line-height: 1.5;
     align-items: start;
@@ -501,54 +521,145 @@ button.usp-more:hover .usp-circle {
 .ihk-list .ihk-icon {
     font-size: 1.35rem;
     line-height: 1;
-    width: 40px; height: 40px;
+    width: 44px; height: 44px;
     border-radius: 50%;
-    background: white;
+    background: linear-gradient(160deg, #ffffff 0%, var(--brand-light, #eaf2fc) 100%);
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(30, 108, 214, 0.18);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 .ihk-list strong { display: block; margin-bottom: 2px; color: var(--text); }
 
-/* Editorial card */
+/* Editorial card — "Oordeel van de redactie" */
 .editorial-card {
     background: white;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    box-shadow: var(--shadow-sm);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
 }
-.editorial-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; color: var(--primary); }
-.editorial-header h3 { margin: 0; font-size: 0.95rem; letter-spacing: 1px; color: var(--primary); }
-.editorial-icon { font-size: 1.1rem; }
-.editorial-card p { font-size: 0.95rem; line-height: 1.65; color: #222; }
+.editorial-card::before {
+    /* Brand-blue accent-strip aan de linkerkant — subtiel visueel
+       signaal dat dit een editorial-stem is, niet een gewone tekst. */
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--brand, #1e6cd6) 0%, var(--brand-soft, #4a8de8) 100%);
+}
+.editorial-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: var(--brand, var(--primary));
+}
+.editorial-header h3 {
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand, var(--primary));
+}
+.editorial-icon { font-size: 1.05rem; }
+.editorial-card p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text, #1a2230);
+    font-family: var(--font-editorial, 'Lora', Georgia, serif);
+}
 
-/* Editorial stories */
-.editorial-stories-heading { color: var(--primary); border-top: 2px solid var(--primary-light); padding-top: 18px; }
-.editorial-stories { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+/* Editorial stories — Reisverslagen van onze redactie */
+.editorial-stories-heading {
+    color: var(--text);
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    font-size: clamp(1.2rem, 2vw, 1.45rem);
+    letter-spacing: -0.018em;
+}
+.editorial-stories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    margin-bottom: 8px;
+}
 .story-card {
     background: white;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
-.story-tags { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--primary); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; }
-.story-verified { display: inline-flex; align-items: center; gap: 5px; }
-.story-rating { color: #ffc107; font-weight: 700; letter-spacing: 0.5px; }
-.story-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: #111; }
-.story-author { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.story-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px -6px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.04);
+    border-color: rgba(30, 108, 214, 0.18);
+}
+.story-tags {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    color: var(--brand, var(--primary));
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+.story-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(46, 163, 106, 0.08);
+    color: #1f7a4d;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+.story-rating { color: #b88a2b; font-weight: 700; letter-spacing: 0.04em; }
+.story-title {
+    font-family: var(--font-editorial, 'Lora', Georgia, serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--text);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+}
+.story-author { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
 .story-avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: #e9ecef;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(160deg, var(--brand-light, #eaf2fc) 0%, #ffffff 100%);
+    border: 1px solid rgba(30, 108, 214, 0.18);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     flex-shrink: 0;
 }
-.story-meta { font-size: 0.85rem; line-height: 1.5; }
-.story-meta .name { font-weight: 700; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px; }
-.story-meta .verified-check { color: var(--primary); }
-.story-excerpt { font-size: 0.9rem; line-height: 1.55; color: #444; margin-bottom: 12px; }
-.story-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--secondary); padding-top: 10px; border-top: 1px solid var(--border); }
-.story-read { color: var(--primary); font-weight: 600; text-decoration: none; }
+.story-meta { font-size: 0.86rem; line-height: 1.55; color: var(--text-muted, var(--secondary)); }
+.story-meta .name { font-weight: 700; color: var(--text); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.story-meta .verified-check { color: var(--brand, var(--primary)); }
+.story-excerpt {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 14px;
+    font-family: var(--font-editorial, 'Lora', Georgia, serif);
+    font-style: italic;
+}
+.story-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.86rem;
+    color: var(--text-muted, var(--secondary));
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+.story-read { color: var(--brand, var(--primary)); font-weight: 700; text-decoration: none; }
 .story-read:hover { text-decoration: underline; }
 
 /* Climate */
@@ -727,38 +838,46 @@ button.usp-more:hover .usp-circle {
     transform: none;
 }
 .tab-buttons {
-    /* Sticky onder de site-header, op alle breedtes. Ancestors (body/html,
-       #app, .page, .detail-container) gebruiken overflow-x: clip en hebben
-       geen transform, dus de sticky-context is de viewport.
-       !important neutraliseert eventuele oudere, gecachete regels en
-       voorkomt dat specificiteits-issues dit overschrijven. */
+    /* Sticky onder de unified site-header. Offset = canonical
+       --header-h token (site.css = 72px), niet meer een
+       hardcoded 70px die uit sync raakte met de echte
+       header-hoogte. Ancestors gebruiken overflow-x: clip en
+       hebben geen transform — sticky-context blijft de
+       viewport. !important blokkeert nog eventuele oudere
+       gecachete regels die deze fix probeerden te
+       overschrijven. */
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 70px !important;
+    top: var(--header-h, 72px) !important;
     z-index: 30 !important;
     background: #fff !important;
+    /* Subtle shadow zodra de tabs onder de header plakken —
+       maakt visueel duidelijk dat dit een floating navigation
+       laag is, niet een statische divider. */
+    box-shadow: 0 4px 12px -8px rgba(15, 23, 42, 0.08);
     display: flex;
-    gap: 8px;
-    border-bottom: 2px solid var(--border);
-    margin-bottom: 24px;
-    padding: 8px 0;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    padding: 6px 0 0;
     flex-wrap: wrap;
 }
 .tab-button {
     background: none;
     border: none;
-    padding: 12px 24px;
+    padding: 14px 22px;
     cursor: pointer;
-    font-size: 0.98rem;
-    color: var(--secondary);
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s;
-    margin-bottom: -2px;
+    font-size: 0.95rem;
+    color: var(--text-muted, var(--secondary));
+    border-bottom: 2px solid transparent;
+    transition: color 0.18s ease, border-color 0.18s ease;
+    margin-bottom: -1px;
     font-family: inherit;
     font-weight: 600;
+    letter-spacing: -0.005em;
 }
-.tab-button:hover { color: var(--primary); }
-.tab-button.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-button:hover { color: var(--brand, var(--primary)); }
+.tab-button.active { color: var(--brand, var(--primary)); border-bottom-color: var(--brand, var(--primary)); }
 .tab-content { display: none; animation: fadeIn 0.3s; }
 .tab-content.active { display: block; }
 .tab-content h3 { font-size: 1.3rem; margin-bottom: 16px; }
@@ -977,34 +1096,87 @@ button.usp-more:hover .usp-circle {
 }
 .btn-book:hover { background: #218838; }
 
-/* Alternatives */
+/* Alternatives — "Vergelijkbare accommodaties" */
 .alternatives-section {
-    margin-top: 48px;
-    padding-top: 48px;
-    border-top: 2px solid var(--border);
+    margin-top: 56px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
 }
-.alternatives-section h2 { font-size: 1.6rem; margin-bottom: 24px; }
+.alternatives-section h2 {
+    font-size: clamp(1.4rem, 2.6vw, 1.8rem);
+    margin-bottom: 22px;
+    letter-spacing: -0.018em;
+    color: var(--text);
+    font-weight: 700;
+}
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
 }
 .card {
     background: white;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     cursor: pointer;
     border: 1px solid var(--border);
-    transition: all 0.3s;
+    transition: transform 0.2s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    display: flex;
+    flex-direction: column;
 }
-.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
-.card img { width: 100%; height: 180px; object-fit: cover; }
-.card-content { padding: 18px; }
-.card-content h3 { color: var(--primary); margin-bottom: 6px; font-size: 1.05rem; }
-.card-location { color: var(--secondary); font-size: 0.88rem; margin-bottom: 8px; }
-.card-rating { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
-.card-price { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(30, 108, 214, 0.18);
+}
+.card img,
+.card .card-img-fallback {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+.card-content {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+.card-content h3 {
+    color: var(--text);
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+    line-height: 1.3;
+}
+.card-location {
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    margin: 0;
+}
+/* Checkmark match-indicators i.p.v. oude metadata-pills. Reuses
+   .listing-card-matches/.listing-card-match-row uit site.css —
+   één recommendation-taal door de hele site. */
+.card .listing-card-matches {
+    margin: 4px 0 8px;
+}
+.card-rating {
+    color: #b88a2b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0;
+}
+.card-price {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text);
+}
+.card-price small { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; margin-left: 2px; }
 
 /* ========== STICKY CTA (detail) ========== */
 .sticky-cta {
@@ -1012,22 +1184,25 @@ button.usp-more:hover .usp-circle {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
     border-top: 1px solid var(--border);
     padding: 12px 24px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     display: none;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 -8px 20px -8px rgba(15, 23, 42, 0.10);
     z-index: 200;
 }
 .page#page-detail.active ~ .sticky-cta,
 #page-detail.active .sticky-cta { display: flex; }
 .sticky-cta-info { display: flex; flex-direction: column; line-height: 1.3; }
-.sticky-cta-title { font-weight: 600; font-size: 0.95rem; }
-.sticky-cta-price { color: var(--secondary); font-size: 0.85rem; }
-.sticky-cta-price strong { color: var(--primary); font-size: 1.05rem; }
+.sticky-cta-title { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.sticky-cta-price { color: var(--text-muted, var(--secondary)); font-size: 0.85rem; }
+.sticky-cta-price strong { color: var(--text); font-size: 1.05rem; font-weight: 800; }
 .sticky-cta .btn-primary { padding: 12px 24px; }
 
 /* ========== RESPONSIVE ========== */
