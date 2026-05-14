@@ -545,11 +545,20 @@ function evaluateMatch(acc, answers) {
     }
     pct = Math.max(0, Math.min(98, pct));
 
-    // 4) Human positives + cautions
+    // 4) Human positives + cautions — dynamische cap op basis van
+    //    match-sterkte. Sterke matches verdienen meer contextuele
+    //    explanation chips ("Adult Only", "Aan de Spaanse kust",
+    //    "Luxe resort", "Infinity pool", "Ontspanning", ...); zwakke
+    //    matches blijven beknopt. Volgorde van HUMAN_POSITIVES bepaalt
+    //    de prioritering — audience/sfeer/ligging staan boven
+    //    facility-specifieke rules, dus de meest UX-relevante chips
+    //    vullen eerst. De dedupe via `positives.includes(text)`
+    //    voorkomt dubbele zinnen.
+    const maxPositives = pct >= 90 ? 8 : pct >= 75 ? 6 : 5;
     const positives = [];
     const cautions = [];
     HUMAN_POSITIVES.forEach(rule => {
-        if (positives.length >= 4) return;
+        if (positives.length >= maxPositives) return;
         try {
             if (rule.when(clean, acc)) {
                 const text = typeof rule.say === 'function' ? rule.say(clean, acc) : rule.say;
@@ -558,6 +567,9 @@ function evaluateMatch(acc, answers) {
         } catch (_) { /* defensief */ }
     });
     HUMAN_CAUTIONS.forEach(rule => {
+        // Cautions blijven bewust beknopt (max 2) — een lijst met
+        // mitsen-en-maren maakt een aanbeveling onzeker; de echte
+        // dealbreakers worden door hardConflict al uitgesloten.
         if (cautions.length >= 2) return;
         try {
             if (rule.when(clean, acc)) {

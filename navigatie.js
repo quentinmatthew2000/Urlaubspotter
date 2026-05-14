@@ -80,10 +80,14 @@ const app = {
             'packages': 'Pakketreizen'
         },
         facilities: {
+            // Canonieke volle labels — gebruikt door zowel de USP-iconen
+            // op de detail-page als de tag-chips op de listing-cards.
+            // Geen afkortingen meer ('All-in', 'Adult', 'Relax) — die
+            // voelden inconsistent t.o.v. de keuzehulp-taxonomie.
             'water': 'Wateractiviteiten',
             'kids-fun': 'Kinderpret',
-            'all-inclusive': 'All inclusive',
-            'sports-games': 'Sport en spel',
+            'all-inclusive': 'All-inclusive',
+            'sports-games': 'Sport & Spel',
             'adventure': 'Avontuur',
             'relax': 'Ontspanning',
             'pet-friendly': 'Diervriendelijk',
@@ -666,10 +670,21 @@ const app = {
         noResults.style.display = 'none';
 
         grid.innerHTML = filtered.map(acc => {
-            const tagLabels = [
-                ...acc.whatKeys.slice(0,1).map(k => this.labels.what[k]),
-                ...acc.locationKeys.slice(0,1).map(k => this.labels.location[k])
-            ].filter(Boolean);
+            // Listing-card tags: type-tag + ligging-tag + tot 3
+            // facility-tags afgeleid uit acc.facilityKeys via de
+            // canonieke labels.facilities-map. Geeft elke kaart 3-5
+            // betekenisvolle chips i.p.v. de oude 2. Dedupliceert
+            // op label-niveau zodat we geen "Hotel · Hotel" krijgen
+            // wanneer een what-/facility-key naar dezelfde tekst
+            // resolved.
+            const seen = new Set();
+            const pushUnique = (txt, target) => {
+                if (txt && !seen.has(txt)) { seen.add(txt); target.push(txt); }
+            };
+            const tagLabels = [];
+            (acc.whatKeys || []).slice(0, 1).forEach(k => pushUnique(this.labels.what[k], tagLabels));
+            (acc.locationKeys || []).slice(0, 1).forEach(k => pushUnique(this.labels.location[k], tagLabels));
+            (acc.facilityKeys || []).slice(0, 3).forEach(k => pushUnique(this.labels.facilities[k], tagLabels));
             return `
                 <div class="accommodation-card" onclick="app.goToDetail(${acc.id})">
                     <img src="${acc.image}" alt="${acc.name}" loading="lazy">
@@ -710,26 +725,31 @@ const app = {
             </div>
         `).join('');
 
-        // USP-rij: iconen voor de belangrijkste faciliteiten
+        // USP-rij: iconen voor de belangrijkste faciliteiten. Het icoon
+        // komt uit deze map; het label wordt ALTIJD uit this.labels.
+        // facilities[k] gehaald zodat USP-iconen en de listing-card-
+        // tags één en dezelfde tag-vocabulaire delen. Geen
+        // afgekorte inline labels meer ('Adult'/'All-in'/'Relax/etc.).
         const uspIconMap = {
-            'water': { icon: '🌊', label: 'Water' },
-            'kids-fun': { icon: '🎠', label: 'Kinderpret' },
-            'all-inclusive': { icon: '🍽️', label: 'All-in' },
-            'sports-games': { icon: '⚽', label: 'Sport' },
-            'adventure': { icon: '🧗', label: 'Avontuur' },
-            'relax': { icon: '🧘', label: 'Relax' },
-            'pet-friendly': { icon: '🐕', label: 'Hond' },
-            'adult-only': { icon: '🥂', label: 'Adult' },
-            'luxe': { icon: '✨', label: 'Luxe' },
-            'nature': { icon: '🌲', label: 'Natuur' },
-            'festive': { icon: '🎉', label: 'Feestelijk' }
+            'water':         { icon: '🌊' },
+            'kids-fun':      { icon: '🎠' },
+            'all-inclusive': { icon: '🍽️' },
+            'sports-games':  { icon: '⚽' },
+            'adventure':     { icon: '🧗' },
+            'relax':         { icon: '🧘' },
+            'pet-friendly':  { icon: '🐕' },
+            'adult-only':    { icon: '🥂' },
+            'luxe':          { icon: '✨' },
+            'nature':        { icon: '🌲' },
+            'festive':       { icon: '🎉' }
         };
         // Render alle tags; CSS verbergt op mobiel de items vanaf de 7e tot de
         // gebruiker "Meer" aantikt. Op desktop blijft het grid alles tonen.
         const facilityKeys = acc.facilityKeys || [];
         const uspItems = facilityKeys.map(k => {
-            const cfg = uspIconMap[k] || { icon: '•', label: this.labels.facilities[k] || k };
-            return `<div class="usp-item"><div class="usp-circle">${cfg.icon}</div><span class="usp-label">${cfg.label}</span></div>`;
+            const icon  = (uspIconMap[k] && uspIconMap[k].icon) || '•';
+            const label = this.labels.facilities[k] || k;
+            return `<div class="usp-item"><div class="usp-circle">${icon}</div><span class="usp-label">${label}</span></div>`;
         }).join('');
         const uspRow = document.getElementById('usp-row');
         const hasOverflow = facilityKeys.length > 6;
