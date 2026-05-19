@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urlaubspotter - Vind jouw perfecte vakantie</title>
-    <link rel="stylesheet" href="site.css?v=31">
-    <link rel="stylesheet" href="navigatie.css?v=20">
+    <link rel="stylesheet" href="site.css?v=32">
+    <link rel="stylesheet" href="navigatie.css?v=21">
 </head>
 <body>
 <!-- Unified site header — gerenderd via renderHeader() uit site.js -->
@@ -152,18 +152,20 @@
     <!-- PAGE: DETAIL (Niveau 5) -->
     <div id="page-detail" class="page">
         <div class="detail-container">
-            <!-- Compacte header — alleen titel + back/share/favoriet
-                 acties. Sterren-rij naast de titel is verwijderd:
-                 die brak op mobile de title-breedte en concurreerde
-                 met de actie-iconen. De rating staat al in "In het
-                 Kort" + bij de reviews. -->
+            <!-- Compacte header — alleen back-button + titel + favoriet.
+                 De share/delen-knop is verwijderd: gaf clutter en
+                 verzwakte de hiërarchie. Sterren-rij naast de titel
+                 was eerder al verwijderd. Title wordt nu de visuele
+                 anchor; back-button is een lichte, moderne pill-
+                 vorm (zie .icon-btn.back-btn in navigatie.css). -->
             <div class="detail-header-bar">
-                <button class="icon-btn" onclick="app.goBack()" aria-label="Terug">←</button>
+                <button class="icon-btn back-btn" onclick="app.goBack()" aria-label="Terug" type="button">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
                 <div class="detail-header-title">
                     <h1 id="detail-title"></h1>
                 </div>
                 <div class="detail-header-actions">
-                    <button class="icon-btn" aria-label="Delen">⇪</button>
                     <button id="detail-fav-btn" class="icon-btn fav-btn" aria-label="Favoriet" aria-pressed="false" type="button">♡</button>
                 </div>
             </div>
@@ -312,7 +314,7 @@
 </div>
 
 <script src="site-data.js?v=14"></script>
-<script src="site.js?v=27"></script>
-<script src="navigatie.js?v=22"></script>
+<script src="site.js?v=28"></script>
+<script src="navigatie.js?v=23"></script>
 </body>
 </html>

@@ -335,18 +335,16 @@ img { max-width: 100%; height: auto; }
 }
 
 .detail-header-bar {
-    /* Header-rij: alle 3 kolommen (back / titel / actions) verticaal
-       gecentreerd zodat een 1-regelige titel niet "floats" tussen
-       knoppen die boven zitten. Bij een 2-regelige titel blijven
-       knoppen netjes naast de eerste regel uitgelijnd via
-       align-self. Voelt premium en balanced i.p.v. floating. */
+    /* Header-rij: 3 kolommen (back / titel / favoriet) verticaal
+       gecentreerd. Voelt premium en mobile-app-like, met de titel
+       als visuele anchor en lichte controls links/rechts. */
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 6px 0 18px;
+    gap: 12px;
+    padding: 4px 0 16px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-    min-height: 48px;
+    margin-bottom: 22px;
+    min-height: 44px;
 }
 .detail-header-bar > .icon-btn { flex-shrink: 0; align-self: center; }
 
@@ -400,10 +398,33 @@ img { max-width: 100%; height: auto; }
     justify-content: center;
     color: var(--text);
     font-family: inherit;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .icon-btn:hover { background: var(--primary-light); }
 .icon-btn svg { display: block; pointer-events: none; }
-/* Favoriet-knop: SVG-hart, gevuld rood wanneer opgeslagen */
+
+/* Back-button modernization: lichter, kleiner, subtieler dan de
+   andere icon-btn varianten. Geen volle border meer maar een
+   transparante hover-fill — voelt als modern mobile navigation
+   i.p.v. een desktop chrome-element. SVG chevron arrow i.p.v.
+   het "←" character voor crisper rendering. */
+.icon-btn.back-btn {
+    width: 34px; height: 34px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--text-muted, var(--secondary));
+}
+.icon-btn.back-btn:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: var(--text);
+}
+.icon-btn.back-btn svg { width: 18px; height: 18px; }
+
+/* Favoriet-knop: SVG-hart, gevuld rood wanneer opgeslagen. Iets
+   kleiner dan voorheen (34×34) zodat het in dezelfde gewichts-
+   klasse als back-btn zit; border blijft voor visuele toggle-
+   status zichtbaar. */
+.icon-btn.fav-btn { width: 34px; height: 34px; border-color: var(--border); }
 .icon-btn.fav-btn.is-fav { color: #e63946; border-color: #e63946; }
 .icon-btn.fav-btn.is-fav svg { fill: #e63946; stroke: #e63946; }
 .icon-btn.fav-btn.is-fav:hover { background: #ffeaea; }
@@ -538,7 +559,12 @@ button.usp-more:hover .usp-circle {
 }
 .ihk-list strong { display: block; margin-bottom: 2px; color: var(--text); }
 
-/* Editorial card — "Oordeel van de redactie" */
+/* Editorial card — "Oordeel van de redactie"
+   Typografie is gemodernieerd: geen serif/italic meer (Lora was
+   te dramatisch/magazine-achtig en clashte met de modern travel-
+   platform identity). Inter sans-serif als body, calm
+   hierarchy. Heading is subtieler (smaller, minder loud) zodat
+   het content zelf de aandacht trekt. */
 .editorial-card {
     background: white;
     border: 1px solid var(--border);
@@ -560,23 +586,33 @@ button.usp-more:hover .usp-circle {
 .editorial-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
+    gap: 8px;
+    margin-bottom: 12px;
     color: var(--brand, var(--primary));
 }
 .editorial-header h3 {
     margin: 0;
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* Strakker en subtieler — 0.7rem in plaats van 0.78, gewone
+       letter-spacing in plaats van wide 0.12em zodat de header niet
+       meer "loud" leest. */
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--brand, var(--primary));
+    color: var(--text-muted, #6b7280);
 }
-.editorial-icon { font-size: 1.05rem; }
+.editorial-icon { font-size: 0.95rem; opacity: 0.75; }
 .editorial-card p {
-    font-size: 1rem;
-    line-height: 1.7;
+    /* Modern sans-serif lichaam — geen Lora/serif meer. Tighter
+       line-height (1.6 i.p.v. 1.7) voor calmer rhythm. Charcoal
+       text, kalme premium-feel. */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.98rem;
+    line-height: 1.6;
     color: var(--text, #1a2230);
-    font-family: var(--font-editorial, 'Lora', Georgia, serif);
+    font-weight: 400;
+    letter-spacing: -0.005em;
 }
 
 /* Editorial stories — Reisverslagen van onze redactie */
@@ -606,68 +642,92 @@ button.usp-more:hover .usp-circle {
     box-shadow: 0 6px 18px -6px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.04);
     border-color: rgba(30, 108, 214, 0.18);
 }
+/* Reisverslag-cards typografie: gemodernieerd. Geen Lora/serif/
+   italic meer (klonk magazine-achtig en concurreerde visueel met
+   de accommodatie zelf). Inter sans-serif, tighter line-height,
+   compacter rhythm. Het verslag-blok ondersteunt de pagina nu
+   i.p.v. hem te overstemmen. */
 .story-tags {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.72rem;
-    color: var(--brand, var(--primary));
+    font-size: 0.68rem;
+    color: var(--text-muted, var(--secondary));
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 .story-verified {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
+    gap: 5px;
+    padding: 3px 9px;
     background: rgba(46, 163, 106, 0.08);
     color: #1f7a4d;
     border-radius: 999px;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
+    font-size: 0.68rem;
 }
-.story-rating { color: #b88a2b; font-weight: 700; letter-spacing: 0.04em; }
+.story-rating { color: #b88a2b; font-weight: 700; letter-spacing: 0.03em; font-size: 0.72rem; }
 .story-title {
-    font-family: var(--font-editorial, 'Lora', Georgia, serif);
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 14px;
+    /* Modern sans-serif i.p.v. Lora editorial — kalmer, premium-
+       travel-platform i.p.v. magazine-column. */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 12px;
     color: var(--text);
     line-height: 1.35;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    /* 2-regelige clamp houdt preview compact en scanbaar. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
-.story-author { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.story-author { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
 .story-avatar {
-    width: 42px; height: 42px; border-radius: 50%;
+    width: 38px; height: 38px; border-radius: 50%;
     background: linear-gradient(160deg, var(--brand-light, #eaf2fc) 0%, #ffffff 100%);
     border: 1px solid rgba(30, 108, 214, 0.18);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     flex-shrink: 0;
 }
-.story-meta { font-size: 0.86rem; line-height: 1.55; color: var(--text-muted, var(--secondary)); }
-.story-meta .name { font-weight: 700; color: var(--text); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.story-meta { font-size: 0.82rem; line-height: 1.5; color: var(--text-muted, var(--secondary)); }
+.story-meta .name { font-weight: 700; color: var(--text); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 3px; font-size: 0.88rem; }
 .story-meta .verified-check { color: var(--brand, var(--primary)); }
 .story-excerpt {
-    font-size: 0.95rem;
-    line-height: 1.65;
-    color: var(--text);
+    /* Modern sans-serif, geen italic. Tighter line-height (1.55).
+       3-regelige clamp houdt de preview compact en voorkomt dat de
+       reisverslag-rij visueel domineert. */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text, #1a2230);
+    font-style: normal;
+    font-weight: 400;
     margin-bottom: 14px;
-    font-family: var(--font-editorial, 'Lora', Georgia, serif);
-    font-style: italic;
+    letter-spacing: -0.003em;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 .story-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     color: var(--text-muted, var(--secondary));
-    padding-top: 14px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
 }
-.story-read { color: var(--brand, var(--primary)); font-weight: 700; text-decoration: none; }
+.story-read { color: var(--brand, var(--primary)); font-weight: 600; text-decoration: none; font-size: 0.86rem; }
 .story-read:hover { text-decoration: underline; }
 
 /* Climate */
@@ -1252,22 +1312,22 @@ button.usp-more:hover .usp-circle {
     .sticky-cta .btn-primary { width: 100%; }
     .hero { padding: 50px 20px; min-height: 360px; }
     .category-selection { flex-direction: column; align-items: stretch; }
-    /* Mobile-header polish: compactere gaps + iets kleinere knoppen
-       zodat de titel-zone visueel het zwaarste blok blijft i.p.v.
-       dat de knoppen mee-domineren. align-items: center op .detail-
-       header-bar (basis-rule) houdt 1-regelige titels netjes
-       gecentreerd t.o.v. de knoppen. */
+    /* Mobile-header polish: compactere gaps + kleinere icons.
+       Titel-zone domineert visueel; back-btn en favoriet zijn
+       lichte controls links/rechts. */
     .detail-header-bar {
-        gap: 10px;
-        padding: 4px 0 14px;
-        margin-bottom: 18px;
+        gap: 8px;
+        padding: 2px 0 12px;
+        margin-bottom: 16px;
     }
-    .detail-header-bar .icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+    .detail-header-bar .icon-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+    .detail-header-bar .icon-btn.back-btn { width: 30px; height: 30px; }
+    .detail-header-bar .icon-btn.back-btn svg { width: 17px; height: 17px; }
+    .detail-header-bar .icon-btn.fav-btn { width: 32px; height: 32px; }
     .detail-header-title h1 {
         font-size: clamp(1.1rem, 4.4vw, 1.35rem);
         line-height: 1.2;
     }
-    .detail-stars { font-size: 0.85rem; letter-spacing: 1.5px; }
     .detail-header-actions { gap: 6px; }
 }
 

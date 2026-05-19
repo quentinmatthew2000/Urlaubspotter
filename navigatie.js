@@ -586,6 +586,7 @@ const app = {
         const editorial = this._buildContextualEditorial(src);
         const editorialStories = this._buildContextualStories(src);
         const longDescription = this._buildContextualLongDescription(src, whoText);
+        const climate = this._buildContextualClimate(src);
         const synth = {
             id: src.id, name: src.name, location: src.location, price: src.price,
             rating: src.rating, reviews: src.reviews, tags: src.tags || [],
@@ -595,6 +596,7 @@ const app = {
             longDescription,
             editorial,
             editorialStories,
+            climate,
             facilities: ['WiFi','Parkeren','Ontbijt inbegrepen','Kindvriendelijk'],
             facilityKeys: [], accommodationKeys: [],
             whoKeys: src.who || [], whatKeys: src.what || [], whereKey: src.where || '',
@@ -770,6 +772,92 @@ const app = {
             excerpt,
             replies: 1 + (src.id % 3)
         }];
+    },
+
+    // ============================================================
+    // CONTEXTUAL CLIMATE FALLBACK
+    // Synth-records uit SITE_DATA hadden geen climate-array, waardoor
+    // de "Weer & Klimaat" sectie als lege bordered container
+    // verscheen op accommodatie-detail-pagina's. Deze helper bouwt
+    // een vergelijkbaar profiel (5 vakantie-relevante maanden,
+    // realistische temp/regen/zon-waarden) op basis van src.where
+    // zodat élke detail-pagina een betekenisvolle klimaat-rij toont.
+    // Profielen zijn regional gegroepeerd (Mediterraan, Atlantisch,
+    // Centraal-Europees, Alpine) en aligned op de bestaande
+    // hardcoded climate-records.
+    // ============================================================
+    _buildContextualClimate(src) {
+        const where = src.where || '';
+        // Regional climate profiles — 5 vakantie-relevante maanden
+        // (Mei → Sept) plus winterse Dec→Feb opties via key. Houd
+        // in sync met de hardcoded records (id 1-6) zodat de
+        // visuele consistentie behouden blijft.
+        const PROFILES = {
+            // Mediterraan-zomer (warm + droog)
+            mediterranean: [
+                { month: 'Mei',  temp: 22, rain: 5, sun: 9 },
+                { month: 'Juni', temp: 26, rain: 3, sun: 11 },
+                { month: 'Juli', temp: 29, rain: 1, sun: 12 },
+                { month: 'Aug',  temp: 29, rain: 2, sun: 11 },
+                { month: 'Sept', temp: 26, rain: 4, sun: 9 }
+            ],
+            // Atlantisch (Frankrijk west-kust, Bretagne, Normandië)
+            atlantic: [
+                { month: 'Mei',  temp: 17, rain: 8, sun: 7 },
+                { month: 'Juni', temp: 20, rain: 6, sun: 8 },
+                { month: 'Juli', temp: 23, rain: 5, sun: 9 },
+                { month: 'Aug',  temp: 23, rain: 6, sun: 8 },
+                { month: 'Sept', temp: 20, rain: 8, sun: 6 }
+            ],
+            // Centraal-Europees (NL / BE / Duitsland-laagland)
+            centraal: [
+                { month: 'Mei',  temp: 16, rain: 9, sun: 7 },
+                { month: 'Juni', temp: 19, rain: 8, sun: 8 },
+                { month: 'Juli', temp: 22, rain: 8, sun: 8 },
+                { month: 'Aug',  temp: 21, rain: 8, sun: 7 },
+                { month: 'Sept', temp: 18, rain: 9, sun: 5 }
+            ],
+            // Alpine (Oostenrijk / Zuid-Tirol / hoog Duitsland)
+            alpine: [
+                { month: 'Mei',  temp: 14, rain: 10, sun: 6 },
+                { month: 'Juni', temp: 18, rain: 11, sun: 7 },
+                { month: 'Juli', temp: 21, rain: 10, sun: 8 },
+                { month: 'Aug',  temp: 20, rain: 10, sun: 7 },
+                { month: 'Sept', temp: 16, rain: 9, sun: 5 }
+            ],
+            // Adriatisch (Kroatië)
+            adriatic: [
+                { month: 'Mei',  temp: 21, rain: 6, sun: 9 },
+                { month: 'Juni', temp: 25, rain: 4, sun: 11 },
+                { month: 'Juli', temp: 28, rain: 3, sun: 12 },
+                { month: 'Aug',  temp: 28, rain: 4, sun: 11 },
+                { month: 'Sept', temp: 24, rain: 6, sun: 9 }
+            ]
+        };
+        // Mapping van where-key naar profile. Default: centraal
+        // (NL-laagland gevoel) voor onbekende of provincie-keys.
+        const WHERE_PROFILE = {
+            // EU
+            'spanje': 'mediterranean', 'italie': 'mediterranean', 'portugal': 'mediterranean',
+            'frankrijk': 'atlantic',
+            'belgie': 'centraal', 'duitsland': 'centraal', 'nederland': 'centraal',
+            'oostenrijk': 'alpine',
+            'kroatie': 'adriatic',
+            // NL provincies — allen centraal-europees
+            'drenthe': 'centraal', 'gelderland': 'centraal', 'limburg': 'centraal',
+            'zeeland': 'centraal', 'noord-holland': 'centraal', 'overijssel': 'centraal',
+            'flevoland': 'centraal', 'friesland': 'centraal', 'groningen': 'centraal',
+            'noord-brabant': 'centraal', 'zuid-holland': 'centraal', 'utrecht': 'centraal'
+        };
+        // Bergen-tag override: een hotel "in de bergen" in Italië krijgt
+        // alpine-klimaat i.p.v. mediterraan, voor realisme.
+        const tags = src.tags || [];
+        const isMountain = tags.some(t => /berg|alpen|tirool/i.test(t));
+        const profileKey = isMountain ? 'alpine' : (WHERE_PROFILE[where] || 'centraal');
+        const profile = PROFILES[profileKey];
+        // Defensief copy zodat downstream renders de array niet
+        // accidenteel muteren tussen records.
+        return profile.map(m => ({ ...m }));
     },
 
     goToDetail(id) {
@@ -1127,10 +1215,21 @@ const app = {
         }).join('');
 
         // ===== Info-tab =====
-        // Klimaat
+        // Klimaat — defensieve fallback: als een record geen climate-
+        // array heeft (bv. een legacy hardcoded entry die ooit zonder
+        // climate werd toegevoegd), genereren we er één op basis van
+        // de where-key zodat NOOIT meer een lege "Weer & Klimaat"
+        // bordered box verschijnt op een detail-pagina.
         const region = acc.location.split(',').slice(-1)[0].trim();
         document.getElementById('climate-title').textContent = `Weer & Klimaat — ${region}`;
-        document.getElementById('climate-months').innerHTML = (acc.climate || []).map(m => `
+        let climate = acc.climate;
+        if (!climate || !climate.length) {
+            climate = this._buildContextualClimate({
+                where: acc.whereKey || '',
+                tags: acc.tags || []
+            });
+        }
+        document.getElementById('climate-months').innerHTML = climate.map(m => `
             <div class="climate-month">
                 <div class="month-name">${m.month}</div>
                 <div class="climate-row">☀️ ${m.temp}°C</div>
