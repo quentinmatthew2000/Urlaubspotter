@@ -611,6 +611,8 @@ function renderHeader(activePage = '') {
             <a href="Homepagina.html" ${activePage === 'home' ? 'class="active"' : ''}>Home</a>
             <a href="Keuzehulp.html" ${activePage === 'keuzehulp' ? 'class="active"' : ''}>Keuzehulp</a>
             <a href="alle-vakanties.html" ${activePage === 'nav' ? 'class="active"' : ''}>Alle vakanties</a>
+            <a href="alle-vakanties.html?deal=aanbieding" ${activePage === 'deals' ? 'class="active"' : ''}>Alle aanbiedingen</a>
+            <a href="alle-vakanties.html?deal=lastminute" ${activePage === 'lastminute' ? 'class="active"' : ''}>Alle Last Minutes</a>
             <span class="has-dropdown">
                 <a href="Niveau2-Wat.html" ${activePage === 'wat' ? 'class="active"' : ''}>Vakantietypen</a>
                 <div class="nav-dropdown wide">
@@ -873,6 +875,11 @@ function ensureNavDelegate() {
             nav.classList.toggle('open', willOpen);
             toggleHit.classList.toggle('open', willOpen);
             toggleHit.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            // Body scroll-lock: voorkomt page-scroll achter de
+            // full-screen drawer. CSS-laag (.site-nav.open) zet
+            // het paneel als fixed inset → bottom; deze flag
+            // zorgt dat de body geen mee-scrollend gat geeft.
+            document.body.classList.toggle('nav-open', willOpen);
             return;
         }
         // 2. Accordion-submenu header — opent één sub binnen de drawer.

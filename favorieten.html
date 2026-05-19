@@ -3,8 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorieten · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=32">
+    <title>Mijn Lijst · Urlaubspotter</title>
+    <link rel="stylesheet" href="site.css?v=33">
+    <style>
+        /* ============================================================
+           MIJN LIJST — vergelijkingspagina (was: simpele favorieten-grid).
+           Premium accommodation-comparison ervaring i.p.v. een rij saved
+           cards: per kaart laten we de belangrijkste USPs zien als
+           gegroepeerde checkmark-rijen zodat de gebruiker direct kan
+           vergelijken zonder iedere accommodatie te openen. Mobile-first;
+           desktop schaalt soepel naar 2-kolommen vergelijking.
+           ============================================================ */
+        .compare-intro {
+            max-width: 720px;
+            margin-bottom: 24px;
+        }
+        .compare-intro .lead { color: var(--text-muted); margin-top: 6px; }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 880px) {
+            .compare-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        }
+
+        .compare-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        .compare-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px -10px rgba(15, 23, 42, 0.16), 0 4px 10px rgba(15, 23, 42, 0.05);
+            border-color: rgba(30, 108, 214, 0.20);
+        }
+
+        /* Hero — gradient bg + emoji als visual anchor + remove-icon */
+        .compare-hero {
+            position: relative;
+            min-height: 156px;
+            display: flex;
+            align-items: flex-end;
+            padding: 16px;
+            color: #fff;
+            font-size: 3rem;
+            line-height: 1;
+        }
+        .compare-hero-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 5px 11px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .compare-remove {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            color: var(--text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+            transition: background 0.18s ease;
+        }
+        .compare-remove:hover { background: #fff; color: #e63946; }
+
+        /* Body — title + meta + atmosphere line */
+        .compare-body {
+            padding: 18px 18px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .compare-title {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.018em;
+            line-height: 1.25;
+            color: var(--text);
+            margin: 0;
+        }
+        .compare-loc {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin: 0 0 2px;
+        }
+        .compare-meta-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .compare-rating {
+            color: #b88a2b;
+            font-weight: 700;
+            font-size: 0.88rem;
+        }
+        .compare-rating-count { color: var(--text-muted); font-weight: 500; }
+        .compare-price {
+            margin-left: auto;
+            color: var(--text);
+            font-weight: 800;
+            font-size: 1.05rem;
+        }
+        .compare-price small { color: var(--text-muted); font-weight: 500; font-size: 0.72rem; }
+
+        .compare-summary {
+            margin: 12px 18px 4px;
+            color: var(--text);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            font-style: normal;
+        }
+        .compare-summary--muted { color: var(--text-muted); }
+
+        /* USP-section — gegroepeerde checkmark-rijen, het hart van het
+           vergelijkings-UX. Verticaal ritme, clean separators, modern
+           sans-serif typografie. */
+        .compare-usps {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 16px 18px 4px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .compare-usp {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 2px 0;
+            color: var(--text);
+            font-size: 0.92rem;
+            line-height: 1.4;
+            font-weight: 500;
+            letter-spacing: -0.003em;
+        }
+        .compare-usp svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            color: #2ea36a;
+        }
+        .compare-usp-label { color: var(--text); }
+        .compare-usp--audience { color: #1f7a4d; font-weight: 600; }
+        .compare-usp--audience svg { color: #2ea36a; }
+
+        /* Footer — view-detail CTA */
+        .compare-footer {
+            padding: 14px 18px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .compare-cta {
+            flex: 1;
+            text-align: center;
+            background: var(--brand, var(--primary));
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.92rem;
+            padding: 11px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background 0.18s ease;
+        }
+        .compare-cta:hover { background: var(--brand-dark, var(--primary-dark)); }
+
+        /* Empty state — promo to inspire saved-list discovery. */
+        .compare-empty {
+            text-align: center;
+            padding: 56px 24px 64px;
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            background: var(--bg-light, #f5f7fa);
+            color: var(--text-muted);
+        }
+        .compare-empty h3 { color: var(--text); margin-bottom: 8px; font-weight: 700; }
+        .compare-empty p { max-width: 380px; margin: 0 auto 18px; line-height: 1.55; }
+        .compare-empty .link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--brand);
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 540px) {
+            .compare-hero { min-height: 132px; font-size: 2.4rem; }
+            .compare-body { padding: 16px 16px 4px; }
+            .compare-title { font-size: 1.08rem; }
+            .compare-usps { padding: 14px 16px 4px; }
+            .compare-footer { padding: 12px 16px 16px; }
+        }
+    </style>
 </head>
 <body>
 
@@ -13,23 +236,23 @@
 <nav class="breadcrumb" id="bc">
     <a href="index.html">Home</a>
     <span class="sep">›</span>
-    <span class="current">Favorieten</span>
+    <span class="current">Mijn Lijst</span>
 </nav>
 
 <section class="section">
     <div class="section-head">
-        <div>
-            <span class="eyebrow">Mijn lijst</span>
-            <h2 id="fav-title">Favorieten</h2>
-            <p class="lead" id="fav-lead">Accommodaties die je hebt bewaard.</p>
+        <div class="compare-intro">
+            <span class="eyebrow">Mijn Lijst</span>
+            <h2 id="fav-title">Vergelijk je favorieten</h2>
+            <p class="lead" id="fav-lead">Bewaar accommodaties en zie in één oogopslag welke het beste bij jouw vakantie past — voorzieningen, sfeer, doelgroep en ligging naast elkaar.</p>
         </div>
-        <button type="button" class="link" id="fav-clear" style="background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;font-size:0.95rem;display:none;">Alles wissen</button>
+        <button type="button" class="link" id="fav-clear" style="background:none;border:none;color:var(--brand);font-weight:700;cursor:pointer;font-size:0.95rem;display:none;">Alles wissen</button>
     </div>
-    <div class="listing-grid" id="fav-listing"></div>
-    <div id="fav-empty" class="listing-empty" style="display:none;">
-        Nog geen favorieten opgeslagen.
-        <br><br>
-        <a class="link" href="alle-vakanties.html">Bekijk alle vakanties →</a>
+    <div class="compare-grid" id="fav-listing"></div>
+    <div id="fav-empty" class="compare-empty" style="display:none;">
+        <h3>Nog geen accommodaties opgeslagen</h3>
+        <p>Tik op het hart-icoon bij een accommodatie om hem te bewaren. Hier zie je dan in één oogopslag wat ze van elkaar onderscheidt.</p>
+        <a class="link" href="alle-vakanties.html">Ontdek alle vakanties →</a>
     </div>
 </section>
 
@@ -39,7 +262,7 @@
 </footer>
 
 <script src="site-data.js?v=14"></script>
-<script src="site.js?v=28"></script>
+<script src="site.js?v=29"></script>
 <script>
     renderHeader('favorites');
     renderFooter();
@@ -47,22 +270,215 @@
     const listingEl = document.getElementById('fav-listing');
     const emptyEl = document.getElementById('fav-empty');
     const titleEl = document.getElementById('fav-title');
+    const leadEl = document.getElementById('fav-lead');
     const clearBtn = document.getElementById('fav-clear');
+
+    // ============================================================
+    // USP-BUILDER — bepaalt de top vergelijkings-USPs per accommodatie.
+    // Selecteert prioritair:
+    //   1. Type-signal (Hotel / Camping / Vakantiepark / Glamping / ...)
+    //   2. Ligging-signal (Aan zee / In de bergen / Centraal gelegen / ...)
+    //   3. Doelgroep-signal (Ideaal voor koppels / Voor gezinnen / ...)
+    //   4. 2-3 belangrijke voorzieningen / atmospheres die comparison-
+    //      worthy zijn (Wellness aanwezig / All-inclusive / Hond
+    //      toegestaan / Waterpark / Boutique sfeer / Adults Only / ...).
+    // Max 6 items per kaart — geen tag-overload, alleen wat ertoe doet.
+    // ============================================================
+    const TYPE_TAG_MAP = {
+        'hotel': 'Hotel',
+        'camping': 'Camping',
+        'holiday-park': 'Vakantiepark',
+        'glamping': 'Glamping-verblijf',
+        'wellness': 'Wellness-verblijf',
+        'adventure-trip': 'Actief verblijf',
+        'city-trip': 'Stedentrip-hotel',
+        'sun': 'Zonbestemming',
+        'winter': 'Wintersportverblijf'
+    };
+    const LIGGING_PHRASE = {
+        'Aan zee': 'Direct aan zee',
+        'Aan het strand': 'Direct aan het strand',
+        'In de bergen': 'In de bergen',
+        'Aan een meer': 'Aan een meer',
+        'Nabij natuur': 'Midden in de natuur',
+        'Nabij natuur/bos': 'Midden in de natuur',
+        'Centraal gelegen': 'Centrumlocatie',
+        'Afgelegen': 'Rustige, afgelegen ligging',
+        'Stad': 'In de stad',
+        'In de stad': 'In de stad',
+        'Bos': 'In het bos',
+        'Natuur': 'In de natuur',
+        'Bergen': 'In de bergen'
+    };
+    const FACILITY_PHRASE = {
+        'Wellness':         'Wellness aanwezig',
+        'All-inclusive':    'All-inclusive',
+        'Binnenzwembad':    'Binnenzwembad',
+        'Glijbanen':        'Waterpark / glijbanen',
+        'Kinderpret':       'Kinderanimatie',
+        'Sport & Spel':     'Sport & Spel-faciliteiten',
+        'Diervriendelijk':  'Hond toegestaan',
+        'Adult Only':       'Adults only',
+        'Luxe':             'Luxe inrichting',
+        'Boutique':         'Boutique sfeer',
+        'Romantisch':       'Romantische sfeer',
+        'Ontspanning':      'Rustige sfeer',
+        'Avontuur':         'Avontuurlijke setting',
+        'Cultuur':          'Cultureel rijke omgeving',
+        'Bezienswaardigheden': 'Veel te bezichtigen',
+        'Fietsroutes':      'Mooie fietsroutes',
+        'Looproutes':       'Mooie wandelroutes',
+        'Entertainment':    'Entertainment-programma',
+        'Open bar':         'Open bar',
+        'Live muziek':      'Live muziek',
+        'Wateractiviteiten':'Wateractiviteiten',
+        'Outdoor activiteiten': 'Outdoor activiteiten',
+        'Feestelijk':       'Feestelijke sfeer'
+    };
+    const WHO_PHRASE = {
+        'couples':         'Ideaal voor koppels',
+        'families-kids':   'Geschikt voor gezinnen met kinderen',
+        'families-babies': 'Geschikt voor jonge gezinnen',
+        'families-teens':  'Geschikt voor gezinnen met tieners',
+        'friends':         'Top voor vriendengroepen',
+        'seniors':         'Comfortabel voor senioren',
+        'solo':            'Geschikt voor solo-reizigers',
+        'pets':            'Hond welkom'
+    };
+    // Atmosphere summary — 1-zin samenvatting per accommodatie-archetype.
+    function atmosphereSummary(acc) {
+        const tags = acc.tags || [];
+        const what = (acc.what || [])[0] || '';
+        const who = (acc.who || [])[0] || '';
+        if (tags.includes('Adult Only')) return 'Rustige volwassenen-only sfeer, gemaakt voor wie privacy en kalmte zoekt.';
+        if (tags.includes('Wellness') && tags.includes('Romantisch')) return 'Romantische wellness-setting voor een lang weekend zonder agenda.';
+        if (tags.includes('Wellness')) return 'Wellness-gericht verblijf met focus op ontspanning en rust.';
+        if (what === 'holiday-park' && tags.includes('Glijbanen')) return 'Bruisend familiepark met waterpark, animatie en alles voor de kinderen.';
+        if (what === 'holiday-park') return 'Familiepark met ruime accommodaties en faciliteiten voor alle leeftijden.';
+        if (what === 'camping' && tags.includes('Aan zee')) return 'Familiecamping aan zee — strand, sfeer en ruimte om buiten te leven.';
+        if (what === 'camping' && who.startsWith('families')) return 'Familiecamping met aandacht voor jonge gezinnen en kinderpret.';
+        if (what === 'camping') return 'Camping middenin de natuur — buitenleven, fietsen, ruimte.';
+        if (what === 'glamping') return 'Luxe glamping-ervaring zonder concessies aan comfort.';
+        if (what === 'city-trip') return 'Sfeervol stadshotel op loopafstand van het centrum, net buiten de drukke assen.';
+        if (tags.includes('In de bergen')) return 'Berghotel of chalet met wandelpaden vanaf de deur en koele avonden.';
+        if (tags.includes('Aan zee')) return 'Strandgericht verblijf — zee-uitzicht, stille ochtenden, lokale restaurants.';
+        if (tags.includes('Luxe')) return 'Premium verblijf met aandacht voor detail; ideaal voor een verwen-week.';
+        return 'Een fijn verblijf op een mooie locatie — onze redactie heeft het op de lijst staan.';
+    }
+
+    function buildComparisonUSPs(acc) {
+        const usps = [];
+        const seen = new Set();
+        const push = (label, opts = {}) => {
+            if (!label || seen.has(label)) return;
+            seen.add(label);
+            usps.push({ label, audience: !!opts.audience });
+        };
+        const tags = acc.tags || [];
+
+        // 1. Type
+        const what = (acc.what || [])[0];
+        if (what && TYPE_TAG_MAP[what]) push(TYPE_TAG_MAP[what]);
+
+        // 2. Ligging
+        for (const t of tags) {
+            if (LIGGING_PHRASE[t]) { push(LIGGING_PHRASE[t]); break; }
+        }
+
+        // 3. Doelgroep (audience)
+        const whoKey = (acc.who || [])[0];
+        if (whoKey && WHO_PHRASE[whoKey]) push(WHO_PHRASE[whoKey], { audience: true });
+
+        // 4. Faciliteiten / sfeer — eerste 3 matching tags die comparison-
+        //    worthy zijn (gefilterd op FACILITY_PHRASE map). Skip tags die
+        //    al via type/ligging zijn gedekt om duplicate signals te
+        //    voorkomen ('Wellness' kan zowel type als faciliteit zijn).
+        const usedTypeLabel = what && TYPE_TAG_MAP[what];
+        for (const t of tags) {
+            if (usps.length >= 6) break;
+            if (LIGGING_PHRASE[t]) continue; // already used as ligging signal
+            const phrase = FACILITY_PHRASE[t];
+            if (phrase && !seen.has(phrase) && phrase !== usedTypeLabel) push(phrase);
+        }
+
+        return usps.slice(0, 6);
+    }
+
+    function gradFor(acc) {
+        if (typeof gradientFor === 'function') return gradientFor(acc);
+        return 'linear-gradient(135deg, #4facfe 0%, #00c6ff 100%)';
+    }
+
+    function renderCompareCard(acc) {
+        const usps = buildComparisonUSPs(acc);
+        const summary = atmosphereSummary(acc);
+        const grad = gradFor(acc);
+        const whereLabel = (typeof DATA !== 'undefined') ? DATA.label('where', acc.where) : acc.where;
+        const checkSvg = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        return `
+            <article class="compare-card" data-id="${acc.id}">
+                <div class="compare-hero" style="background: ${grad}">
+                    <span class="compare-hero-badge">${whereLabel || acc.location}</span>
+                    <button type="button" class="compare-remove" aria-label="Verwijderen uit lijst" data-remove="${acc.id}" title="Verwijderen uit lijst">×</button>
+                    <span aria-hidden="true">${acc.emoji || '🏝️'}</span>
+                </div>
+                <div class="compare-body">
+                    <h3 class="compare-title">${acc.name}</h3>
+                    <p class="compare-loc">📍 ${acc.location}</p>
+                    <div class="compare-meta-row">
+                        <span class="compare-rating">★ ${acc.rating.toFixed(1)} <span class="compare-rating-count">· ${acc.reviews} reviews</span></span>
+                        <span class="compare-price">€${acc.price}<small> /nacht</small></span>
+                    </div>
+                </div>
+                <p class="compare-summary">${summary}</p>
+                <ul class="compare-usps" aria-label="Vergelijkings-USPs">
+                    ${usps.map(u => `
+                        <li class="compare-usp${u.audience ? ' compare-usp--audience' : ''}">
+                            ${checkSvg}
+                            <span class="compare-usp-label">${u.label}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+                <div class="compare-footer">
+                    <a class="compare-cta" href="Navigatie.html?acc=${acc.id}">Bekijk accommodatie →</a>
+                </div>
+            </article>
+        `;
+    }
 
     function renderFavs() {
         const ids = getFavorites();
         const favs = SITE_DATA.accommodations.filter(a => ids.includes(Number(a.id)));
-        titleEl.textContent = favs.length ? `${favs.length} favoriet${favs.length === 1 ? '' : 'en'}` : 'Favorieten';
         if (!favs.length) {
+            titleEl.textContent = 'Vergelijk je favorieten';
+            leadEl.textContent = 'Bewaar accommodaties en zie in één oogopslag welke het beste bij jouw vakantie past — voorzieningen, sfeer, doelgroep en ligging naast elkaar.';
             listingEl.innerHTML = '';
             emptyEl.style.display = 'block';
             clearBtn.style.display = 'none';
             return;
         }
+        titleEl.textContent = favs.length === 1
+            ? '1 accommodatie in je lijst'
+            : `${favs.length} accommodaties om te vergelijken`;
+        leadEl.textContent = favs.length === 1
+            ? 'Voeg er nog een paar toe om naast elkaar te vergelijken.'
+            : 'Bekijk hieronder de belangrijkste verschillen — voorzieningen, sfeer en doelgroep per accommodatie.';
         emptyEl.style.display = 'none';
         clearBtn.style.display = '';
-        // Hergebruik bestaande kaart-rendering zodat styling overeenkomt
-        renderListingPreview('fav-listing', favs, { limit: favs.length });
+        listingEl.innerHTML = favs.map(renderCompareCard).join('');
+
+        // Bind remove-buttons (per-card uit-de-lijst)
+        listingEl.querySelectorAll('[data-remove]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = Number(btn.getAttribute('data-remove'));
+                if (typeof toggleFavorite === 'function') {
+                    toggleFavorite(id);
+                    renderFavs();
+                }
+            });
+        });
     }
 
     clearBtn.addEventListener('click', () => {

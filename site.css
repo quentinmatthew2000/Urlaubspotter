@@ -391,7 +391,14 @@ button { font-family: inherit; cursor: pointer; }
 /* ============ NAV DRAWER — premium mobile UX ============
    Standaard ingeklapt; klapt open via hamburger op alle breakpoints.
    BELANGRIJK: wanneer gesloten gebruiken we display:none zodat het
-   element géén flex-rij of gap claimt in de header. */
+   element géén flex-rij of gap claimt in de header.
+
+   OPEN-STATE: full-screen panel onder de header-rij (position: fixed
+   van top:header-h tot bottom:0), met volle witte achtergrond zodat
+   de pagina-content NIET meer doorschemert onder een korte menu-
+   inhoud. body.nav-open lockt page-scroll zodat de drawer scrollt
+   zonder dat de pagina daarachter mee-scrollt — voelt als app-
+   navigatie i.p.v. een floating overlay. */
 .site-nav {
     flex: 1 1 100%;
     order: 3;
@@ -401,12 +408,37 @@ button { font-family: inherit; cursor: pointer; }
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--border);
-    max-height: calc(100vh - var(--header-h, 64px) - 16px);
-    overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
 }
-.site-nav.open { display: flex; }
+.site-nav.open {
+    display: flex;
+    /* Full-screen panel pinned below the header. inset gebruikt
+       --header-h zodat de header zelf zichtbaar blijft als
+       referentie. background: var(--bg) + box-shadow geven de
+       panel zijn eigen identiteit los van de pagina. */
+    position: fixed;
+    top: var(--header-h, 72px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 16px 20px max(24px, env(safe-area-inset-bottom, 16px));
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 90;
+    box-shadow: 0 6px 24px -8px rgba(15, 23, 42, 0.12);
+}
+/* Lock page-scroll wanneer de drawer open is — voorkomt dat de
+   pagina achter het menu mee-scrollt en geeft een dedicated
+   navigation-screen gevoel. */
+body.nav-open {
+    overflow: hidden;
+    /* iOS Safari: -webkit-overflow-scrolling moet onderdrukt zodat
+       de body niet alsnog reageert op momentum-scroll. */
+    touch-action: none;
+}
 .site-nav > a,
 .site-nav > .has-dropdown > a {
     display: flex;
