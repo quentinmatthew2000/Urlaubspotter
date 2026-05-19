@@ -593,16 +593,16 @@ button.usp-more:hover .usp-circle {
 .editorial-header h3 {
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    /* Strakker en subtieler — 0.7rem in plaats van 0.78, gewone
-       letter-spacing in plaats van wide 0.12em zodat de header niet
-       meer "loud" leest. */
-    font-size: 0.7rem;
+    /* Brand-blue heading — afgestemd op de Urlaubspotter-logo
+       kleur (--brand: #1e6cd6). Strak en subtiel maar wel
+       duidelijk gemerkt als "redactie-stem". */
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted, #6b7280);
+    color: var(--brand, #1e6cd6);
 }
-.editorial-icon { font-size: 0.95rem; opacity: 0.75; }
+.editorial-icon { font-size: 0.95rem; opacity: 0.9; color: var(--brand, #1e6cd6); }
 .editorial-card p {
     /* Modern sans-serif lichaam — geen Lora/serif meer. Tighter
        line-height (1.6 i.p.v. 1.7) voor calmer rhythm. Charcoal

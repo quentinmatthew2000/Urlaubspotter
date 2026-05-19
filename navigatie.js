@@ -498,44 +498,13 @@ const app = {
     },
 
     goBack() {
-        // App-like back-navigation. Prioriteit:
-        // 1) INTERNE NAVIGATIE — wanneer de user binnen Navigatie.html
-        //    écht via de internal listing/category/combination naar
-        //    detail kwam (pageHistory bevat de vorige interne page),
-        //    spring binnen de SPA terug. Géén history.back-flicker.
-        // 2) SAME-ORIGIN REFERRER — user kwam vanaf een andere site-
-        //    pagina (Niveau2-Wie.html, Homepagina.html, keuzehulp-
-        //    resultaten, search-results, etc.) en wil daarheen terug.
-        // 3) HISTORY-FALLBACK — geen referrer maar er is wel een
-        //    browser-history entry (bv. open'd via interne nav binnen
-        //    dezelfde tab waar de referrer-header niet bewaard is).
-        // 4) HOMEPAGE — final fallback voor cold deep-links of
-        //    bookmarks zonder enige history-context.
-        const internalHistory = (this.state && Array.isArray(this.state.pageHistory)) ? this.state.pageHistory : [];
-        const prevInternal = internalHistory.length ? internalHistory[internalHistory.length - 1] : null;
-        const camesViaInternalNav = !!prevInternal && ['listing', 'category', 'combination'].includes(prevInternal);
-        if (this.state.currentPage === 'detail' && camesViaInternalNav) {
-            this.state.pageHistory.pop();
-            this.goToPage(prevInternal, false);
-            return;
-        }
-        // Same-origin referrer → native browser back
-        if (document.referrer) {
-            try {
-                const ref = new URL(document.referrer);
-                if (ref.origin === location.origin) {
-                    history.back();
-                    return;
-                }
-            } catch (_) { /* ongeldige referrer: val door naar home */ }
-        }
-        // Browser history bestaat maar geen referrer (interne tab-nav
-        // zonder referrer-header) — probeer alsnog terug
-        if (history.length > 1) {
-            history.back();
-            return;
-        }
-        // Final fallback: home
+        // Deterministische back-navigation: altijd terug naar homepage.
+        // Geen browser-history detectie, geen referrer-checks, geen
+        // interne SPA-jumps meer — de oude varianten gaven onbe-
+        // trouwbaar gedrag op mobile (lege listing-views, willekeurige
+        // page-history-state, geen referrer bij bookmark-opens).
+        // Eén voorspelbaar gedrag = beter UX dan zes 'slimme' paden
+        // die elk hun eigen edge-cases hebben.
         window.location.href = 'index.html';
     },
 
@@ -694,62 +663,91 @@ const app = {
         // bij international 'in Italië' i.p.v. 'in italie'.
         const locPhrase = src.location || (typeof DATA !== 'undefined' ? DATA.label('where', where) : where) || 'deze regio';
 
-        // Opening (wat dit verblijf typeert + voor wie het werkt)
-        let opening;
+        // Structuur per editorial: 3 zinnen.
+        //   1. WIE — voor wie deze accommodatie het beste werkt
+        //   2. WAT — wat hier echt opvalt / waar de sfeer in zit
+        //   3. WANNEER — praktische tip of beste moment om te gaan
+        // Doel: warm + vivid + insightful, maar concise. Geen
+        // dramatische luxury-prose, geen AI-cliché.
+        let opening;     // 1. WIE
+        let middle;      // 2. WAT
+        let closing;     // 3. WANNEER / TIP
+
+        // ---------- 1. WIE — direct met "ideaal voor / aantrekkelijk voor / past bij"
         if (isAdultOnly && isWellness) {
-            opening = `${src.name} is een van die verblijven waar het verschil zit in wat er niet is: geen kinderlawaai, geen volle ontbijtzaal, geen 'animatie' op het terras. Wat er wél is — een wellness die meer dan een spa is, personeel dat fluistert i.p.v. praat — voelt meteen als de reden dat je hier zit.`;
+            opening = `Ideaal voor koppels die rust en privacy boven entertainment plaatsen — een verblijf zonder kinderlawaai, met de sfeer van een echte wellness-bestemming.`;
         } else if (isAdultOnly || isRomantic) {
-            opening = `${src.name} is geen accommodatie die je willekeurig boekt. Dit is een verblijf voor mensen die rust en privacy boven entertainment plaatsen — en die merken dat de plek hen daarin tegemoet komt, op de momenten dat het telt.`;
+            opening = `Vooral aantrekkelijk voor koppels die op zoek zijn naar een rustig, intiem verblijf met privacy als rode draad.`;
+        } else if (isFamily && (what === 'camping' || what === 'holiday-park') && (tags.includes('Glijbanen') || tags.includes('Binnenzwembad'))) {
+            opening = `Bij uitstek geschikt voor gezinnen met kinderen tussen 4 en 12 — de waterfaciliteiten en kinderanimatie maken hier het verschil.`;
         } else if (isFamily && (what === 'camping' || what === 'holiday-park')) {
-            opening = `${src.name} doet iets wat veel gezinsparken niet voor elkaar krijgen: ouders genoeg lucht geven, kinderen genoeg te doen geven, en geen van beide het gevoel geven dat de week op de ander is afgestemd. Aankomstdag is meteen relaxed — wat aan het terrein én de routing ligt.`;
+            opening = `Een fijne keuze voor gezinnen die ruimte zoeken om buiten te leven — terrein dat lucht geeft aan ouders én genoeg te doen biedt voor de kinderen.`;
         } else if (isFamily) {
-            opening = `${src.name} is duidelijk ingericht op gezinnen die niet de hele dag op het terrein willen zitten, maar wel willen weten dat alles klopt als ze terugkomen. Geen overdaad, geen marketing-sfeer — het soort plek waar de kinderen na drie dagen al hun eigen plekje hebben.`;
+            opening = `Vooral geschikt voor gezinnen met jongere kinderen die comfort en gemak belangrijk vinden zonder concessies aan sfeer.`;
         } else if (isLuxe && isCoast) {
-            opening = `${src.name} hoort tot de strandverblijven waarvan je 's avonds bij het diner pas snapt waarom de prijs anders ligt — niet door één opvallend detail, maar door de optelsom van een tiental kleine dingen die je elders mist.`;
+            opening = `Past het beste bij koppels of vrienden die op zoek zijn naar een premium strandverblijf met aandacht voor detail en service.`;
+        } else if (isLuxe && isWellness) {
+            opening = `Ideaal voor wie een echte verwen-week wil — luxe inrichting gecombineerd met serieuze wellness-faciliteiten.`;
         } else if (isLuxe) {
-            opening = `${src.name} hoort tot de verblijven waar je merkt dat er over de details is nagedacht — niet alleen over het marketingmateriaal. Het comfort is op een rustige manier consequent: meubels die kloppen, licht dat klopt, personeel dat 's avonds nog vrolijk is.`;
+            opening = `Een premium verblijf voor wie graag bewust kiest voor kwaliteit — comfort dat op een rustige manier consequent is.`;
         } else if (isCity) {
-            opening = `${src.name} ligt precies op de plek waar je hem wilt hebben — dichtbij genoeg om alles lopend te doen, ver genoeg van de drukke toeristische assen om 's avonds rust te vinden. De buurt rondom is sfeervol zonder over-toerist te zijn.`;
+            opening = `Perfect voor koppels en vrienden die een sfeervol stadshotel zoeken, op loopafstand van het centrum maar net buiten de drukke assen.`;
         } else if (isMountain) {
-            opening = `${src.name} maakt het werk dat een goede bergaccommodatie zou moeten doen: het laat de omgeving het verhaal vertellen. Binnen is alles op de juiste manier eenvoudig; buiten begint het echte programma.`;
-        } else {
-            opening = `${src.name} is een van die verblijven waar de redactie zonder reserve over schrijft — niet spectaculair, wel goed. Dat klinkt onderkoeld, maar het is precies wat je voor een week mooie vakantie wil.`;
-        }
-
-        // Middle (zintuiglijk detail van ligging / sfeer)
-        let middle;
-        if (isCoast) {
-            middle = ` De ligging aan zee maakt het verschil zoals het altijd doet: stille ochtenden, zoute lucht die door open ramen drijft, en de manier waarop het licht aan ${locPhrase} zelfs een gewone dag bijzonder maakt.`;
-        } else if (isMountain) {
-            middle = ` De bergomgeving doet werk dat geen accommodatie zelf kan doen — wandelingen vanaf de deur, koele avonden waarop je deken nodig hebt in juli, en het soort uitzicht dat een vroege ochtend rechtvaardigt.`;
+            opening = `Een trefzekere keuze voor wandelaars en avontuurlijke koppels — bergpaden vanaf de deur, en avonden met dat typische berglicht.`;
         } else if (isLake) {
-            middle = ` Aan het water krijgt deze plek iets dat alleen meren bieden: de stilte van het oppervlak bij dageraad, het geluid van eerste roeispanen, en de mogelijkheid om binnen tien minuten varend of wandelend in de natuur te zijn.`;
-        } else if (isCity) {
-            middle = ` De omgeving doet veel werk: korte loopafstanden naar het centrum, sfeervolle terrasstraten waar 's avonds wel mensen zitten maar geen toeristen-groepen, en buurtbakkers waar je na twee dagen al groet wordt.`;
+            opening = `Aantrekkelijk voor wie rust zoekt in de natuur: aan een meer, met korte loop- en vaarafstanden naar wandelgebied.`;
         } else if (isWellness) {
-            middle = ` Het wellness-gedeelte is geen bijzaak maar de reden dat mensen hier komen — sauna die werkelijk warm is, behandelingen die niet op een klok lopen, stille hoeken waar je een uur kan zitten zonder dat iemand komt vragen of het smaakt.`;
+            opening = `Geschikt voor wie een paar dagen écht uit het ritme wil — wellness-gericht verblijf met rust als hoofdgerecht.`;
         } else {
-            middle = ` De omgeving van ${locPhrase} levert genoeg om elke dag iets anders te doen — fietsroutes, korte rijden naar dorpen die zelfs in het hoogseizoen werkbaar blijven, en het type sfeer dat zich aan het tempo van je vakantie aanpast.`;
+            opening = `Een fijne keuze voor wie comfort, sfeer en een mooie omgeving belangrijker vindt dan een lijstje met sterren.`;
         }
 
-        // Closing (praktische tip / wat te weten voor wie boekt)
-        let closing;
-        if (isLuxe && isAdultOnly) {
-            closing = ` Reserveer vroeg in het seizoen — vrije periodes zijn schaars en deze plek werkt het mooist buiten de drukke maanden, wanneer het personeel echt tijd voor je heeft.`;
-        } else if (isFamily && tags.includes('Glijbanen')) {
-            closing = ` Tip van de redactie: in schoolvakanties is het waterpark vroeg in de ochtend (vóór 10 uur) het rustigst — verderop wordt het druk maar werkbaar. Houd 's middags één uurtje vrij voor de kleintjes, anders kost het 's avonds.`;
-        } else if (isFamily) {
-            closing = ` Wat opvalt na een paar dagen: zelfs ouders met jonge kinderen lijken er rustig uit te zien. Dat is geen toeval — het terrein laat het toe.`;
-        } else if (isCity) {
-            closing = ` Tip van de redactie: vraag bij het inchecken naar de lokale lunchspots; de adressen in standaard-reisgidsen zijn niet de adressen waar de buurt zelf eet.`;
-        } else if (isMountain) {
-            closing = ` Voorjaar en nazomer zijn hier de aangenaamste seizoenen — minder volk op de paden, en de natuur op zijn best. Neem ook in juli een dunne fleece mee voor de avonden.`;
+        // ---------- 2. WAT — specifiek atmosferisch detail dat eruit springt
+        if (isCoast && isLuxe) {
+            middle = ` Wat meteen opvalt: stille ochtenden op het terras, ruime kamers met zee-zicht, en dat zoute licht aan ${locPhrase} dat zelfs een gewone dag iets bijzonders geeft.`;
         } else if (isCoast) {
-            closing = ` Buiten het hoogseizoen is dit de aangenaamste periode: zacht licht, minder volk op het strand, en restaurants die tijd voor je nemen — het soort week waarvan je thuis nog twee keer denkt dat het te kort was.`;
+            middle = ` De directe ligging aan zee maakt het verschil — strand op loopafstand, restaurants die echt lokaal zijn, en die karakteristieke kustsfeer in ${locPhrase}.`;
+        } else if (isMountain) {
+            middle = ` De bergomgeving doet hier het meeste werk: wandelroutes vanaf de deur, koele avonden, en uitzicht dat het vroege opstaan rechtvaardigt.`;
+        } else if (isLake) {
+            middle = ` Wat hier eruit springt is de stilte: meeroppervlak bij dageraad, eerste roeispanen, en wandelpaden binnen handbereik vanaf het terras.`;
+        } else if (isCity) {
+            middle = ` Wat de locatie sterk maakt: korte loopafstanden, sfeervolle terrasstraten in de buurt, en het type lokale spots die niet in de standaard reisgids staan.`;
+        } else if (isWellness && isAdultOnly) {
+            middle = ` Het wellness-aanbod en de rustige sfeer vormen samen de eigenlijke aantrekkingskracht — sauna, behandelingen en stille hoeken waar je een uur kan zitten zonder gestoord te worden.`;
         } else if (isWellness) {
-            closing = ` Boek een midweek als je kan — weekenden zijn drukker, en deze plek heeft baat bij een paar dagen zonder agenda.`;
+            middle = ` Het ruime wellness-gedeelte met sauna en behandelingen valt direct op — geen bijzaak, maar de hoofdreden om hier te boeken.`;
+        } else if (isFamily && tags.includes('Glijbanen')) {
+            middle = ` De waterglijbanen, ruime speeltuin en kinderanimatie maken indruk; ouders kunnen ondertussen ontspannen op het terras of bij het zwembad.`;
+        } else if (isFamily && (what === 'camping' || what === 'holiday-park')) {
+            middle = ` De ontspannen sfeer en goed georganiseerde faciliteiten vallen meteen op — speeltuinen, sanitair op niveau, en een terrein dat genoeg lucht geeft.`;
+        } else if (isLuxe) {
+            middle = ` Wat opvalt is de aandacht voor detail: meubels die kloppen, licht dat klopt, en personeel dat ook 's avonds nog tijd voor je heeft.`;
+        } else if (tags.includes('Diervriendelijk')) {
+            middle = ` Hond welkom, ruime wandelroutes vanaf het terrein, en een ontspannen sfeer waar zowel huisdier als baas zich snel thuis voelt.`;
         } else {
-            closing = ` Wat je vooral merkt na een paar dagen: deze plek hoeft niet hard te werken om indruk te maken — daar zit precies de kracht in. Een week is hier zelden te lang.`;
+            middle = ` De omgeving van ${locPhrase} levert genoeg om elke dag iets anders te doen — fietsroutes, mooie dorpjes op korte rijafstand, en sfeer die zich aan jouw tempo aanpast.`;
+        }
+
+        // ---------- 3. WANNEER / TIP — praktische take-away
+        if (isLuxe && isAdultOnly) {
+            closing = ` Reserveer ruim van tevoren — de mooiste periodes (mei/juni en september) raken snel volgeboekt.`;
+        } else if (isFamily && tags.includes('Glijbanen')) {
+            closing = ` Tip: in schoolvakanties is het waterpark vroeg in de ochtend (vóór 10 uur) het rustigst — daarna wordt het druk maar werkbaar.`;
+        } else if (isFamily) {
+            closing = ` Buiten de schoolvakanties is hier het mooiste — meer ruimte, kortere wachtrijen, en gezinnen die echt op rust komen.`;
+        } else if (isCity) {
+            closing = ` Tip van de redactie: vraag bij het inchecken naar lokale eet- en lunchspots; die liggen vaak één straat verder en zijn de moeite waard.`;
+        } else if (isMountain) {
+            closing = ` Voorjaar en nazomer zijn hier het aangenaamst — minder volk op de paden, en stabiel wandelweer. Pak ook in juli een dunne fleece in.`;
+        } else if (isCoast) {
+            closing = ` Buiten het hoogseizoen is dit het mooiste: zacht licht, rustigere stranden, en restaurants die de tijd voor je nemen.`;
+        } else if (isWellness) {
+            closing = ` Een midweek werkt hier het best — minder volk dan in het weekend, en genoeg tijd om écht uit het ritme te raken.`;
+        } else if (isLake) {
+            closing = ` Vroeg in het seizoen (mei) of nazomer (september) zijn hier de aangenaamste maanden — de natuur op zijn best zonder zomerdrukte.`;
+        } else {
+            closing = ` Reserveer in het hoogseizoen op tijd; buiten de drukke maanden is hier alle ruimte om langer te blijven dan je dacht.`;
         }
 
         return opening + middle + closing;

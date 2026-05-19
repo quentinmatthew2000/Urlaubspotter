@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mijn Lijst · Urlaubspotter</title>
-    <link rel="stylesheet" href="site.css?v=33">
+    <link rel="stylesheet" href="site.css?v=34">
     <style>
         /* ============================================================
            MIJN LIJST — vergelijkingspagina (was: simpele favorieten-grid).
@@ -144,16 +144,44 @@
         .compare-summary--muted { color: var(--text-muted); }
 
         /* USP-section — gegroepeerde checkmark-rijen, het hart van het
-           vergelijkings-UX. Verticaal ritme, clean separators, modern
-           sans-serif typografie. */
+           vergelijkings-UX. Drie sub-secties (Voor wie / Type & ligging /
+           Voorzieningen) met eigen mini-headers, zodat de lezer
+           verticaal kan scannen welke accommodatie wat heeft. Geen
+           cap meer op aantal items — alle major USPs worden getoond
+           zodat echte vergelijking mogelijk is. */
         .compare-usps {
-            list-style: none;
             margin: 14px 0 0;
             padding: 16px 18px 4px;
             border-top: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 14px;
+        }
+        .compare-usp-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .compare-usp-group + .compare-usp-group {
+            padding-top: 12px;
+            border-top: 1px dashed var(--border);
+        }
+        .compare-usp-heading {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--brand, #1e6cd6);
+            margin: 0;
+        }
+        .compare-usp-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         .compare-usp {
             display: flex;
@@ -274,15 +302,19 @@
     const clearBtn = document.getElementById('fav-clear');
 
     // ============================================================
-    // USP-BUILDER — bepaalt de top vergelijkings-USPs per accommodatie.
-    // Selecteert prioritair:
-    //   1. Type-signal (Hotel / Camping / Vakantiepark / Glamping / ...)
-    //   2. Ligging-signal (Aan zee / In de bergen / Centraal gelegen / ...)
-    //   3. Doelgroep-signal (Ideaal voor koppels / Voor gezinnen / ...)
-    //   4. 2-3 belangrijke voorzieningen / atmospheres die comparison-
-    //      worthy zijn (Wellness aanwezig / All-inclusive / Hond
-    //      toegestaan / Waterpark / Boutique sfeer / Adults Only / ...).
-    // Max 6 items per kaart — geen tag-overload, alleen wat ertoe doet.
+    // USP-BUILDER — bepaalt ALLE comparison-worthy USPs per accommodatie,
+    // gegroepeerd in drie secties: Voor wie / Type & ligging / Voor-
+    // zieningen & sfeer. Geen cap meer op aantal items — alle major
+    // tags worden gesurfaceerd zodat de gebruiker daadwerkelijk kan
+    // vergelijken welke accommodatie wat heeft.
+    //
+    // Volgorde-strategie:
+    //   • Audience-rij eerst (alle who-keys, niet alleen de eerste)
+    //   • Type + ligging samen — wat het is, waar het ligt
+    //   • Voorzieningen & sfeer — alles wat de stay onderscheidt
+    // Tag → phrase mapping gebruikt natuurlijke NL frasering
+    // (geen "Glijbanen" maar "Waterpark / glijbanen") zodat de
+    // checkmark-rijen leesbaar reizen i.p.v. tag-dumps.
     // ============================================================
     const TYPE_TAG_MAP = {
         'hotel': 'Hotel',
@@ -295,6 +327,22 @@
         'sun': 'Zonbestemming',
         'winter': 'Wintersportverblijf'
     };
+    // Accommodation-type tags (uit acc.tags) die als "type" lezen
+    // — zo voorkomen we dat 'Bungalow' of 'Chalet' in de voor-
+    // zieningen-rij belandt.
+    const TYPE_FROM_TAGS = {
+        'Hotel': 'Hotel',
+        'Camping': 'Camping',
+        'Vakantiepark': 'Vakantiepark',
+        'Glamping': 'Glamping-verblijf',
+        'Bungalow': 'Bungalow',
+        'Chalet': 'Chalet',
+        'Resort': 'Resort',
+        'Villa': 'Villa',
+        'Appartement': 'Appartement',
+        'B&B': 'Bed & breakfast',
+        'Boutique': 'Boutique-stijl'
+    };
     const LIGGING_PHRASE = {
         'Aan zee': 'Direct aan zee',
         'Aan het strand': 'Direct aan het strand',
@@ -302,7 +350,7 @@
         'Aan een meer': 'Aan een meer',
         'Nabij natuur': 'Midden in de natuur',
         'Nabij natuur/bos': 'Midden in de natuur',
-        'Centraal gelegen': 'Centrumlocatie',
+        'Centraal gelegen': 'Centrale locatie',
         'Afgelegen': 'Rustige, afgelegen ligging',
         'Stad': 'In de stad',
         'In de stad': 'In de stad',
@@ -310,30 +358,53 @@
         'Natuur': 'In de natuur',
         'Bergen': 'In de bergen'
     };
+    // Faciliteiten (concrete voorzieningen die je kunt aan- of
+    // afvinken: zwembad, animatie, etc.)
     const FACILITY_PHRASE = {
-        'Wellness':         'Wellness aanwezig',
-        'All-inclusive':    'All-inclusive',
-        'Binnenzwembad':    'Binnenzwembad',
-        'Glijbanen':        'Waterpark / glijbanen',
-        'Kinderpret':       'Kinderanimatie',
-        'Sport & Spel':     'Sport & Spel-faciliteiten',
-        'Diervriendelijk':  'Hond toegestaan',
-        'Adult Only':       'Adults only',
-        'Luxe':             'Luxe inrichting',
-        'Boutique':         'Boutique sfeer',
-        'Romantisch':       'Romantische sfeer',
-        'Ontspanning':      'Rustige sfeer',
-        'Avontuur':         'Avontuurlijke setting',
-        'Cultuur':          'Cultureel rijke omgeving',
-        'Bezienswaardigheden': 'Veel te bezichtigen',
-        'Fietsroutes':      'Mooie fietsroutes',
-        'Looproutes':       'Mooie wandelroutes',
-        'Entertainment':    'Entertainment-programma',
-        'Open bar':         'Open bar',
-        'Live muziek':      'Live muziek',
-        'Wateractiviteiten':'Wateractiviteiten',
-        'Outdoor activiteiten': 'Outdoor activiteiten',
-        'Feestelijk':       'Feestelijke sfeer'
+        'Binnenzwembad':         'Binnenzwembad',
+        'Glijbanen':             'Waterpark met glijbanen',
+        'Kinderpret':            'Kinderanimatie',
+        'All-inclusive':         'All-inclusive',
+        'Sport & Spel':          'Sport & Spel-faciliteiten',
+        'Outdoor activiteiten':  'Outdoor activiteiten',
+        'Wateractiviteiten':     'Wateractiviteiten',
+        'Entertainment':         'Entertainment-programma',
+        'Open bar':              'Open bar',
+        'Live muziek':           'Live muziek',
+        'Diervriendelijk':       'Hond toegestaan',
+        'Fietsroutes':           'Mooie fietsroutes vanaf het terrein',
+        'Looproutes':            'Mooie wandelroutes vanaf het terrein',
+        'Bezienswaardigheden':   'Veel te bezichtigen in de omgeving'
+    };
+    // Sfeer-tags — wat voor TYPE vakantie / ambiance is dit?
+    const VIBE_PHRASE = {
+        'Wellness':       'Wellness aanwezig',
+        'Adult Only':     'Adults only',
+        'Luxe':           'Luxe inrichting',
+        'Romantisch':     'Romantische sfeer',
+        'Ontspanning':    'Rustige, ontspannen sfeer',
+        'Avontuur':       'Avontuurlijke setting',
+        'Cultuur':        'Cultureel rijke omgeving',
+        'Feestelijk':     'Feestelijke sfeer',
+        'Zonvakantie':    'Zonvakantie-bestemming',
+        'Wintervakantie': 'Wintersport-omgeving',
+        'Wintersport':    'Wintersport-omgeving',
+        'Stedentrip':     'Stedentrip-sfeer',
+        'Citytrip':       'Stedentrip-sfeer',
+        'Volwassenen':    'Volwassenen-georiënteerd'
+    };
+    // Direct-from-tags audience phrasings ("Voor gezinnen" → ...)
+    const AUDIENCE_TAG_PHRASE = {
+        'Voor koppels':                  'Ideaal voor koppels',
+        'Voor gezinnen':                 'Geschikt voor gezinnen',
+        'Voor gezinnen met kinderen':    'Geschikt voor gezinnen met kinderen',
+        'Voor gezinnen met tieners':     'Geschikt voor gezinnen met tieners',
+        "Voor gezinnen met baby's":      'Geschikt voor jonge gezinnen',
+        'Voor vrienden':                 'Top voor vriendengroepen',
+        'Voor senioren':                 'Comfortabel voor senioren',
+        'Voor solo':                     'Geschikt voor solo-reizigers',
+        'Voor alleen reizenden':         'Geschikt voor solo-reizigers',
+        'Met huisdier':                  'Hond welkom'
     };
     const WHO_PHRASE = {
         'couples':         'Ideaal voor koppels',
@@ -367,41 +438,70 @@
     }
 
     function buildComparisonUSPs(acc) {
-        const usps = [];
+        const tags = acc.tags || [];
+        const whoKeys = acc.who || [];
         const seen = new Set();
-        const push = (label, opts = {}) => {
+        const audience = [];
+        const typeLigging = [];
+        const facilities = [];
+        const push = (target, label) => {
             if (!label || seen.has(label)) return;
             seen.add(label);
-            usps.push({ label, audience: !!opts.audience });
+            target.push(label);
         };
-        const tags = acc.tags || [];
 
-        // 1. Type
+        // --- AUDIENCE (Voor wie geschikt) ---
+        // Alle who-keys, niet alleen de eerste. Gevolgd door eventuele
+        // audience-tags die direct in acc.tags staan (Voor koppels /
+        // Voor gezinnen / etc.) en nog niet via who-keys zijn gedekt.
+        whoKeys.forEach(k => push(audience, WHO_PHRASE[k]));
+        tags.forEach(t => {
+            if (AUDIENCE_TAG_PHRASE[t]) push(audience, AUDIENCE_TAG_PHRASE[t]);
+        });
+
+        // --- TYPE & LIGGING ---
+        // Eerst what-key → type, dan tag-based types (Bungalow / Chalet /
+        // Boutique die niet via what-key zichtbaar zijn). Daarna alle
+        // ligging-tags die opgevoerd zijn (Aan zee + Aan het strand
+        // kunnen beide relevant zijn).
         const what = (acc.what || [])[0];
-        if (what && TYPE_TAG_MAP[what]) push(TYPE_TAG_MAP[what]);
+        if (what && TYPE_TAG_MAP[what]) push(typeLigging, TYPE_TAG_MAP[what]);
+        tags.forEach(t => {
+            if (TYPE_FROM_TAGS[t]) push(typeLigging, TYPE_FROM_TAGS[t]);
+        });
+        tags.forEach(t => {
+            if (LIGGING_PHRASE[t]) push(typeLigging, LIGGING_PHRASE[t]);
+        });
 
-        // 2. Ligging
-        for (const t of tags) {
-            if (LIGGING_PHRASE[t]) { push(LIGGING_PHRASE[t]); break; }
-        }
+        // --- FACILITEITEN & SFEER ---
+        // Eerst concrete faciliteiten (zwembad, animatie, all-inclusive,
+        // sport, water, hond, fiets/loop-routes, bezienswaardigheden),
+        // daarna sfeer-tags (Wellness / Luxe / Adults only / Romantisch
+        // / Ontspanning / Avontuur / etc.). Strikte volgorde zodat
+        // verschillende accommodaties hun voorzieningen op exact
+        // dezelfde plek in de lijst krijgen — dat maakt visuele
+        // side-by-side vergelijking mogelijk.
+        const facilityOrder = [
+            'Binnenzwembad', 'Glijbanen', 'Kinderpret', 'All-inclusive',
+            'Sport & Spel', 'Outdoor activiteiten', 'Wateractiviteiten',
+            'Entertainment', 'Open bar', 'Live muziek',
+            'Diervriendelijk', 'Looproutes', 'Fietsroutes',
+            'Bezienswaardigheden'
+        ];
+        facilityOrder.forEach(t => {
+            if (tags.includes(t) && FACILITY_PHRASE[t]) push(facilities, FACILITY_PHRASE[t]);
+        });
+        const vibeOrder = [
+            'Wellness', 'Adult Only', 'Luxe', 'Romantisch', 'Ontspanning',
+            'Avontuur', 'Cultuur', 'Feestelijk',
+            'Zonvakantie', 'Wintervakantie', 'Wintersport',
+            'Stedentrip', 'Citytrip', 'Volwassenen'
+        ];
+        vibeOrder.forEach(t => {
+            if (tags.includes(t) && VIBE_PHRASE[t]) push(facilities, VIBE_PHRASE[t]);
+        });
 
-        // 3. Doelgroep (audience)
-        const whoKey = (acc.who || [])[0];
-        if (whoKey && WHO_PHRASE[whoKey]) push(WHO_PHRASE[whoKey], { audience: true });
-
-        // 4. Faciliteiten / sfeer — eerste 3 matching tags die comparison-
-        //    worthy zijn (gefilterd op FACILITY_PHRASE map). Skip tags die
-        //    al via type/ligging zijn gedekt om duplicate signals te
-        //    voorkomen ('Wellness' kan zowel type als faciliteit zijn).
-        const usedTypeLabel = what && TYPE_TAG_MAP[what];
-        for (const t of tags) {
-            if (usps.length >= 6) break;
-            if (LIGGING_PHRASE[t]) continue; // already used as ligging signal
-            const phrase = FACILITY_PHRASE[t];
-            if (phrase && !seen.has(phrase) && phrase !== usedTypeLabel) push(phrase);
-        }
-
-        return usps.slice(0, 6);
+        return { audience, typeLigging, facilities };
     }
 
     function gradFor(acc) {
@@ -409,12 +509,31 @@
         return 'linear-gradient(135deg, #4facfe 0%, #00c6ff 100%)';
     }
 
+    const COMPARE_CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function renderUSPGroup(heading, items, audience) {
+        if (!items.length) return '';
+        const itemClass = audience ? 'compare-usp compare-usp--audience' : 'compare-usp';
+        return `
+            <div class="compare-usp-group">
+                <h4 class="compare-usp-heading">${heading}</h4>
+                <ul class="compare-usp-list">
+                    ${items.map(label => `
+                        <li class="${itemClass}">
+                            ${COMPARE_CHECK_SVG}
+                            <span class="compare-usp-label">${label}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
     function renderCompareCard(acc) {
-        const usps = buildComparisonUSPs(acc);
+        const { audience, typeLigging, facilities } = buildComparisonUSPs(acc);
         const summary = atmosphereSummary(acc);
         const grad = gradFor(acc);
         const whereLabel = (typeof DATA !== 'undefined') ? DATA.label('where', acc.where) : acc.where;
-        const checkSvg = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         return `
             <article class="compare-card" data-id="${acc.id}">
                 <div class="compare-hero" style="background: ${grad}">
@@ -431,14 +550,11 @@
                     </div>
                 </div>
                 <p class="compare-summary">${summary}</p>
-                <ul class="compare-usps" aria-label="Vergelijkings-USPs">
-                    ${usps.map(u => `
-                        <li class="compare-usp${u.audience ? ' compare-usp--audience' : ''}">
-                            ${checkSvg}
-                            <span class="compare-usp-label">${u.label}</span>
-                        </li>
-                    `).join('')}
-                </ul>
+                <div class="compare-usps" aria-label="Vergelijkings-USPs">
+                    ${renderUSPGroup('Voor wie geschikt', audience, true)}
+                    ${renderUSPGroup('Type & ligging', typeLigging, false)}
+                    ${renderUSPGroup('Voorzieningen & sfeer', facilities, false)}
+                </div>
                 <div class="compare-footer">
                     <a class="compare-cta" href="Navigatie.html?acc=${acc.id}">Bekijk accommodatie →</a>
                 </div>
