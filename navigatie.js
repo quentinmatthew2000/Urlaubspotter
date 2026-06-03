@@ -1152,10 +1152,18 @@ const app = {
                 if (RECOMMENDATION_PHRASES.has(txt)) return;
                 seen.add(txt); displayTags.push(txt);
             };
-            // Volgorde-strategie: type eerst (geeft direct context),
-            // dan ligging, dan facilities/sfeer/context (acc.tags),
-            // dan resterende facility-keys. Dat geeft een natuurlijke
-            // lees-volgorde op de feature-card grid.
+            // Volgorde-strategie: AUDIENCE eerst (acc.whoKeys mapped
+            // naar canonical "Voor X" labels via WHO_AUDIENCE_LABEL),
+            // dan type, ligging, facilities, en als laatste acc.tags.
+            // De audience-first volgorde zorgt dat
+            // _pickAudienceHighlights in site.js direct de juiste
+            // canonical audience-tags vindt zonder ze uit acc.tags te
+            // moeten halen (die bevatten meestal characteristics, geen
+            // audience-signalen).
+            (acc.whoKeys || []).forEach(k => {
+                var lbl = (typeof WHO_AUDIENCE_LABEL !== 'undefined') ? WHO_AUDIENCE_LABEL[k] : null;
+                if (lbl) add(lbl);
+            });
             (acc.whatKeys || []).forEach(k => add(WHAT_FEATURE_REMAP[k] || this.labels.what[k]));
             (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
             (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));

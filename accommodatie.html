@@ -92,7 +92,7 @@
 </footer>
 
 <script src="site-data.js?v=14"></script>
-<script src="site.js?v=30"></script>
+<script src="site.js?v=31"></script>
 <script src="search-navigation.js?v=9"></script>
 <script>
     renderHeader('nav');
@@ -176,9 +176,16 @@
             </div>
         `;
 
-        // Feature-card tag-render (acc.tags = canonieke labels uit SITE_DATA).
+        // Feature-card tag-render — audience-first. acc.who → canonieke
+        // "Voor X" audience-labels worden vooraan toegevoegd zodat
+        // _pickAudienceHighlights in site.js direct de juiste audience-
+        // signalen vindt. Daarna komen alle characteristics uit acc.tags
+        // die onder de "+ N kenmerken" toggle terechtkomen.
         if (typeof renderFeatureTags === 'function') {
-            renderFeatureTags('detail-tags', acc.tags || []);
+            var audienceLabels = (acc.who || [])
+                .map(function (k) { return (typeof WHO_AUDIENCE_LABEL !== 'undefined') ? WHO_AUDIENCE_LABEL[k] : null; })
+                .filter(Boolean);
+            renderFeatureTags('detail-tags', audienceLabels.concat(acc.tags || []));
         }
     }
 </script>

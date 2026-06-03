@@ -409,7 +409,13 @@ const FEATURE_TAG_ICONS = {
     'Citytrip': '🌆', 'Actief / Avontuur': '🧭', 'Actief': '🏃',
     'Italië': '🍝', 'Spanje': '🥘', 'Frankrijk': '🗼', 'Duitsland': '🍺',
     'Nederland': '🇳🇱', 'België': '🍫', 'Portugal': '🍷', 'Kroatië': '⛵',
-    'Oostenrijk': '🎿'
+    'Oostenrijk': '🎿',
+    // Lifestyle-audience derivations (zie LIFESTYLE_AUDIENCE_DERIVATIONS).
+    // Iconen zijn afgestemd op de canonical audience-emoji-set.
+    'Rustzoekers': '🧘', 'Actieve vakantiegangers': '🚴',
+    'Waterliefhebbers': '🏊', 'Luxe reizigers': '✨',
+    'Glamping-liefhebbers': '✨', 'Cultuurliefhebbers': '🎭',
+    'Romantische stellen': '💕'
 };
 // Recommendation-phrases die NIET in de feature-tag grid horen — die
 // zijn redactionele aanbevelings-context (Ideaal voor / editorial-
@@ -419,26 +425,62 @@ const FEATURE_TAG_RECOMMENDATION_PHRASES = new Set([
     'Weekendje weg', 'Korte vakantie', 'Lang weekend', 'Last minutes', 'Lastminute'
 ]);
 
-// Priority sets voor de 3 primary highlights: pick 1 uit elk
-// (audience → signature → ligging), dan fill remaining slots met
-// overige tags in originele volgorde. Geeft elke accommodatie 3
-// betekenisvolle highlights die direct duidelijk maken wat het
-// onderscheidt voor wie / wat / waar.
-const FEATURE_PRIORITY_AUDIENCE = [
-    'Adult Only', 'Voor koppels',
-    'Voor gezinnen met kinderen', 'Voor gezinnen met tieners', "Voor gezinnen met baby's",
-    'Voor gezinnen', 'Voor vrienden', 'Voor senioren',
-    'Voor solo', 'Voor alleen reizenden', 'Volwassenen', 'Met huisdier'
+// AUDIENCE-FIRST HIGHLIGHT PHILOSOPHY
+// Urlaubspotter is geen facility-first platform. De bezoeker moet
+// eerst weten "voor wie is deze plek?" voordat ze faciliteiten gaan
+// vergelijken. De zichtbare highlight-chips communiceren daarom
+// uitsluitend audience-fit; characteristics (Wellness, Aan zee,
+// Boutique, etc.) leven onder "+ N kenmerken".
+
+// who-key (uit acc.who) → canonieke "Voor X" audience-label. Gebruikt
+// door navigatie.js + accommodatie.html om acc.who beschikbaar te
+// maken in de feature-tag input. Cross-script via window-property
+// zodat zowel module-scope als script-tags het kunnen lezen.
+window.WHO_AUDIENCE_LABEL = {
+    'couples':         'Voor koppels',
+    'families-babies': "Voor gezinnen met baby's",
+    'families-kids':   'Voor gezinnen met kinderen',
+    'families-teens':  'Voor gezinnen met tieners',
+    'friends':         'Voor vrienden',
+    'seniors':         'Voor senioren',
+    'solo':            'Voor solo',
+    'pets':            'Met huisdier'
+};
+
+// Canonieke audience-labels in prioriteitsvolgorde — eerste match
+// wint. Specifiekere labels (families met baby's / tieners) staan
+// vóór de generieke "Voor gezinnen" zodat het meest specifieke
+// signaal wordt opgepikt.
+const FEATURE_AUDIENCE_PRIORITY = [
+    'Adult Only',
+    'Voor koppels',
+    "Voor gezinnen met baby's",
+    'Voor gezinnen met kinderen',
+    'Voor gezinnen met tieners',
+    'Voor gezinnen',
+    'Voor vrienden',
+    'Voor senioren',
+    'Voor solo', 'Voor alleen reizenden',
+    'Met huisdier',
+    'Volwassenen'
 ];
-const FEATURE_PRIORITY_SIGNATURE = [
-    'Wellness', 'Boutique', 'Luxe', 'Romantisch', 'All-inclusive',
-    'Glamping', 'Avontuur', 'Glijbanen', 'Kinderpret', 'Binnenzwembad',
-    'Cultuur', 'Stedentrip', 'Citytrip', 'Zonvakantie', 'Wintersport'
-];
-const FEATURE_PRIORITY_LIGGING = [
-    'Aan zee', 'Aan het strand', 'In de bergen', 'Aan een meer',
-    'Centraal gelegen', 'Afgelegen', 'Nabij natuur', 'Nabij natuur/bos',
-    'Stad', 'In de stad', 'Bos', 'Natuur', 'Bergen'
+
+// Lifestyle-audience derivations — wanneer een accommodatie weinig
+// (of geen) canonical audience-tags heeft, leiden we audience-
+// persona's af uit characteristic-tags. Een wellness-resort krijgt
+// 'Rustzoekers'; een chalet met fietsroutes krijgt 'Actieve
+// vakantiegangers'. Deze derived labels zijn audience-signals — ze
+// vertellen je voor wie de plek werkt, niet wat hij heeft. De
+// originele trigger-tag (bv. "Wellness") blijft gewoon in de
+// "+ N kenmerken" sectie zichtbaar als characteristic.
+const LIFESTYLE_AUDIENCE_DERIVATIONS = [
+    { trigger: ['Wellness', 'Ontspanning'],                                                       label: 'Rustzoekers' },
+    { trigger: ['Avontuur', 'Sport & Spel', 'Outdoor activiteiten', 'Looproutes', 'Fietsroutes'], label: 'Actieve vakantiegangers' },
+    { trigger: ['Glijbanen', 'Binnenzwembad', 'Wateractiviteiten'],                               label: 'Waterliefhebbers' },
+    { trigger: ['Luxe'],                                                                          label: 'Luxe reizigers' },
+    { trigger: ['Glamping'],                                                                      label: 'Glamping-liefhebbers' },
+    { trigger: ['Cultuur', 'Bezienswaardigheden', 'Stedentrip', 'Citytrip'],                      label: 'Cultuurliefhebbers' },
+    { trigger: ['Romantisch'],                                                                    label: 'Romantische stellen' }
 ];
 
 // Document-level click delegation voor de "+ N kenmerken" toggle.
@@ -482,41 +524,54 @@ function _featureEscape(str) {
         .replace(/'/g, '&#39;');
 }
 
-// Picks 3 highlights via priority-sets + fill, returns { highlights, rest }.
-function _pickFeatureHighlights(tags, max) {
+// Audience-first highlight picker. Output: array of audience-labels
+// (max `max` items). Strategie:
+//   1. Canonical audience-tags uit FEATURE_AUDIENCE_PRIORITY
+//      (Adult Only / Voor koppels / Voor gezinnen met kinderen / etc.)
+//   2. Lifestyle-audience derivations
+//      (Wellness → Rustzoekers, Avontuur → Actieve vakantiegangers,
+//      Luxe → Luxe reizigers, etc.)
+// De originele trigger-tags (Wellness, Avontuur, Luxe) blijven gewoon
+// in de "+ N kenmerken" sectie verschijnen — derived labels zijn
+// audience-signals, niet characteristic-vervangers.
+function _pickAudienceHighlights(tags, max) {
     var picks = [];
     var used = Object.create(null);
-    function tryPick(priorityList) {
-        for (var i = 0; i < priorityList.length; i++) {
-            var tag = priorityList[i];
-            if (tags.indexOf(tag) >= 0 && !used[tag]) {
-                picks.push(tag);
-                used[tag] = true;
-                return;
-            }
+    var tagSet = Object.create(null);
+    for (var i = 0; i < tags.length; i++) tagSet[tags[i]] = true;
+
+    // 1. Canonical audience-tags in priority-volgorde
+    for (var i = 0; i < FEATURE_AUDIENCE_PRIORITY.length && picks.length < max; i++) {
+        var tag = FEATURE_AUDIENCE_PRIORITY[i];
+        if (tagSet[tag] && !used[tag]) {
+            picks.push(tag);
+            used[tag] = true;
         }
     }
-    tryPick(FEATURE_PRIORITY_AUDIENCE);
-    if (picks.length < max) tryPick(FEATURE_PRIORITY_SIGNATURE);
-    if (picks.length < max) tryPick(FEATURE_PRIORITY_LIGGING);
-    for (var j = 0; j < tags.length && picks.length < max; j++) {
-        if (!used[tags[j]]) {
-            picks.push(tags[j]);
-            used[tags[j]] = true;
+
+    // 2. Lifestyle-audience derivations
+    for (var r = 0; r < LIFESTYLE_AUDIENCE_DERIVATIONS.length && picks.length < max; r++) {
+        var rule = LIFESTYLE_AUDIENCE_DERIVATIONS[r];
+        if (used[rule.label]) continue;
+        var triggered = false;
+        for (var t = 0; t < rule.trigger.length; t++) {
+            if (tagSet[rule.trigger[t]]) { triggered = true; break; }
+        }
+        if (triggered) {
+            picks.push(rule.label);
+            used[rule.label] = true;
         }
     }
-    var rest = [];
-    for (var k = 0; k < tags.length; k++) {
-        if (!used[tags[k]]) rest.push(tags[k]);
-    }
-    return { highlights: picks.slice(0, max), rest: rest };
+    return picks;
 }
 
 // Renderer voor de detail-page feature-tags. Bouwt:
-//   1. <div.detail-highlights> met 3 premium chips
-//   2. <button.detail-more-toggle> met "+ N kenmerken" label (alleen
-//      als er resterende tags zijn)
+//   1. <div.detail-highlights> met max 2 audience-chips (voor wie
+//      is deze accommodatie geschikt — canonical of derived)
+//   2. <button.detail-more-toggle> met "+ N kenmerken" label
+//      (alleen als er resterende characteristics zijn)
 //   3. <div.detail-more hidden> met de resterende secondary chips
+//      (alle characteristics, ligging, facilities)
 //
 // Gebruikt string-concat i.p.v. nested template-literals — robuuster
 // bij ongebruikelijke karakters in tag-labels (emoji's, accenten).
@@ -537,9 +592,25 @@ function renderFeatureTags(containerId, tags) {
     }
     if (!list.length) { el.innerHTML = ''; return; }
 
-    var pick = _pickFeatureHighlights(list, 3);
-    var highlights = pick.highlights;
-    var rest = pick.rest;
+    // AUDIENCE-FIRST: max 2 audience-chips bovenaan, rest in toggle.
+    // Audience-labels (canonical of derived) staan visueel apart van
+    // characteristic-chips zodat "voor wie" altijd het eerste signaal
+    // is dat een bezoeker ziet — vóór wellness, ligging of facility.
+    var MAX_HIGHLIGHTS = 2;
+    var highlights = _pickAudienceHighlights(list, MAX_HIGHLIGHTS);
+
+    // "rest" = alle input-tags minus de canonical audience-labels die
+    // als highlight gebruikt zijn. Derived audience-labels (Rustzoekers
+    // etc.) zitten niet in de input, dus die hoeven niet uit rest
+    // gefilterd te worden. De trigger-tags (Wellness, Luxe, etc.)
+    // blijven bewust in rest staan — zij zijn characteristics die de
+    // gebruiker mag inzien onder de toggle.
+    var usedSet = Object.create(null);
+    for (var u = 0; u < highlights.length; u++) usedSet[highlights[u]] = true;
+    var rest = [];
+    for (var k = 0; k < list.length; k++) {
+        if (!usedSet[list[k]]) rest.push(list[k]);
+    }
 
     var html = '<div class="detail-highlights" aria-label="Belangrijkste kenmerken">';
     for (var h = 0; h < highlights.length; h++) {
