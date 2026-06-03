@@ -439,6 +439,26 @@ body.nav-open {
        de body niet alsnog reageert op momentum-scroll. */
     touch-action: none;
 }
+
+/* === FULLSCREEN-OVERLAY ARCHITECTURE FOR OPEN DRAWER ============
+   .site-header is normaal position: sticky; top: 0. Sticky-context
+   kan onder bepaalde browser-quirks breken (iOS Safari address-bar
+   collapse, body overflow:hidden mid-scroll, rubber-band touch
+   gestures op de drawer-rand). Wanneer de drawer open is dwingen
+   we de header naar position: fixed zodat hij altijd op viewport-
+   top blijft, los van enige body-scroll-context. Samen met de
+   drawer (.site-nav.open is al position: fixed; top: var(--header-h);
+   bottom: 0) levert dit een true fullscreen-overlay op: header +
+   category-strip + drawer dekken het hele viewport, geen pagina-
+   content kan eronder/erboven/eromheen zichtbaar zijn.
+   =============================================================== */
+body.nav-open .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+}
 .site-nav > a,
 .site-nav > .has-dropdown > a {
     display: flex;

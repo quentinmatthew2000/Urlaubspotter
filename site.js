@@ -1135,6 +1135,21 @@ function ensureNavDelegate() {
             // zorgt dat de body geen mee-scrollend gat geeft.
             document.body.classList.toggle('nav-open', willOpen);
 
+            // === DRAWER OPENT ALTIJD VAN BOVENAF ====================
+            // Bij OPENEN forceren we ook de interne scroll-positie van
+            // de drawer naar 0. Browsers behouden de scroll-state van
+            // een element tussen visibility-toggles; zonder deze reset
+            // zou de drawer kunnen openen op een eerdere internal-
+            // scroll-positie (gebruiker had bv. een sub-menu open
+            // gescrolld en daarna gesloten). Synchroon na de class-
+            // toggle zodat het op een al-zichtbaar element gebeurt.
+            if (willOpen) {
+                nav.scrollTop = 0;
+                // requestAnimationFrame als extra zekerheid voor browsers
+                // die de scrollTop-set negeren bij display:none → flex.
+                requestAnimationFrame(() => { nav.scrollTop = 0; });
+            }
+
             // Na CLOSE: body is weer scrollbaar (nav-open class is
             // verwijderd), nu kunnen we de gebruiker terugbrengen op
             // hun oorspronkelijke scroll-positie. Instant zodat we
