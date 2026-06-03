@@ -172,6 +172,52 @@
             flex-shrink: 0;
         }
 
+        /* Dimensions-grid — 9 evaluatie-criteria die de redactie
+           gebruikt om accommodaties tegen af te wegen. Compacter dan
+           .ov-pillars zodat 9 items rustig in 2-3 kolommen passen
+           zonder de pagina visueel zwaar te maken. */
+        .ov-dimensions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 10px;
+            margin: 20px 0 8px;
+        }
+        .ov-dimension {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 14px 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: border-color 0.18s ease;
+        }
+        .ov-dimension:hover { border-color: var(--brand); }
+        .ov-dimension .num {
+            flex-shrink: 0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.74rem;
+            letter-spacing: 0.08em;
+            color: var(--brand);
+            min-width: 24px;
+            padding-top: 1px;
+        }
+        .ov-dimension .desc strong {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.93rem;
+            color: var(--text);
+            margin-bottom: 3px;
+            letter-spacing: -0.01em;
+        }
+        .ov-dimension .desc span {
+            color: var(--text-muted);
+            font-size: 0.86rem;
+            line-height: 1.5;
+        }
+
         /* Verified-list — process highlights als clean checked list. */
         .ov-verified {
             list-style: none;
@@ -500,29 +546,101 @@
 
 <!-- ============================================================
      SECTIE 3 — ONZE AANPAK
-     Audience-first methodologie + lijst van doelgroepen.
+     Strategische methodologie: de manier waarop we werken, niet
+     een lijst van audiences. Contrast tussen klassieke filter-
+     volgorde (bestemming → filters → resultaten) en de Urlaubs-
+     potter-volgorde (doelgroep → reisstijl → behoeften → selectie).
+     9-dimensies kader + sub-doelgroep combinaties.
      ============================================================ -->
 <section class="ov-section">
-    <h2><span class="eyebrow-small">Onze aanpak</span>De meeste reisplatforms beginnen met bestemmingen. Wij beginnen met mensen.</h2>
-    <p>Een gezin met een baby zoekt iets fundamenteel anders dan een vriendengroep van zes. Een hondenliefhebber heeft andere prioriteiten dan een wellness-zoeker. Een senior met focus op comfort kijkt anders naar dezelfde vakantie dan een actieve dertiger op zoek naar avontuur. Dat zijn geen kleine nuances — dat zijn de verschillen tussen een goede vakantie en een verkeerde keuze.</p>
-    <p>Onze redactie selecteert vakantie­accommodaties per reisgezelschap, niet alleen per bestemming. We werken voor mensen die zichzelf herkennen in één (of meerdere) van deze profielen:</p>
+    <h2><span class="eyebrow-small">Onze aanpak</span>De meeste platforms beginnen met bestemmingen. Wij beginnen met mensen.</h2>
+    <p>De manier waarop de meeste vakantieplatforms werken volgt één vast pad: bestemming → filters → duizenden resultaten. Vanaf dat punt sta je er alleen voor. Welke van die duizenden hotels of campings écht bij jouw vakantie past, mag je vervolgens zelf uitzoeken — meestal door je tegen de avond met een lijst van twintig tabs in slaap te klikken. Dat is geen zoeken meer; dat is afgeschoven werk.</p>
+    <p>Urlaubspotter werkt in omgekeerde volgorde. We beginnen bij wie de reiziger is, welke reisstijl bij dat profiel past, welke behoeften daaruit voortvloeien — en pas dán selecteert onze redactie de accommodaties die op die combinatie aansluiten. Doelgroep → reisstijl → behoeften → selectie. Geen filter-tunnel, geen 12.000 resultaten, geen vergelijkings­matrix die niemand werkelijk doorleest.</p>
 
-    <div class="ov-audiences">
-        <span class="ov-audience"><span class="dot"></span>Gezinnen met jonge kinderen</span>
-        <span class="ov-audience"><span class="dot"></span>Gezinnen met tieners</span>
-        <span class="ov-audience"><span class="dot"></span>Stellen &amp; koppels</span>
-        <span class="ov-audience"><span class="dot"></span>Senioren</span>
-        <span class="ov-audience"><span class="dot"></span>Vriendengroepen</span>
-        <span class="ov-audience"><span class="dot"></span>Hondenbezitters</span>
-        <span class="ov-audience"><span class="dot"></span>Luxe reizigers</span>
-        <span class="ov-audience"><span class="dot"></span>Glamping-liefhebbers</span>
-        <span class="ov-audience"><span class="dot"></span>Actieve vakantiegangers</span>
-        <span class="ov-audience"><span class="dot"></span>Rustzoekers</span>
-        <span class="ov-audience"><span class="dot"></span>Solo-reizigers</span>
-        <span class="ov-audience"><span class="dot"></span>Wellness-reizigers</span>
+    <div class="ov-pull">Een accommodatie beoordelen we nooit in isolatie. We beoordelen hem in relatie tot één vraag: voor wie is dit eigenlijk geschikt?</div>
+
+    <p>Die vraag is het kompas van de redactie. We stellen 'm bij elke plek opnieuw, en we beantwoorden 'm aan de hand van een vast kader. Onze redacteurs wegen elke accommodatie af tegen negen dimensies — geen daarvan is op zichzelf doorslaggevend, maar samen vertellen ze of een plek terecht op de lijst staat.</p>
+
+    <div class="ov-dimensions" aria-label="Negen evaluatie-dimensies">
+        <div class="ov-dimension">
+            <span class="num">01</span>
+            <div class="desc">
+                <strong>Doelgroep-fit</strong>
+                <span>Voor welk reisgezelschap is deze plek eigenlijk gebouwd? Wat in het verblijf werkt vóór hen, en wat juist niet?</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">02</span>
+            <div class="desc">
+                <strong>Voorzieningen</strong>
+                <span>Zwembad, wellness, kinderanimatie, restaurant — kloppen ze met wat de doelgroep daadwerkelijk gebruikt?</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">03</span>
+            <div class="desc">
+                <strong>Sfeer</strong>
+                <span>Voelt de plek 's avonds zoals de marketing belooft? Past het karakter bij de manier waarop hier gereisd wordt?</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">04</span>
+            <div class="desc">
+                <strong>Ligging</strong>
+                <span>Ondersteunt de omgeving wat de reiziger zoekt — centraal voor stedentrip, afgelegen voor rustweek, aan het water voor strandvakantie?</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">05</span>
+            <div class="desc">
+                <strong>Reisstijl</strong>
+                <span>Past het tempo van het verblijf bij hoe iemand wíl reizen — actief en compact, of juist sloom en lang?</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">06</span>
+            <div class="desc">
+                <strong>Verwachtingen</strong>
+                <span>Wat belooft de marketing, en klopt dat met de realiteit? Een eerlijke vergelijking tussen brochure en bezoek.</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">07</span>
+            <div class="desc">
+                <strong>Prijs-segment</strong>
+                <span>Een eerlijke plek in z'n marktklasse — een 3-sterrenhotel beoordelen we tegen een goed 3-sterrenhotel, niet tegen het 5-sterrenresort verderop.</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">08</span>
+            <div class="desc">
+                <strong>Seizoen</strong>
+                <span>In welke maanden werkt deze plek écht? Een terras dat in juli leeft kan in november een sombere parkeerplaats zijn.</span>
+            </div>
+        </div>
+        <div class="ov-dimension">
+            <span class="num">09</span>
+            <div class="desc">
+                <strong>Sterktes &amp; zwaktes</strong>
+                <span>Waarin excelleert dit verblijf — en waar zit het zwakkere onderdeel? Eerlijk benoemd, niet weggepoetst.</span>
+            </div>
+        </div>
     </div>
 
-    <p class="muted" style="margin-top:18px;">Voor elk van deze reisgezelschappen werken andere accommodaties — en andere accommodaties juist niet. Wat we aanbevelen, bevelen we aan vóór een specifiek profiel. Niet aan iedereen, want geen plek werkt voor iedereen.</p>
+    <h2 style="margin-top:42px;"><span class="eyebrow-small">Voorbij doelgroepen</span>Reizigers zijn zelden ééndimensionaal — en onze selectie ook niet.</h2>
+    <p>Een vader van twee tieners die graag in de bergen wandelt is geen 'gezin' en geen 'wandelaar' — hij is beide tegelijk. Een koppel in de zestig met liefde voor design en wellness past niet in één hokje. Een hondenbezitter zoekt iets fundamenteel anders dan een wandelaar, behalve wanneer dezelfde persoon hond én wandelschoenen heeft, en dán wordt de selectie weer specifieker.</p>
+    <p>Daarom werkt onze redactie niet alleen met doelgroepen, maar met <strong>sub-doelgroepen</strong> en <strong>doelgroep-combinaties</strong>. Daar gaan we een laag dieper dan klassieke vakantieplatforms — die per definitie geen oog hebben voor de overlap tussen reizigersprofielen. Een handvol voorbeelden van combinaties waar we expliciet op selecteren:</p>
+
+    <div class="ov-audiences">
+        <span class="ov-audience"><span class="dot"></span>Gezin met peuters</span>
+        <span class="ov-audience"><span class="dot"></span>Gezin met tieners</span>
+        <span class="ov-audience"><span class="dot"></span>Actieve senioren</span>
+        <span class="ov-audience"><span class="dot"></span>Luxe-zoekende koppels</span>
+        <span class="ov-audience"><span class="dot"></span>Hondenbezitters in de natuur</span>
+        <span class="ov-audience"><span class="dot"></span>Wellness-reizigers op zoek naar rust</span>
+    </div>
+
+    <p class="muted" style="margin-top:18px;">Het verschil tussen een algoritmische ranking en een redactionele aanbeveling zit in deze laag. Een accommodatie die we curated noemen is niet de mooiste, niet de goedkoopste en niet de hoogst beoordeelde. Het is de plek waarvan onze redactie vond dat hij past — voor een specifiek profiel, in een specifieke maand, met een specifieke reisstijl. Daar zit precies waarom je hier kunt vinden wat je elders mist.</p>
 </section>
 
 <!-- ============================================================
