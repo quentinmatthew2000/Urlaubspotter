@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Over ons · Urlaubspotter</title>
+    <title>Over Urlaubspotter — een redactioneel platform voor vakantie­accommodaties</title>
+    <meta name="description" content="Urlaubspotter is een redactioneel vakantieplatform dat reizigers helpt accommodaties te vinden die echt bij hun reisgezelschap, reisstijl en situatie passen. Curated en zelf bezocht door onze redactie.">
     <link rel="stylesheet" href="site.css?v=34">
     <style>
         /* ============================================================
-           OVER ONS — warm, editorial, human story page.
-           Clean white surface, brand-blue accents, restrained type.
-           Reads as: "a team of travel enthusiasts who help you
-           discover vacations that genuinely fit you" — not a
-           corporate booking-intermediary blurb.
+           OVER ONS — strategische brand-positionering pagina.
+           Premium editorial travel platform; geen booking-platform,
+           geen affiliate site, geen generieke travel blog. Nadruk op
+           audience-first vakantie-discovery, redactionele expertise,
+           curated en verified accommodation-selectie.
            ============================================================ */
         .ov-hero {
             max-width: 880px;
             margin: 0 auto;
-            padding: 56px 24px 28px;
+            padding: 64px 24px 32px;
             text-align: left;
         }
         .ov-hero .eyebrow {
@@ -26,44 +27,54 @@
             gap: 10px;
             color: var(--brand);
             font-size: 0.74rem;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
-            margin: 0 0 18px;
+            margin: 0 0 22px;
         }
         .ov-hero .eyebrow::before {
             content: "";
-            width: 22px; height: 1px;
+            width: 24px; height: 1px;
             background: currentColor;
             opacity: 0.55;
         }
         .ov-hero h1 {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(2rem, 4.4vw, 3rem);
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            line-height: 1.1;
-            margin: 0 0 18px;
+            font-size: clamp(2.1rem, 4.6vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -0.028em;
+            line-height: 1.08;
+            margin: 0 0 22px;
             color: var(--text);
             text-wrap: balance;
-            max-width: 720px;
+            max-width: 760px;
         }
         .ov-hero .lead {
-            font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+            font-size: clamp(1.05rem, 1.5vw, 1.22rem);
             color: var(--text-muted);
             line-height: 1.6;
             margin: 0;
-            max-width: 660px;
+            max-width: 680px;
         }
 
-        .ov-section { max-width: 880px; margin: 0 auto; padding: 36px 24px; }
+        .ov-section { max-width: 880px; margin: 0 auto; padding: 44px 24px; }
         .ov-section h2 {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+            font-size: clamp(1.4rem, 2.4vw, 1.75rem);
             font-weight: 700;
-            letter-spacing: -0.018em;
-            margin: 0 0 14px;
+            letter-spacing: -0.02em;
+            margin: 0 0 18px;
             color: var(--text);
+            text-wrap: balance;
+        }
+        .ov-section h2 .eyebrow-small {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--brand);
+            margin-bottom: 8px;
         }
         .ov-section p {
             font-size: 1.02rem;
@@ -73,27 +84,27 @@
         }
         .ov-section p.muted { color: var(--text-muted); }
 
-        /* Pull-quote — gives the story an editorial moment without
-           heavy chrome. Hairline left border in brand blue, larger
-           serif-fallback type for warmth. */
+        /* Pull-quote — modern editorial accent. Brand-blue hairline,
+           sans-serif (geen italic Lora meer), kalm en premium. */
         .ov-pull {
-            margin: 32px 0;
-            padding: 6px 0 6px 22px;
+            margin: 28px 0;
+            padding: 8px 0 8px 24px;
             border-left: 3px solid var(--brand);
-            font-family: var(--font-editorial);
-            font-style: italic;
-            font-size: clamp(1.15rem, 1.8vw, 1.35rem);
-            line-height: 1.45;
+            font-family: 'Inter', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: clamp(1.1rem, 1.6vw, 1.25rem);
+            line-height: 1.5;
             color: var(--text);
-            max-width: 680px;
+            max-width: 720px;
+            letter-spacing: -0.012em;
         }
 
-        /* "Hoe we werken" — four numbered tiles, clean white cards,
-           thin border, brand-blue index number. Calm, scannable. */
+        /* Curated criteria — 4 numbered tiles. Premium calm cards. */
         .ov-pillars {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
+            gap: 14px;
             margin-top: 22px;
         }
         .ov-pillar {
@@ -113,7 +124,7 @@
         .ov-pillar .num {
             font-family: 'Inter', sans-serif;
             font-weight: 700;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             letter-spacing: 0.12em;
             color: var(--brand);
         }
@@ -132,39 +143,272 @@
             line-height: 1.55;
         }
 
-        /* "Waar we voor staan" — light brand-tinted strip with three
-           short principles. Reads as values, not feature list. */
-        .ov-values {
-            background: var(--brand-light);
-            border: 1px solid #d9e4f3;
-            border-radius: 16px;
-            padding: 32px 32px;
-            margin-top: 8px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 28px;
+        /* Audience chip-grid — toont in één oogopslag de doelgroepen
+           waar onze redactie voor selecteert. Niet als lijst maar als
+           pill-cloud die de breedte visueel onderstreept. */
+        .ov-audiences {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 18px 0 8px;
         }
-        .ov-values .v h4 {
+        .ov-audience {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            background: var(--brand-light, #eaf2fc);
+            color: var(--brand-dark, #1554b0);
+            border: 1px solid #d9e4f3;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: -0.003em;
+        }
+        .ov-audience .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--brand);
+            flex-shrink: 0;
+        }
+
+        /* Verified-list — process highlights als clean checked list. */
+        .ov-verified {
+            list-style: none;
+            margin: 18px 0 8px;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .ov-verified li {
+            display: flex;
+            gap: 12px;
+            padding: 14px 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            align-items: flex-start;
+        }
+        .ov-verified .check {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--brand-light, #eaf2fc);
+            color: var(--brand);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+        .ov-verified strong {
+            display: block;
+            color: var(--text);
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 0.95rem;
+        }
+        .ov-verified span.body {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        /* Quality-types vergelijking: Curated vs Verified naast elkaar.
+           Twee cards, gelijke breedte, brand-blue accenting. */
+        .ov-quality {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .ov-quality-card {
+            padding: 22px 24px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ov-quality-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 3px;
+            background: var(--brand);
+        }
+        .ov-quality-card h4 {
             font-family: 'Inter', sans-serif;
-            font-size: 0.78rem;
+            font-size: 0.7rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--brand);
             margin: 0 0 8px;
             font-weight: 700;
         }
-        .ov-values .v p {
-            font-size: 0.95rem;
+        .ov-quality-card .title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--text);
+            margin: 0 0 8px;
+            letter-spacing: -0.015em;
+        }
+        .ov-quality-card p {
+            font-size: 0.93rem;
             line-height: 1.55;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        @media (max-width: 640px) {
+            .ov-quality { grid-template-columns: 1fr; }
+        }
+
+        /* Mission card — single statement block, brand-tinted strip. */
+        .ov-mission {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 28px;
+            margin-top: 18px;
+            position: relative;
+        }
+        .ov-mission .label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--brand);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .ov-mission .statement {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text);
+            letter-spacing: -0.018em;
+            margin: 0 0 14px;
+            text-wrap: balance;
+        }
+        .ov-mission .support {
+            font-size: 0.98rem;
+            line-height: 1.6;
+            color: var(--text-muted);
             margin: 0;
         }
 
-        .ov-contact {
+        /* Vision — strongest editorial moment. Brand-blue tinted
+           full-width section met grote uitspraak; visueel de
+           climax van de pagina. */
+        .ov-vision-wrap {
+            background: linear-gradient(180deg, #ffffff 0%, var(--brand-light, #eaf2fc) 100%);
+            border-top: 1px solid #e7eef9;
+            border-bottom: 1px solid #e7eef9;
             margin-top: 32px;
-            padding: 28px 24px;
+        }
+        .ov-vision {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 56px 24px;
+            text-align: left;
+        }
+        .ov-vision .label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.74rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--brand);
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .ov-vision .headline {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            color: var(--text);
+            text-wrap: balance;
+            max-width: 760px;
+            margin: 0 0 22px;
+        }
+        .ov-vision .body {
+            font-size: clamp(1.02rem, 1.4vw, 1.15rem);
+            line-height: 1.65;
+            color: var(--text);
+            max-width: 680px;
+            margin: 0 0 14px;
+        }
+        .ov-vision .body:last-child { margin-bottom: 0; }
+
+        /* CTA — final encouragement. Twee buttons (primary +
+           secondary), genoeg whitespace, geen pushy feel. */
+        .ov-cta {
             background: #fff;
             border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 36px 32px;
+            margin-top: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 18px;
+        }
+        .ov-cta h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.25rem, 2vw, 1.5rem);
+            font-weight: 700;
+            letter-spacing: -0.018em;
+            color: var(--text);
+            margin: 0;
+            text-wrap: balance;
+        }
+        .ov-cta p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin: 0;
+            max-width: 620px;
+        }
+        .ov-cta-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .ov-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+        }
+        .ov-cta-btn--primary {
+            background: var(--brand);
+            color: #fff;
+            border: 1px solid var(--brand);
+        }
+        .ov-cta-btn--primary:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+        .ov-cta-btn--secondary {
+            background: transparent;
+            color: var(--brand);
+            border: 1px solid var(--brand);
+        }
+        .ov-cta-btn--secondary:hover { background: var(--brand-light, #eaf2fc); }
+
+        /* Editorial contact-footer — kalm, niet pushy. */
+        .ov-contact {
+            margin-top: 28px;
+            padding: 24px 26px;
+            background: var(--bg-light, #f5f7fa);
             border-radius: 14px;
             display: flex;
             justify-content: space-between;
@@ -172,40 +416,49 @@
             flex-wrap: wrap;
             gap: 14px;
         }
-        .ov-contact .txt h3 {
+        .ov-contact .txt h4 {
             margin: 0 0 4px;
-            font-size: 1.05rem;
+            font-size: 0.98rem;
             font-weight: 700;
             color: var(--text);
         }
         .ov-contact .txt p {
             margin: 0;
             color: var(--text-muted);
-            font-size: 0.92rem;
+            font-size: 0.9rem;
         }
         .ov-contact a.btn-mail {
-            padding: 11px 22px;
+            padding: 10px 18px;
             background: var(--brand);
             color: #fff;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             transition: background 0.18s ease;
         }
         .ov-contact a.btn-mail:hover { background: var(--brand-dark); }
 
         @media (max-width: 720px) {
-            .ov-hero { padding: 36px 18px 20px; }
-            .ov-hero h1 { font-size: clamp(1.65rem, 7.5vw, 2.2rem); }
+            .ov-hero { padding: 44px 18px 24px; }
+            .ov-hero h1 { font-size: clamp(1.7rem, 8vw, 2.4rem); }
             .ov-hero .lead { font-size: 1rem; }
-            .ov-section { padding: 26px 18px; }
+            .ov-section { padding: 32px 18px; }
             .ov-section p { font-size: 0.98rem; }
-            .ov-pull { margin: 22px 0; padding-left: 16px; }
-            .ov-pillars { gap: 12px; }
+            .ov-pull { margin: 22px 0; padding-left: 18px; }
+            .ov-pillars { gap: 10px; }
             .ov-pillar { padding: 18px 18px 20px; }
-            .ov-values { grid-template-columns: 1fr; padding: 24px 22px; gap: 22px; }
-            .ov-contact { padding: 22px 18px; flex-direction: column; align-items: stretch; text-align: center; }
+            .ov-audience { padding: 8px 12px; font-size: 0.84rem; }
+            .ov-mission { padding: 22px 22px; }
+            .ov-vision { padding: 42px 18px; }
+            .ov-vision .headline { font-size: clamp(1.5rem, 7vw, 2rem); }
+            .ov-cta {
+                padding: 26px 22px;
+                gap: 14px;
+            }
+            .ov-cta-buttons { width: 100%; }
+            .ov-cta-btn { flex: 1; justify-content: center; }
+            .ov-contact { padding: 20px 18px; flex-direction: column; align-items: stretch; text-align: center; }
             .ov-contact a.btn-mail { width: 100%; text-align: center; }
         }
     </style>
@@ -220,70 +473,201 @@
     <span class="current">Over ons</span>
 </nav>
 
+<!-- ============================================================
+     SECTIE 1 — HERO
+     Sterke opening die binnen 5 seconden duidelijk maakt:
+     Urlaubspotter helpt mensen accommodaties vinden die bij
+     hén passen, niet bij iedereen.
+     ============================================================ -->
 <section class="ov-hero">
-    <span class="eyebrow">Wie we zijn</span>
-    <h1>Een redactie die jaren te lang dezelfde frustratie aanhoorde — en daar uiteindelijk een betere reisgids van maakte.</h1>
-    <p class="lead">We zijn schrijvers, reizigers en redacteuren. Geen ranking-algoritme, geen sponsored top-10, geen marketingafdeling die je vakantie probeert te verkopen. Een groep mensen die zelf naar plekken toe gaat, die eerlijk vertelt wat opviel, en die graag een uurtje doorvraagt voordat ze iets aanbevelen.</p>
+    <span class="eyebrow">Een redactioneel vakantieplatform</span>
+    <h1>De juiste vakantie kies je niet uit het meeste. Die kies je uit het passendste.</h1>
+    <p class="lead">Urlaubspotter is geen boekingsplatform en geen vergelijkingssite. We zijn een redactionele vakantiegids die reizigers helpt accommodaties te vinden die bij hen passen — bij dit reisgezelschap, deze reisstijl en deze fase in het leven. Niet bij de gemiddelde toerist, niet bij een algoritmische top-10, maar bij jou.</p>
 </section>
 
+<!-- ============================================================
+     SECTIE 2 — WAAROM URLAUBSPOTTER BESTAAT
+     Probleemstelling: te veel keuze. Onze rol als selecteur.
+     ============================================================ -->
 <section class="ov-section">
-    <h2>Hoe we hier kwamen</h2>
-    <p>Veel van onze redacteuren schreven eerder voor <strong>Kidsvakantiegids</strong> — al jaren één van de meest geraadpleegde reisgidsen voor gezinnen in Nederland. Daar leerden we wat een goede reisgids voor mensen kan doen: een gezin met een baby krijgt iets anders aanbevolen dan een gezin met tieners, en die nuance maakt het verschil tussen een gewone week en een waardevolle.</p>
-    <p>Onderweg merkten we iets. Dezelfde lezers die als gezin bij ons kwamen, kwamen ook terug zónder kinderen — voor een wellness-weekend met hun partner, een citytrip met vrienden, een wandelvakantie met de ouders. De redactionele blik bleef werken; alleen het reisgezelschap veranderde.</p>
-    <p>Urlaubspotter is dezelfde aanpak, verbreed naar elke reisgezel. Hetzelfde gevoel van: iemand heeft hier echt over nagedacht. Alleen nu ook voor de keren dat je zonder kinderbed reist.</p>
+    <h2><span class="eyebrow-small">Waarom we bestaan</span>Te veel keuze is geen luxe meer. Het is een obstakel.</h2>
+    <p>Het internet bevat inmiddels miljoenen vakantie­accommodaties. Het probleem voor de moderne reiziger is niet dat er te weinig opties zijn — het probleem is dat er duizenden zijn, en geen enkele filter vertelt je welke daadwerkelijk bij jouw vakantie past.</p>
+    <p>Boekingsplatforms tonen je elke beschikbare optie binnen je budget. Wat ze niet tonen is wáárom een hotel bij het ene gezin de week van hun leven wordt en bij het andere stel een teleurstelling. Een 9-sterren-rating zegt niets over reisstijl, over reisgezelschap, over verwachtingen. Een uitstekende familiecamping kan voor koppels een verkeerde keuze zijn. Een geweldig adult-only resort hoort niet thuis op een gezinsvakantie. Context bepaalt alles — en context staat zelden in een filter.</p>
+    <p>Urlaubspotter is opgericht om die laag te leveren die ontbreekt: redactionele selectie, audience-matching en eerlijk advies. We voegen niets toe aan het volume. We selecteren scherp uit wat er al is, en zeggen erbij voor wie het werkt.</p>
 
-    <div class="ov-pull">"Een vakantie is geen product. Het is een week van je leven — die mag bij je passen."</div>
+    <div class="ov-pull">Mensen hebben geen behoefte aan meer keuze. Ze hebben behoefte aan betere selectie.</div>
+</section>
 
-    <h2>Voor wie we schrijven</h2>
-    <p>We schrijven voor iedereen die met aandacht reist. Voor de koppels die op zoek zijn naar een hotel dat aanvoelt als een geheim, en niet als de zoveelste lobby. Voor de gezinnen die snappen dat een baby en een tiener twee totaal andere vakanties nodig hebben. Voor de senioren die comfort willen zonder concessies aan smaak.</p>
-    <p>Voor vriendengroepen die toe zijn aan een villa-week met een goede keuken. Voor solo-reizigers die liever ergens neerstrijken dan rondrennen. Voor de wandelaars, de wellness-zoekers, de mensen die juist niets willen plannen. En voor iedereen die ergens tussenin valt — wat eerlijk gezegd de meesten van ons zijn.</p>
+<!-- ============================================================
+     SECTIE 3 — ONZE AANPAK
+     Audience-first methodologie + lijst van doelgroepen.
+     ============================================================ -->
+<section class="ov-section">
+    <h2><span class="eyebrow-small">Onze aanpak</span>De meeste reisplatforms beginnen met bestemmingen. Wij beginnen met mensen.</h2>
+    <p>Een gezin met een baby zoekt iets fundamenteel anders dan een vriendengroep van zes. Een hondenliefhebber heeft andere prioriteiten dan een wellness-zoeker. Een senior met focus op comfort kijkt anders naar dezelfde vakantie dan een actieve dertiger op zoek naar avontuur. Dat zijn geen kleine nuances — dat zijn de verschillen tussen een goede vakantie en een verkeerde keuze.</p>
+    <p>Onze redactie selecteert vakantie­accommodaties per reisgezelschap, niet alleen per bestemming. We werken voor mensen die zichzelf herkennen in één (of meerdere) van deze profielen:</p>
 
-    <h2 style="margin-top:36px;">Hoe we werken</h2>
+    <div class="ov-audiences">
+        <span class="ov-audience"><span class="dot"></span>Gezinnen met jonge kinderen</span>
+        <span class="ov-audience"><span class="dot"></span>Gezinnen met tieners</span>
+        <span class="ov-audience"><span class="dot"></span>Stellen &amp; koppels</span>
+        <span class="ov-audience"><span class="dot"></span>Senioren</span>
+        <span class="ov-audience"><span class="dot"></span>Vriendengroepen</span>
+        <span class="ov-audience"><span class="dot"></span>Hondenbezitters</span>
+        <span class="ov-audience"><span class="dot"></span>Luxe reizigers</span>
+        <span class="ov-audience"><span class="dot"></span>Glamping-liefhebbers</span>
+        <span class="ov-audience"><span class="dot"></span>Actieve vakantiegangers</span>
+        <span class="ov-audience"><span class="dot"></span>Rustzoekers</span>
+        <span class="ov-audience"><span class="dot"></span>Solo-reizigers</span>
+        <span class="ov-audience"><span class="dot"></span>Wellness-reizigers</span>
+    </div>
+
+    <p class="muted" style="margin-top:18px;">Voor elk van deze reisgezelschappen werken andere accommodaties — en andere accommodaties juist niet. Wat we aanbevelen, bevelen we aan vóór een specifiek profiel. Niet aan iedereen, want geen plek werkt voor iedereen.</p>
+</section>
+
+<!-- ============================================================
+     SECTIE 4 — CURATED ACCOMMODATIES
+     Wat curated betekent + 4 criteria-pillars.
+     ============================================================ -->
+<section class="ov-section">
+    <h2><span class="eyebrow-small">Curated</span>Geselecteerd door onze redactie.</h2>
+    <p>Veel accommodaties op Urlaubspotter dragen het label <strong>curated</strong>. Dat betekent: een redacteur heeft besloten dat deze plek thuishoort op onze lijst, voor een specifieke groep reizigers. We laten geen accommodatie zomaar binnen — elke vermelding is een bewuste keuze.</p>
+    <p>Curated betekent nadrukkelijk niet 'minder gecheckt'. Het betekent dat een redacteur, gewapend met jarenlange ervaring in dit segment, een beoordeling heeft gemaakt op vier vaste criteria. Wat je op Urlaubspotter ziet is dus niet de complete database — het is wat onze redactie de moeite waard vond om te tonen.</p>
+
     <div class="ov-pillars">
         <div class="ov-pillar">
-            <span class="num">01 — ONDERZOEK</span>
-            <h3>We bezoeken zelf</h3>
-            <p>Geen knip-en-plak-reviews. Onze redactie verblijft, fotografeert en let op de details die op een website nooit zichtbaar zijn.</p>
+            <span class="num">01 — REVIEWS</span>
+            <h3>Recente gastreviews wegen door</h3>
+            <p>We lezen recente, geverifieerde gastreviews — niet de drie sterrenreviews die toevallig bovenaan staan, maar de patronen die over een jaar heen verschijnen.</p>
         </div>
         <div class="ov-pillar">
-            <span class="num">02 — CURATIE</span>
-            <h3>We selecteren scherp</h3>
-            <p>Niet elke accommodatie verdient een plek. We werken met een ondergrens en zijn eerlijk over voor wie iets wél of níet werkt.</p>
+            <span class="num">02 — VOORZIENINGEN</span>
+            <h3>Past het aanbod bij de doelgroep?</h3>
+            <p>Een waterpark zegt niets als de doelgroep koppels is. Faciliteiten wegen we tegen het reisgezelschap waarvoor we de plek zouden aanbevelen.</p>
         </div>
         <div class="ov-pillar">
-            <span class="num">03 — MATCHING</span>
-            <h3>We denken in reisstijlen</h3>
-            <p>De vraag is niet "een hotel in Italië", maar "het hotel in Italië dat bij iemand zoals jij past". Daar bouwen we onze keuzehulp omheen.</p>
+            <span class="num">03 — LIGGING</span>
+            <h3>Klopt de omgeving met de reisstijl?</h3>
+            <p>Centraal in een drukke stad werkt voor stedentrips, niet voor een rustweek. Afgelegen werkt voor wellness, niet voor citytrip. Ligging is reisstijl.</p>
         </div>
         <div class="ov-pillar">
-            <span class="num">04 — INSPIRATIE</span>
-            <h3>We blijven verhalen vertellen</h3>
-            <p>Reisverslagen, lange-leesgidsen en seizoensaanbevelingen — omdat een vakantie kiezen ook moet voelen als ergens naar uitkijken.</p>
+            <span class="num">04 — POSITIONERING</span>
+            <h3>Een eerlijke plek in z'n marktsegment</h3>
+            <p>Een 3-sterrenhotel beoordelen we naar wat een goed 3-sterrenhotel zou moeten zijn — niet tegen het 5-sterrenresort verderop. Faire vergelijking, eerlijk eindoordeel.</p>
         </div>
     </div>
 </section>
 
+<!-- ============================================================
+     SECTIE 5 — VERIFIED ACCOMMODATIES
+     Persoonlijk bezocht door de redactie. Procesoverzicht.
+     ============================================================ -->
 <section class="ov-section">
-    <h2>Waar we voor staan</h2>
-    <div class="ov-values">
-        <div class="v">
-            <h4>Eerlijk</h4>
-            <p>Onafhankelijk geschreven. We laten zien wat werkt én wat tegenviel — geen verkooppraat.</p>
+    <h2><span class="eyebrow-small">Verified</span>Persoonlijk bezocht. Zelf beoordeeld.</h2>
+    <p>Een deel van de accommodaties op Urlaubspotter draagt het zwaarste label: <strong>verified</strong>. Daar zijn we zélf geweest. Een redacteur sliep er, ontbeet er, gebruikte het zwembad, sprak met het personeel, en weet hoe deze plek 's avonds aanvoelt — niet alleen op de gepolijste foto's van de marketingafdeling.</p>
+    <p>Tijdens een redactiebezoek produceren we eigen materiaal en beoordelen we de plek tegen een vast kader. De verified-aanduiding staat voor eerstehands-ervaring, geen herhaling van wat anderen al hebben geschreven.</p>
+
+    <ul class="ov-verified">
+        <li>
+            <span class="check">✓</span>
+            <div>
+                <strong>Eigen fotografie &amp; video</strong>
+                <span class="body">Zoals het er werkelijk uitziet — sanitair, kamers, ontbijtruimte, sfeer in de avond.</span>
+            </div>
+        </li>
+        <li>
+            <span class="check">✓</span>
+            <div>
+                <strong>Reisverslag van de redactie</strong>
+                <span class="body">Een eerlijk verslag van het verblijf, geschreven door de redacteur die er was.</span>
+            </div>
+        </li>
+        <li>
+            <span class="check">✓</span>
+            <div>
+                <strong>Doelgroep-analyse</strong>
+                <span class="body">Voor welke reisgezelschappen deze plek wérkt — en voor welke we hem niet zouden boeken.</span>
+            </div>
+        </li>
+        <li>
+            <span class="check">✓</span>
+            <div>
+                <strong>Beoordeling tegen vast kader</strong>
+                <span class="body">Sanitair, sfeer, restaurant, ligging, prijs-kwaliteit, en de eerlijkheid van marketing versus realiteit.</span>
+            </div>
+        </li>
+    </ul>
+
+    <div class="ov-quality">
+        <div class="ov-quality-card">
+            <h4>Curated</h4>
+            <div class="title">Door de redactie geselecteerd</div>
+            <p>Beoordeeld op reviews, voorzieningen, ligging en positionering. Een bewuste keuze om deze plek aan te bevelen voor een specifiek reisgezelschap.</p>
         </div>
-        <div class="v">
-            <h4>Persoonlijk</h4>
-            <p>Vakantie kiezen gaat over wie je bent, niet over wat trending is. Onze gidsen reflecteren dat.</p>
+        <div class="ov-quality-card">
+            <h4>Verified</h4>
+            <div class="title">Door de redactie zélf bezocht</div>
+            <p>Eerstehands-ervaring, eigen fotografie en een eerlijk reisverslag. Het hoogste niveau van zekerheid dat een vakantieplatform kan bieden.</p>
         </div>
-        <div class="v">
-            <h4>Onderzocht</h4>
-            <p>Elke aanbeveling is teruggevoerd op een redactiebezoek, een gesprek of een testreiziger.</p>
+    </div>
+</section>
+
+<!-- ============================================================
+     SECTIE 6 — WAAROM DIT JUIST NU BELANGRIJK IS
+     De verschuiving in search + AI + eerstehands-expertise.
+     ============================================================ -->
+<section class="ov-section">
+    <h2><span class="eyebrow-small">Waarom juist nu</span>Reisinspiratie verandert. Wat telt is écht weten waar je over schrijft.</h2>
+    <p>Hoe mensen vakantie zoeken is in een paar jaar tijd fundamenteel veranderd. Tot voor kort was reisinspiratie een kwestie van surfen langs blogs, top-10's en boekingsplatforms. Steeds vaker stellen reizigers hun vraag direct aan een AI-tool, en gaan ze op zoek naar bronnen met aantoonbare specialistische kennis.</p>
+    <p>Wat in dat landschap doorslaggevend wordt is niet meer wie het meeste content publiceert — maar wie eerstehands-ervaring heeft. Originele beoordelingen. Echte reiservaringen. Niche-expertise. Reizigers vertrouwen niet meer op anonieme rankings; ze vertrouwen op redactie die zelf is geweest, en weet wat ze laat zien.</p>
+    <p>Daar is Urlaubspotter voor gebouwd. Elke aanbeveling op het platform is terug te voeren op een redacteur, een bezoek, een gastreviews-analyse of een doelgroep-evaluatie. Geen anonieme content, geen AI-gegenereerde verzinsels, geen rankings die niemand kan uitleggen. Vakantieadvies dat je kunt vertrouwen omdat je weet waar het vandaan komt.</p>
+</section>
+
+<!-- ============================================================
+     SECTIE 7 — ONZE MISSIE
+     Mission statement card.
+     ============================================================ -->
+<section class="ov-section">
+    <h2><span class="eyebrow-small">Onze missie</span>Wat we proberen te doen — elke dag opnieuw.</h2>
+    <div class="ov-mission">
+        <div class="label">Missie</div>
+        <p class="statement">Mensen helpen vakantie­accommodaties te vinden die echt bij hun situatie, hun reisstijl en hun reisgezelschap passen.</p>
+        <p class="support">Niet meer keuze, maar betere selectie. Niet algoritmes, maar redactie. Niet generiek, maar contextueel. Niet de plek die het meeste oplevert, maar de plek waar je 's avonds blij terugkomt op je terras en denkt: dit was de juiste keuze.</p>
+    </div>
+</section>
+
+<!-- ============================================================
+     SECTIE 8 — ONZE VISIE
+     Strongest editorial moment — full-width brand-tinted statement.
+     ============================================================ -->
+<div class="ov-vision-wrap">
+    <section class="ov-vision">
+        <div class="label">Onze visie</div>
+        <h2 class="headline">De toekomst van vakantie kiezen is niet meer zoeken. Het is herkend worden.</h2>
+        <p class="body">Vakantieplatforms hebben jarenlang gewedijverd om wie het grootste aanbod heeft. Wij wedijveren om wie het meest relevante aanbod heeft — voor jou, voor jouw vakantie, voor jouw reisgezelschap.</p>
+        <p class="body">Wij geloven dat mensen geen behoefte hebben aan meer keuze. Ze hebben behoefte aan betere selectie. Aan een platform dat begrijpt dat een gezin met een baby anders reist dan een stel zonder kinderen, dat een wandelaar iets anders zoekt dan een wellness-liefhebber, en dat een senior op zoek naar comfort niet bediend wordt door dezelfde aanbevelingen als een actieve twintiger.</p>
+        <p class="body">Urlaubspotter is gebouwd op die overtuiging. Niet als nóg een boekingstool, maar als een redactionele gids die jou serieus neemt — en die de tijd heeft genomen om accommodaties te selecteren die bij je passen voordat je begint te zoeken.</p>
+    </section>
+</div>
+
+<!-- ============================================================
+     SECTIE 9 — CTA
+     Helpful, non-pushy. Stuurt richting Keuzehulp + ontdek.
+     ============================================================ -->
+<section class="ov-section">
+    <div class="ov-cta">
+        <h3>Klaar om jouw vakantie te vinden?</h3>
+        <p>Onze Keuzehulp stelt een paar simpele vragen over wie je bent, waar je heen wilt en met wie je reist — en wijst je naar de vakantie­accommodaties die echt bij je passen. Geen filteroorlog, geen scroll-tunnel — gewoon een redacteur in zakvorm.</p>
+        <div class="ov-cta-buttons">
+            <a class="ov-cta-btn ov-cta-btn--primary" href="Keuzehulp.html">Start met de Keuzehulp →</a>
+            <a class="ov-cta-btn ov-cta-btn--secondary" href="alle-vakanties.html">Bekijk alle accommodaties</a>
         </div>
     </div>
 
     <div class="ov-contact">
         <div class="txt">
-            <h3>Tip, vraag of mooi verhaal?</h3>
-            <p>We lezen elke mail. Werkdagen reageren we binnen 24 uur.</p>
+            <h4>Tip, vraag of mooi verhaal?</h4>
+            <p>We lezen elke mail. Op werkdagen reageren we binnen 24 uur.</p>
         </div>
         <a href="mailto:hallo@urlaubspotter.nl" class="btn-mail">hallo@urlaubspotter.nl</a>
     </div>
