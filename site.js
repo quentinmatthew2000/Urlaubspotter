@@ -1080,6 +1080,52 @@ function ensureNavDelegate() {
             const nav = document.querySelector('.site-header .site-nav');
             if (!nav) return;
             const willOpen = !nav.classList.contains('open');
+
+            // === STICKY-CONTEXT-BREAK FIX ============================
+            // Browser-bug: zodra body krijgt `overflow: hidden` (via
+            // .nav-open class) terwijl de gebruiker scrollY > 0 heeft,
+            // verliest .site-header { position: sticky; top: 0 } zijn
+            // sticky-context en revert naar zijn document-flow positie
+            // (op y=0 in document-coords). Op een gescroll'de pagina is
+            // y=0 off-screen → de header verdwijnt boven het viewport,
+            // de drawer opent op top: var(--header-h) maar de pagina-
+            // content blijft erboven zichtbaar.
+            //
+            // Fix: voor het OPENEN bewaren we de huidige scroll-positie
+            // en scrollen we de pagina naar de top vóórdat we de
+            // overflow:hidden lock toepassen. De sticky-context is dan
+            // op een geldige positie (scrollY === 0), dus de header
+            // blijft visueel bovenaan zichtbaar tijdens de lock.
+            // Bij SLUITEN restoren we de oorspronkelijke scroll-positie
+            // zodra de body weer scrollbaar is — gebruiker komt terug
+            // op precies dezelfde plek waar ze de drawer openden.
+            // Instant-scroll helper: html krijgt globally scroll-behavior:
+            // smooth, dus window.scrollTo zonder { behavior } animeert.
+            // Die animatie wordt afgekapt door de overflow:hidden-lock
+            // hieronder en de scroll-positie blijft staan. We forceren
+            // daarom instant via meerdere methoden voor cross-browser
+            // veiligheid (oudere Safari kent { behavior: 'instant' } niet).
+            const _instantScrollTo = (y) => {
+                try {
+                    window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+                } catch (_) { /* oudere browsers: val door naar imperative set */ }
+                document.documentElement.scrollTop = y;
+                document.body.scrollTop = y;
+            };
+
+            let savedScrollY = 0;
+            if (willOpen) {
+                savedScrollY = window.scrollY
+                    || document.documentElement.scrollTop
+                    || document.body.scrollTop
+                    || 0;
+                document.body.dataset.navScrollY = String(savedScrollY);
+                if (savedScrollY > 0) _instantScrollTo(0);
+            } else {
+                savedScrollY = parseInt(document.body.dataset.navScrollY || '0', 10) || 0;
+                delete document.body.dataset.navScrollY;
+            }
+
             nav.classList.toggle('open', willOpen);
             toggleHit.classList.toggle('open', willOpen);
             toggleHit.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
@@ -1088,6 +1134,14 @@ function ensureNavDelegate() {
             // het paneel als fixed inset → bottom; deze flag
             // zorgt dat de body geen mee-scrollend gat geeft.
             document.body.classList.toggle('nav-open', willOpen);
+
+            // Na CLOSE: body is weer scrollbaar (nav-open class is
+            // verwijderd), nu kunnen we de gebruiker terugbrengen op
+            // hun oorspronkelijke scroll-positie. Instant zodat we
+            // geen smooth-animation tonen.
+            if (!willOpen && savedScrollY > 0) {
+                _instantScrollTo(savedScrollY);
+            }
             return;
         }
         // 2. Accordion-submenu header — opent één sub binnen de drawer.
