@@ -2121,3 +2121,133 @@ button.inspiration-tab[aria-selected="true"] {
     .detail-tag-label { font-size: 0.8rem; }
 }
 
+/* ============ HIGHLIGHTS + MORE FEATURES ============
+   Premium "3 highlights + N kenmerken" structuur. De drie
+   sterkste accommodatie-kenmerken staan bovenaan als chips met
+   duidelijk hogere visuele waarde (witte chip, soft shadow,
+   28×28 ringed icon-circle, stronger weight). Daaronder een
+   kalme "+ N kenmerken" toggle die de rest expandeert tot
+   secondary chips (bg-light surface, geen shadow, lichter
+   weight). Twee-laagse hiërarchie maakt direct duidelijk wat
+   de plek onderscheidt.
+   ============================================================ */
+
+/* PRIMARY: highlights — 3 chips bovenaan */
+.detail-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.detail-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px 10px 10px;
+    background: #fff;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text, #1a2230);
+    letter-spacing: -0.008em;
+    box-shadow: 0 2px 6px -2px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+    line-height: 1.2;
+    transition: border-color 0.18s ease, box-shadow 0.22s ease, transform 0.15s ease;
+    max-width: 100%;
+}
+.detail-highlight:hover {
+    border-color: rgba(30, 108, 214, 0.25);
+    box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.12), 0 1px 2px rgba(15, 23, 42, 0.04);
+    transform: translateY(-1px);
+}
+.detail-highlight-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(30, 108, 214, 0.20);
+    background: linear-gradient(160deg, #ffffff 0%, var(--brand-light, #eaf2fc) 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    line-height: 1;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+.detail-highlight-label {
+    color: var(--text, #1a2230);
+    font-weight: 700;
+    font-size: 0.92rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+/* TOGGLE: "+ N kenmerken" button */
+.detail-more-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted, #6b7280);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 6px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    letter-spacing: -0.005em;
+    transition: color 0.18s ease;
+}
+.detail-more-toggle:hover { color: var(--brand, #1e6cd6); }
+.detail-more-toggle svg {
+    color: currentColor;
+    transition: transform 0.22s ease;
+}
+.detail-more-toggle[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+/* SECONDARY: expanded chips — lichter, kleinere visuele waarde */
+.detail-more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+.detail-more[hidden] { display: none; }
+.detail-more-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bg-light, #f5f7fa);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text, #1a2230);
+    line-height: 1.25;
+    letter-spacing: -0.003em;
+}
+.detail-more-chip-icon {
+    font-size: 0.92rem;
+    line-height: 1;
+}
+
+@media (max-width: 540px) {
+    /* Mobile: gestapelde chips wrapen natuurlijk, touch-friendly
+       tap-zones. Highlights iets compacter maar behouden hun
+       premium gewicht. */
+    .detail-highlights { gap: 8px; margin-bottom: 12px; }
+    .detail-highlight {
+        padding: 8px 14px 8px 8px;
+        gap: 8px;
+        font-size: 0.86rem;
+    }
+    .detail-highlight-icon { width: 24px; height: 24px; font-size: 0.85rem; }
+    .detail-highlight-label { font-size: 0.86rem; }
+    .detail-more-toggle { font-size: 0.85rem; }
+    .detail-more-chip { padding: 5px 10px; font-size: 0.78rem; }
+}
+

@@ -1160,14 +1160,24 @@ const app = {
             (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
             (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));
             (acc.tags || []).forEach(add);
-            tagsEl.innerHTML = displayTags
-                .map(t => `
-                    <div class="detail-tag">
-                        <span class="detail-tag-circle" aria-hidden="true">${TAG_ICONS[t] || '•'}</span>
-                        <span class="detail-tag-label">${t}</span>
-                    </div>
-                `)
-                .join('');
+            // Gedeelde renderer uit site.js produceert nu de
+            // "Highlights + More" structuur (3 premium chips +
+            // expandable "+ N kenmerken"). Fallback: als
+            // renderFeatureTags ontbreekt (oude cache), val terug
+            // op de oorspronkelijke inline render zodat de pagina
+            // nooit blank blijft.
+            if (typeof renderFeatureTags === 'function') {
+                renderFeatureTags('detail-tags', displayTags);
+            } else {
+                tagsEl.innerHTML = displayTags
+                    .map(t => `
+                        <div class="detail-tag">
+                            <span class="detail-tag-circle" aria-hidden="true">${TAG_ICONS[t] || '•'}</span>
+                            <span class="detail-tag-label">${t}</span>
+                        </div>
+                    `)
+                    .join('');
+            }
         }
 
         // In het kort

@@ -418,21 +418,158 @@ const FEATURE_TAG_ICONS = {
 const FEATURE_TAG_RECOMMENDATION_PHRASES = new Set([
     'Weekendje weg', 'Korte vakantie', 'Lang weekend', 'Last minutes', 'Lastminute'
 ]);
-function renderFeatureTags(containerId, tags) {
-    const el = document.getElementById(containerId);
-    if (!el) return;
-    const seen = new Set();
-    const list = (tags || []).filter(t => {
-        if (!t || seen.has(t)) return false;
-        if (FEATURE_TAG_RECOMMENDATION_PHRASES.has(t)) return false;
-        seen.add(t); return true;
+
+// Priority sets voor de 3 primary highlights: pick 1 uit elk
+// (audience → signature → ligging), dan fill remaining slots met
+// overige tags in originele volgorde. Geeft elke accommodatie 3
+// betekenisvolle highlights die direct duidelijk maken wat het
+// onderscheidt voor wie / wat / waar.
+const FEATURE_PRIORITY_AUDIENCE = [
+    'Adult Only', 'Voor koppels',
+    'Voor gezinnen met kinderen', 'Voor gezinnen met tieners', "Voor gezinnen met baby's",
+    'Voor gezinnen', 'Voor vrienden', 'Voor senioren',
+    'Voor solo', 'Voor alleen reizenden', 'Volwassenen', 'Met huisdier'
+];
+const FEATURE_PRIORITY_SIGNATURE = [
+    'Wellness', 'Boutique', 'Luxe', 'Romantisch', 'All-inclusive',
+    'Glamping', 'Avontuur', 'Glijbanen', 'Kinderpret', 'Binnenzwembad',
+    'Cultuur', 'Stedentrip', 'Citytrip', 'Zonvakantie', 'Wintersport'
+];
+const FEATURE_PRIORITY_LIGGING = [
+    'Aan zee', 'Aan het strand', 'In de bergen', 'Aan een meer',
+    'Centraal gelegen', 'Afgelegen', 'Nabij natuur', 'Nabij natuur/bos',
+    'Stad', 'In de stad', 'Bos', 'Natuur', 'Bergen'
+];
+
+// Document-level click delegation voor de "+ N kenmerken" toggle.
+// Idempotent via sentinel-attribute zodat herlaadbare script-bundels
+// niet meerdere listeners registreren. Géén globale window.* function
+// en géén inline onclick handler nodig — robuuster dan per-render
+// listener binding.
+(function () {
+    if (typeof document === 'undefined') return;
+    if (document.documentElement.dataset.detailMoreDelegate === '1') return;
+    document.documentElement.dataset.detailMoreDelegate = '1';
+    document.addEventListener('click', function (e) {
+        var btn = (e.target && e.target.closest) ? e.target.closest('.detail-more-toggle') : null;
+        if (!btn) return;
+        var next = btn.nextElementSibling;
+        if (!next || !next.classList || !next.classList.contains('detail-more')) return;
+        var isOpen = !next.hasAttribute('hidden');
+        if (isOpen) {
+            next.setAttribute('hidden', '');
+            btn.setAttribute('aria-expanded', 'false');
+        } else {
+            next.removeAttribute('hidden');
+            btn.setAttribute('aria-expanded', 'true');
+        }
+        var label = btn.querySelector('.detail-more-label');
+        if (label) {
+            var count = parseInt(btn.getAttribute('data-count') || '0', 10) || 0;
+            label.textContent = isOpen ? ('+ ' + count + ' kenmerken') : ('− Minder kenmerken');
+        }
     });
-    el.innerHTML = list.map(t => `
-        <div class="detail-tag">
-            <span class="detail-tag-circle" aria-hidden="true">${FEATURE_TAG_ICONS[t] || '•'}</span>
-            <span class="detail-tag-label">${t}</span>
-        </div>
-    `).join('');
+})();
+
+// Veilig HTML-escaping om edge-cases met user-content te voorkomen.
+function _featureEscape(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// Picks 3 highlights via priority-sets + fill, returns { highlights, rest }.
+function _pickFeatureHighlights(tags, max) {
+    var picks = [];
+    var used = Object.create(null);
+    function tryPick(priorityList) {
+        for (var i = 0; i < priorityList.length; i++) {
+            var tag = priorityList[i];
+            if (tags.indexOf(tag) >= 0 && !used[tag]) {
+                picks.push(tag);
+                used[tag] = true;
+                return;
+            }
+        }
+    }
+    tryPick(FEATURE_PRIORITY_AUDIENCE);
+    if (picks.length < max) tryPick(FEATURE_PRIORITY_SIGNATURE);
+    if (picks.length < max) tryPick(FEATURE_PRIORITY_LIGGING);
+    for (var j = 0; j < tags.length && picks.length < max; j++) {
+        if (!used[tags[j]]) {
+            picks.push(tags[j]);
+            used[tags[j]] = true;
+        }
+    }
+    var rest = [];
+    for (var k = 0; k < tags.length; k++) {
+        if (!used[tags[k]]) rest.push(tags[k]);
+    }
+    return { highlights: picks.slice(0, max), rest: rest };
+}
+
+// Renderer voor de detail-page feature-tags. Bouwt:
+//   1. <div.detail-highlights> met 3 premium chips
+//   2. <button.detail-more-toggle> met "+ N kenmerken" label (alleen
+//      als er resterende tags zijn)
+//   3. <div.detail-more hidden> met de resterende secondary chips
+//
+// Gebruikt string-concat i.p.v. nested template-literals — robuuster
+// bij ongebruikelijke karakters in tag-labels (emoji's, accenten).
+function renderFeatureTags(containerId, tags) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    // Dedupe + filter recommendation-phrasings. Behoudt volgorde.
+    var seen = Object.create(null);
+    var list = [];
+    var input = tags || [];
+    for (var i = 0; i < input.length; i++) {
+        var t = input[i];
+        if (!t) continue;
+        if (seen[t]) continue;
+        if (FEATURE_TAG_RECOMMENDATION_PHRASES.has(t)) continue;
+        seen[t] = true;
+        list.push(t);
+    }
+    if (!list.length) { el.innerHTML = ''; return; }
+
+    var pick = _pickFeatureHighlights(list, 3);
+    var highlights = pick.highlights;
+    var rest = pick.rest;
+
+    var html = '<div class="detail-highlights" aria-label="Belangrijkste kenmerken">';
+    for (var h = 0; h < highlights.length; h++) {
+        var hTag = highlights[h];
+        var hIcon = FEATURE_TAG_ICONS[hTag] || '•';
+        html += '<span class="detail-highlight">'
+            + '<span class="detail-highlight-icon" aria-hidden="true">' + _featureEscape(hIcon) + '</span>'
+            + '<span class="detail-highlight-label">' + _featureEscape(hTag) + '</span>'
+            + '</span>';
+    }
+    html += '</div>';
+
+    if (rest.length > 0) {
+        var chevron = '<svg viewBox="0 0 12 12" width="12" height="12" fill="none" aria-hidden="true"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        html += '<button type="button" class="detail-more-toggle" aria-expanded="false" data-count="' + rest.length + '">'
+            + '<span class="detail-more-label">+ ' + rest.length + ' kenmerken</span>'
+            + chevron
+            + '</button>';
+        html += '<div class="detail-more" hidden>';
+        for (var r = 0; r < rest.length; r++) {
+            var rTag = rest[r];
+            var rIcon = FEATURE_TAG_ICONS[rTag] || '•';
+            html += '<span class="detail-more-chip">'
+                + '<span class="detail-more-chip-icon" aria-hidden="true">' + _featureEscape(rIcon) + '</span>'
+                + '<span>' + _featureEscape(rTag) + '</span>'
+                + '</span>';
+        }
+        html += '</div>';
+    }
+    el.innerHTML = html;
 }
 
 function renderCategoryTiles(containerId, entries, { linkBuilder, gradient, icons = true, size = 'default' } = {}) {
