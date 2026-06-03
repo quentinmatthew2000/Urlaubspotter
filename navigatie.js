@@ -1066,108 +1066,40 @@ const app = {
             uspRow.classList.remove('has-overflow', 'expanded');
         }
 
-        // Contextuele feature-card tags. Bouwt één geünifieerde lijst
-        // op uit:
-        //   • acc.tags  (synthesized-from-SITE_DATA records dragen
-        //                hier de canonieke string-labels — bv.
-        //                "Appartement", "Adult Only", "Aan zee")
-        //   • acc.whatKeys      → this.labels.what[k]
-        //   • acc.locationKeys  → this.labels.location[k]
-        //   • acc.facilityKeys  → this.labels.facilities[k]
-        // Dedupe via Set zodat we geen "Hotel · Hotel" krijgen.
-        // Iedere tag wordt als feature-card met icon-circle + label
-        // gerendered (.detail-tag) i.p.v. een flat pill — visueel
-        // afgestemd op .usp-item zodat de detail-page één
-        // feature-card vocabulaire heeft. TAG_ICONS hieronder bouwt
-        // het icoon op via de canonieke tag-label.
-        const TAG_ICONS = {
-            // Accommodatie-type
-            'Hotel': '🏨', 'Kamperen': '⛺', 'Camping': '⛺', 'Vakantiepark': '🎡',
-            'Glamping': '✨', 'Bungalow': '🏡', 'Chalet': '🏔️', 'Resort': '🌴',
-            'Villa': '🏛️', 'Appartement': '🏢', 'B&B': '🛌',
-            'Boutique': '🛎️', 'Design': '🎨',
-            // Ligging
-            'Aan zee': '🌊', 'Aan het strand': '🏖️', 'In de bergen': '⛰️',
-            'Aan een meer': '🚤', 'Nabij natuur': '🌲', 'Nabij natuur/bos': '🌲',
-            'Centraal gelegen': '📍', 'Afgelegen': '🌌', 'Stad': '🏙️',
-            'In de stad': '🏙️', 'Bos': '🌲', 'Natuur': '🌲',
-            'Bergen': '⛰️', 'Europa': '🌍',
-            // Faciliteiten
-            'Binnenzwembad': '🏊', 'Glijbanen': '🛝', 'Kinderpret': '🎠',
-            'All-inclusive': '🍽️', 'Sport & Spel': '⚽', 'Outdoor activiteiten': '🧗',
-            'Ontspanning': '🧘', 'Bezienswaardigheden': '📷', 'Fietsroutes': '🚴',
-            'Looproutes': '🥾', 'Diervriendelijk': '🐕', 'Luxe': '✨',
-            'Entertainment': '🎭', 'Open bar': '🍸', 'Live muziek': '🎵',
-            'Wateractiviteiten': '🌊', 'Feestelijk': '🎉',
-            // Audience
-            'Adult Only': '🥂', 'Volwassenen': '👥', 'Voor koppels': '💑',
-            'Voor gezinnen': '👨‍👩‍👧', 'Voor gezinnen met kinderen': '👨‍👩‍👧',
-            'Voor gezinnen met tieners': '🧑', "Voor gezinnen met baby's": '👶',
-            'Voor senioren': '👴', 'Voor vrienden': '👫', 'Voor solo': '🚶',
-            'Voor alleen reizenden': '🚶', 'Met huisdier': '🐕',
-            // Vacation style
-            'Weekendje weg': '🗓️', 'Zonvakantie': '☀️', 'Wintervakantie': '❄️',
-            'Wintersport': '⛷️', 'Wellness': '💆', 'Cultuur': '🎭',
-            'Romantisch': '💕', 'Avontuur': '🧭', 'Stedentrip': '🌆',
-            'Citytrip': '🌆', 'Actief / Avontuur': '🧭', 'Actief': '🏃',
-            // Country
-            'Italië': '🍝', 'Spanje': '🥘', 'Frankrijk': '🗼', 'Duitsland': '🍺',
-            'Nederland': '🇳🇱', 'België': '🍫', 'Portugal': '🍷', 'Kroatië': '⛵',
-            'Oostenrijk': '🎿'
+        // Contextuele feature-tags. Bouwt één geünifieerde lijst op uit:
+        //   • acc.whatKeys       → this.labels.what[k]
+        //   • acc.locationKeys   → this.labels.location[k]
+        //   • acc.facilityKeys   → this.labels.facilities[k]
+        //   • acc.tags           (canonieke string-labels)
+        // Set-dedupe zodat we geen "Hotel · Hotel" of "Adult Only ·
+        // Adult Only" krijgen wanneer tag-string en facility-key naar
+        // hetzelfde label resolven.
+        //
+        // Recommendation-phrasings ('Weekendje weg' etc.) worden door
+        // renderFeatureTags() weggefilterd; daar zit ook de "Stedentrip"-
+        // remap voor de canonieke label van what='city-trip'.
+        const WHAT_FEATURE_REMAP = {
+            'city-trip': 'Stedentrip'
         };
-        const tagsEl = document.getElementById('detail-tags');
-        if (tagsEl) {
-            // EENE canonieke feature-tag grid voor de hele detail-pagina.
-            // Bouwt 1 geünifieerde lijst op uit:
-            //   • acc.facilityKeys  → this.labels.facilities[k]  (was usp-row)
-            //   • acc.tags           (canonieke string-labels)
-            //   • acc.whatKeys       → this.labels.what[k]
-            //   • acc.locationKeys   → this.labels.location[k]
-            // Set-dedupe zodat we geen "Hotel · Hotel" of "Adult Only ·
-            // Adult Only" krijgen wanneer een tag-string en een
-            // facility-key naar dezelfde label resolven.
-            //
-            // Recommendation-phrasings die NIET in de feature-tag grid
-            // horen — die zijn redactionele aanbevelings-context
-            // (eerder thuis in "Ideaal voor" of de editorial-card),
-            // geen harde accommodatie-trait. "Weekendje weg" is ook
-            // de canonieke label voor what='city-trip' — we remappen
-            // dat naar "Stedentrip" (een echte verblijfsstijl) zodat
-            // de what-key visueel blijft maar niet als marketing-
-            // phrase leest.
-            const RECOMMENDATION_PHRASES = new Set([
-                'Weekendje weg',
-                'Korte vakantie',
-                'Lang weekend',
-                'Last minutes',
-                'Lastminute'
-            ]);
-            const WHAT_FEATURE_REMAP = {
-                'city-trip': 'Stedentrip'
-            };
-            const seen = new Set();
-            const displayTags = [];
-            const add = (txt) => {
-                if (!txt || seen.has(txt)) return;
-                if (RECOMMENDATION_PHRASES.has(txt)) return;
-                seen.add(txt); displayTags.push(txt);
-            };
-            // Volgorde-strategie: type eerst (geeft direct context),
-            // dan ligging, dan facilities/sfeer/context (acc.tags),
-            // dan resterende facility-keys. Dat geeft een natuurlijke
-            // lees-volgorde op de feature-card grid.
-            (acc.whatKeys || []).forEach(k => add(WHAT_FEATURE_REMAP[k] || this.labels.what[k]));
-            (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
-            (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));
-            (acc.tags || []).forEach(add);
-            tagsEl.innerHTML = displayTags
-                .map(t => `
-                    <div class="detail-tag">
-                        <span class="detail-tag-circle" aria-hidden="true">${TAG_ICONS[t] || '•'}</span>
-                        <span class="detail-tag-label">${t}</span>
-                    </div>
-                `)
-                .join('');
+        const seen = new Set();
+        const displayTags = [];
+        const add = (txt) => {
+            if (!txt || seen.has(txt)) return;
+            seen.add(txt); displayTags.push(txt);
+        };
+        // Volgorde-strategie: type → ligging → facilities → acc.tags.
+        // Geeft een natuurlijke lees-volgorde aan _pickFeatureHighlights
+        // (audience-pick komt sowieso vanuit priority-set, niet uit
+        // volgorde — maar voor "fill remaining" telt deze volgorde wel).
+        (acc.whatKeys || []).forEach(k => add(WHAT_FEATURE_REMAP[k] || this.labels.what[k]));
+        (acc.locationKeys || []).forEach(k => add(this.labels.location[k]));
+        (acc.facilityKeys || []).forEach(k => add(this.labels.facilities[k]));
+        (acc.tags || []).forEach(add);
+        // Gedeelde renderer uit site.js — produceert de premium
+        // "highlights + more" structuur. Eén visuele taal voor zowel
+        // Navigatie.html?acc= als accommodatie.html?slug=.
+        if (typeof renderFeatureTags === 'function') {
+            renderFeatureTags('detail-tags', displayTags);
         }
 
         // In het kort

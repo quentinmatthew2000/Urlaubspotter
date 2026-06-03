@@ -418,21 +418,116 @@ const FEATURE_TAG_ICONS = {
 const FEATURE_TAG_RECOMMENDATION_PHRASES = new Set([
     'Weekendje weg', 'Korte vakantie', 'Lang weekend', 'Last minutes', 'Lastminute'
 ]);
+
+// Priority sets voor de 3 primary highlights die bovenaan de detail-
+// pagina staan. Strategie: pick 1 uit elke categorie, in deze
+// volgorde — audience (voor wie?), signature feature/vibe (wat is
+// het belangrijkste kenmerk?), ligging (waar?). Resterende slots
+// worden gevuld met overige tags in originele volgorde. Geeft elke
+// accommodatie 3 betekenisvolle highlights die direct duidelijk
+// maken wat de plek onderscheidt.
+const FEATURE_PRIORITY_AUDIENCE = [
+    'Adult Only', 'Voor koppels',
+    'Voor gezinnen met kinderen', 'Voor gezinnen met tieners', "Voor gezinnen met baby's",
+    'Voor gezinnen', 'Voor vrienden', 'Voor senioren',
+    'Voor solo', 'Voor alleen reizenden', 'Volwassenen', 'Met huisdier'
+];
+const FEATURE_PRIORITY_SIGNATURE = [
+    'Wellness', 'Boutique', 'Luxe', 'Romantisch', 'All-inclusive',
+    'Glamping', 'Avontuur', 'Glijbanen', 'Kinderpret', 'Binnenzwembad',
+    'Cultuur', 'Stedentrip', 'Citytrip', 'Zonvakantie', 'Wintersport'
+];
+const FEATURE_PRIORITY_LIGGING = [
+    'Aan zee', 'Aan het strand', 'In de bergen', 'Aan een meer',
+    'Centraal gelegen', 'Afgelegen', 'Nabij natuur', 'Nabij natuur/bos',
+    'Stad', 'In de stad', 'Bos', 'Natuur', 'Bergen'
+];
+function _pickFeatureHighlights(tags, max) {
+    const picks = [];
+    const used = new Set();
+    const tryPick = (priorityList) => {
+        for (const tag of priorityList) {
+            if (tags.includes(tag) && !used.has(tag)) {
+                picks.push(tag);
+                used.add(tag);
+                return;
+            }
+        }
+    };
+    tryPick(FEATURE_PRIORITY_AUDIENCE);
+    if (picks.length < max) tryPick(FEATURE_PRIORITY_SIGNATURE);
+    if (picks.length < max) tryPick(FEATURE_PRIORITY_LIGGING);
+    // Fill any remaining slots met de eerste tags die nog niet zijn
+    // gekozen, in originele acc-volgorde.
+    for (const t of tags) {
+        if (picks.length >= max) break;
+        if (!used.has(t)) { picks.push(t); used.add(t); }
+    }
+    return {
+        highlights: picks.slice(0, max),
+        rest: tags.filter(t => !used.has(t))
+    };
+}
+
+// Global toggle handler — aangeroepen vanuit inline onclick op de
+// "+ N kenmerken" button. Houdt de chip-list collapsible zonder per
+// pagina nieuwe listeners te hoeven binden.
+window.__toggleDetailMore = function(btn) {
+    if (!btn) return;
+    const next = btn.nextElementSibling;
+    if (!next || !next.classList.contains('detail-more')) return;
+    const isOpen = !next.hasAttribute('hidden');
+    if (isOpen) {
+        next.setAttribute('hidden', '');
+        btn.setAttribute('aria-expanded', 'false');
+    } else {
+        next.removeAttribute('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+    }
+    const label = btn.querySelector('.detail-more-label');
+    if (label) {
+        const count = parseInt(btn.dataset.count, 10) || 0;
+        label.textContent = isOpen ? `+ ${count} kenmerken` : '− Minder kenmerken';
+    }
+};
+
 function renderFeatureTags(containerId, tags) {
     const el = document.getElementById(containerId);
     if (!el) return;
+    // Dedupe + filter recommendation-phrases. Behoudt originele
+    // volgorde voor "fill" in highlight-pick.
     const seen = new Set();
     const list = (tags || []).filter(t => {
         if (!t || seen.has(t)) return false;
         if (FEATURE_TAG_RECOMMENDATION_PHRASES.has(t)) return false;
         seen.add(t); return true;
     });
-    el.innerHTML = list.map(t => `
-        <div class="detail-tag">
-            <span class="detail-tag-circle" aria-hidden="true">${FEATURE_TAG_ICONS[t] || '•'}</span>
-            <span class="detail-tag-label">${t}</span>
-        </div>
-    `).join('');
+    if (!list.length) { el.innerHTML = ''; return; }
+    const { highlights, rest } = _pickFeatureHighlights(list, 3);
+    const chevronSvg = '<svg viewBox="0 0 12 12" width="12" height="12" fill="none" aria-hidden="true"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const highlightsHtml = `
+        <div class="detail-highlights" aria-label="Belangrijkste kenmerken">
+            ${highlights.map(t => `
+                <span class="detail-highlight">
+                    <span class="detail-highlight-icon" aria-hidden="true">${FEATURE_TAG_ICONS[t] || '•'}</span>
+                    <span class="detail-highlight-label">${t}</span>
+                </span>
+            `).join('')}
+        </div>`;
+    const moreHtml = rest.length ? `
+        <button class="detail-more-toggle" type="button" aria-expanded="false" data-count="${rest.length}" onclick="window.__toggleDetailMore(this)">
+            <span class="detail-more-label">+ ${rest.length} kenmerken</span>
+            ${chevronSvg}
+        </button>
+        <div class="detail-more" hidden>
+            ${rest.map(t => `
+                <span class="detail-more-chip">
+                    <span class="detail-more-chip-icon" aria-hidden="true">${FEATURE_TAG_ICONS[t] || '•'}</span>
+                    <span>${t}</span>
+                </span>
+            `).join('')}
+        </div>` : '';
+    el.innerHTML = highlightsHtml + moreHtml;
 }
 
 function renderCategoryTiles(containerId, entries, { linkBuilder, gradient, icons = true, size = 'default' } = {}) {
