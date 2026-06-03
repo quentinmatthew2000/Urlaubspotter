@@ -98,9 +98,6 @@ const TAG_INTENTS = {
     'budget':           ['affordable', 'value'],
     'comfort':          ['comfort', 'mid-tier'],
     'luxe':             ['luxury', 'premium', 'boutique'],
-    'last-minute':      ['affordable', 'flexible'],
-    'aanbiedingen':     ['affordable', 'value'],
-    'pakketreizen':     ['all-inclusive', 'convenient', 'planned'],
 
     // -- Bestemming — geen thema's; pure country/continent match --
 
@@ -252,10 +249,6 @@ const HUMAN_POSITIVES = [
       say: "Prima prijs voor wat je krijgt" },
     { when: (a, x) => a.budget.includes('comfort') && x.tier === 'comfort',
       say: "Solide comfort voor een eerlijke prijs" },
-    { when: (a, x) => a.budget.includes('aanbiedingen') && x.tier !== 'luxe',
-      say: "Vaak met scherpe aanbiedingen" },
-    { when: (a, x) => a.budget.includes('pakketreizen') && hasTheme(x, ['all-inclusive','convenient']),
-      say: "Beschikbaar als pakketreis" },
     // Ligging match — concrete zinnen per setting
     { when: (a, x) => a.ligging.includes('aan-zee') && x.settings.includes('aan-zee'),
       say: "Mooie ligging aan zee" },
@@ -466,19 +459,17 @@ function evaluateMatch(acc, answers) {
         return best;
     });
 
-    // Budget — exact tier-match = 1.0, één tier-stap weg = 0.5, twee weg = 0.1
+    // Budget — exact tier-match = 1.0, één tier-stap weg = 0.5, twee weg = 0.1.
+    // Stap 3 biedt nu uitsluitend de drie budget-tiers (budget /
+    // comfort / luxe) plus "Geen voorkeur". Last-minute / aanbiedingen
+    // / pakketreizen zijn verwijderd — die hoorden niet thuis in een
+    // budget-vraag (een luxe accommodatie kan een last-minute zijn,
+    // een budget verblijf kan een aanbieding zijn, etc.).
     categoryScore('budget', clean.budget, (vals, x) => {
         const tierOrder = { budget: 0, comfort: 1, luxe: 2 };
         let best = 0;
         vals.forEach(v => {
             if (v === x.tier) { best = Math.max(best, 1); return; }
-            // softere budgetwaarden (last-minute / aanbiedingen / pakketreizen)
-            if ((v === 'last-minute' || v === 'aanbiedingen') && x.tier !== 'luxe') {
-                best = Math.max(best, 0.85); return;
-            }
-            if (v === 'pakketreizen' && hasTheme(x, ['all-inclusive','convenient'])) {
-                best = Math.max(best, 0.85); return;
-            }
             if (tierOrder[v] !== undefined && tierOrder[x.tier] !== undefined) {
                 const dist = Math.abs(tierOrder[v] - tierOrder[x.tier]);
                 best = Math.max(best, dist === 1 ? 0.5 : 0.1);
@@ -689,7 +680,6 @@ const valueLabels = {
     'adult-only-trip': 'Adult Only', 'ontspanning-vakantie': 'Ontspanning',
     'actief-vakantie': 'Actief',
     'budget': 'Budget', 'comfort': 'Comfort', 'luxe': 'Luxe',
-    'last-minute': 'Last Minutes', 'aanbiedingen': 'Aanbiedingen', 'pakketreizen': 'Pakketreizen',
     'duitsland': 'Duitsland', 'netherlands': 'Nederland', 'frankrijk': 'Frankrijk',
     'italie': 'Italië', 'spanje': 'Spanje',
     'europa': 'In Europa', 'azie': 'In Azië', 'afrika': 'In Afrika', 'amerika': 'In Amerika',
